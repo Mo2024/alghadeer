@@ -28,13 +28,13 @@ public class Student {
     private String name;
 
     @Column(name = "cpr")
-    private Integer cpr;
+    private String cpr;
 
     @Column(name = "hash")
     private String hash;
 
     @Column(name = "telephone")
-    private Integer telephone;
+    private String telephone;
 
     @Column(name = "email")
     private String email;

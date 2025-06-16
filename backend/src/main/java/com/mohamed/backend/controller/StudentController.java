@@ -1,6 +1,7 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.ErrorResponse;
+import com.mohamed.backend.dto.Login;
+import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.Student;
 import com.mohamed.backend.service.StudentService;
@@ -19,16 +20,30 @@ public class StudentController {
     private StudentService studentService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@ModelAttribute Student student, @RequestParam("image") MultipartFile image, HttpSession session){
+    public ResponseEntity<?> register(@ModelAttribute Student student, @RequestParam("image") MultipartFile image, HttpSession session){
         try {
-            Integer studentId = studentService.registerStudent(student, image, session);
-            return ResponseEntity.ok().body(studentId);
+            Response response = studentService.register(student, image, session);
+            return ResponseEntity.ok().body(response);
         } catch (UnhandledRejection e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()) {
+            return ResponseEntity.badRequest().body(new Response(e.getMessage()) {
             });
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(e.getMessage()));
+                    .body(new Response(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
+        try {
+            Response response = studentService.login(login, session);
+            return ResponseEntity.ok().body(response);
+        } catch (UnhandledRejection e) {
+            return ResponseEntity.badRequest().body(new Response(e.getMessage()) {
+            });
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response(e.getMessage()));
         }
     }
 }

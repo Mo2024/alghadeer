@@ -7,11 +7,11 @@ public class ValidationUtils {
         return text != null && text.matches("^[\\p{InArabic}\\s]+$");
     }
 
-    public static boolean isValidCpr(Integer cpr) {
+    public static boolean isValidCpr(String cpr) {
         return cpr != null && String.valueOf(cpr).matches("^\\d{9}$");
     }
 
-    public static boolean isValidTelephone(Integer telephone) {
+    public static boolean isValidTelephone(String telephone) {
         return telephone != null && String.valueOf(telephone).matches("^\\d{8}$");
     }
 
