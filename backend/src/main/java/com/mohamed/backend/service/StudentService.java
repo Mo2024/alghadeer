@@ -22,6 +22,9 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private ImageUtils imageUtils;
+
     public Page<Student> getStudents(Pageable pageable){
         return studentRepository.findAll(pageable);
     }
@@ -58,13 +61,13 @@ public class StudentService {
         }
 
         if (studentRepository.findByCpr(student.getCpr()).isPresent()) {
-            throw new RuntimeException("رقم الهوية هذا مسجل من قبل");
+            throw new RuntimeException("رقم الهوية مسجل من قبل");
         }
 
 
-        byte[] resizedImage = ImageUtils.resizeAndCompress(image);
+        byte[] resizedImage = imageUtils.resizeAndCompress(image);
 
-        ImageUtils.saveImageToFile(resizedImage, student.getCpr().toString());
+        imageUtils.saveImageToFile(resizedImage, student.getCpr().toString());
 
         Student newStudent = Student.builder()
                 .cpr(student.getCpr())
