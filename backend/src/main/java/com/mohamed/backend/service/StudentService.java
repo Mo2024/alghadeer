@@ -39,7 +39,7 @@ public class StudentService {
         log.info("Registering student: {}", student);
         log.info("Uploaded image - filename: {}, size: {} bytes, type: {}",
                 image.getOriginalFilename(), image.getSize(), image.getContentType());
-        
+
         if (student.getName() == null || student.getName().trim().isEmpty() || !ValidationUtils.isArabic(student.getName())) {
             log.error("Invalid name: {}", student.getName());
             throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
