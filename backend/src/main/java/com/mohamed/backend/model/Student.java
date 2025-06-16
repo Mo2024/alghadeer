@@ -42,7 +42,4 @@ public class Student {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "photo_path")
-    private String photoPath;
-
 }
