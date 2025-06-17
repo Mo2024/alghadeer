@@ -1,6 +1,6 @@
 package com.mohamed.backend.model;
 
-public enum Role {
+public enum Permission {
     Admin,
     Supervisor,
     Instructor

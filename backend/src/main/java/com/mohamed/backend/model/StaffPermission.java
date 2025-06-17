@@ -20,7 +20,8 @@ public class StaffPermission {
     @SequenceGenerator(name = "staff_perm_seq", sequenceName = "staff_perm_sequence", initialValue = 1, allocationSize = 1)
     private Integer id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private Permission permission;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")

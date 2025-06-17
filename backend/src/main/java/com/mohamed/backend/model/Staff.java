@@ -31,9 +31,6 @@ public class Staff {
     @Column(name = "hash")
     private String hash;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StaffPermission> permissions = new ArrayList<>();
 
@@ -44,4 +41,5 @@ public class Staff {
             inverseJoinColumns = @JoinColumn(name = "class_id")
     )
     private List<Class> classes;
+
 }
