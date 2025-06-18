@@ -1,5 +1,7 @@
 package com.mohamed.backend.service;
 
+import com.mohamed.backend.security.StaffDetails;
+import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
 import com.mohamed.backend.utils.ValidationUtils;
@@ -14,11 +16,18 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+
+import java.util.Collections;
 
 @Service
 @Slf4j
@@ -101,7 +110,11 @@ public class StudentService {
 
         log.info("New student saved with ID: {}", newStudent.getId());
 
-        session.setAttribute("studentId", newStudent.getId());
+        StudentDetails studentDetails = new StudentDetails(newStudent);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
         log.info("Session created for student ID: {}", newStudent.getId());
 
