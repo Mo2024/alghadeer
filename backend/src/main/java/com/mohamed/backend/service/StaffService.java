@@ -1,6 +1,8 @@
 package com.mohamed.backend.service;
 
+import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.model.StaffPermission;
+import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.RandomNumberGenerator;
 import com.mohamed.backend.utils.SimpleEmail;
@@ -18,9 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -45,6 +53,7 @@ public class StaffService {
         return staffRepository.findAll(pageable);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Response register(Staff staffRequest){
         log.info("Staff info: {}", staffRequest);
@@ -70,8 +79,6 @@ public class StaffService {
                 throw new UnhandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
             }
         }
-
-
 
         String password = String.valueOf(RandomNumberGenerator.generate8DigitNumber());
         String cleanEmail = staffRequest.getEmail().trim();
@@ -148,4 +155,28 @@ public class StaffService {
         log.info("Email changed successfully");
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
+
+    public Response login(Login login, HttpSession session) {
+        Staff staff = staffRepository.findByEmail(login.getUsername())
+                .orElseThrow(() -> new UnhandledRejection("يرجى التأكد من البيانات"));
+
+        log.info("Login info {}", login);
+        log.info("Staff info {}", staff);
+
+        if (login.getUsername() == null || login.getPassword() == null ||
+                login.getUsername().isBlank() || login.getPassword().isBlank() ||
+                !staff.getHash().equals(HashUtils.sha256(login.getPassword()))) {
+            log.error("Invalid login attempt");
+            throw new UnhandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
+        } else {
+            StaffDetails staffDetails = new StaffDetails(staff);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(staffDetails, null, staffDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+
+            log.info("Staff ID: {} logged in", staff.getId());
+        }
+        return new Response("تم تسجيل الدخول بنجاح");
+    }
+
 }

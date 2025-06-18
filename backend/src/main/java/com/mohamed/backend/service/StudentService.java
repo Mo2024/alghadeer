@@ -136,7 +136,11 @@ public class StudentService {
             log.error("Invalid login attempt");
             throw new UnhandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else {
-            session.setAttribute("studentId", student.getId());
+            StudentDetails studentDetails = new StudentDetails(student);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
             log.info("Student ID: {} logged in", student.getId());
         }
         return new Response("تم تسجيل الدخول بنجاح");
