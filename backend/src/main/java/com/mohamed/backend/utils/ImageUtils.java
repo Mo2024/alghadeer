@@ -1,4 +1,4 @@
-package com.mohamed.backend.Utils;
+package com.mohamed.backend.utils;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;

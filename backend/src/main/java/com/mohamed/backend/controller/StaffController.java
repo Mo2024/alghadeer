@@ -21,7 +21,7 @@ public class StaffController {
     @Autowired
     private StaffService staffService;
 
-    @PostMapping("/register")
+    @PostMapping("/admin/register")
     public ResponseEntity<?> register(@RequestBody Staff staff, HttpSession session){
         try {
             Response response = staffService.register(staff);

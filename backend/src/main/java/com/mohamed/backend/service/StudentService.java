@@ -1,8 +1,8 @@
 package com.mohamed.backend.service;
 
-import com.mohamed.backend.Utils.HashUtils;
-import com.mohamed.backend.Utils.ImageUtils;
-import com.mohamed.backend.Utils.ValidationUtils;
+import com.mohamed.backend.utils.HashUtils;
+import com.mohamed.backend.utils.ImageUtils;
+import com.mohamed.backend.utils.ValidationUtils;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
@@ -85,11 +85,13 @@ public class StudentService {
         imageUtils.saveImageToFile(resizedImage, student.getCpr());
         log.info("Image saved to file successfully for student: {}", student.getCpr());
 
+        String cleanEmail = student.getEmail().trim();
+
         Student newStudent = Student.builder()
                 .cpr(student.getCpr())
                 .area(student.getArea())
                 .name(student.getName())
-                .email(student.getEmail())
+                .email(cleanEmail)
                 .hash(HashUtils.sha256(student.getCpr()))
                 .dateOfBirth(student.getDateOfBirth())
                 .telephone(student.getTelephone())
@@ -114,7 +116,6 @@ public class StudentService {
 
         log.info("Login info {}", login);
         log.info("Student info {}", student);
-
 
         if (login.getUsername() == null || login.getPassword() == null ||
                 login.getUsername().isBlank() || login.getPassword().isBlank() ||

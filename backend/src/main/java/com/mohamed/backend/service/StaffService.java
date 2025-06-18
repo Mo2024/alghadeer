@@ -1,16 +1,18 @@
 package com.mohamed.backend.service;
 
-import com.mohamed.backend.Utils.HashUtils;
-import com.mohamed.backend.Utils.RandomNumberGenerator;
-import com.mohamed.backend.Utils.SimpleEmail;
-import com.mohamed.backend.Utils.ValidationUtils;
+import com.mohamed.backend.model.StaffPermission;
+import com.mohamed.backend.utils.HashUtils;
+import com.mohamed.backend.utils.RandomNumberGenerator;
+import com.mohamed.backend.utils.SimpleEmail;
+import com.mohamed.backend.utils.ValidationUtils;
+import com.mohamed.backend.dto.ChangeEmail;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.Class;
 import com.mohamed.backend.model.Staff;
-import com.mohamed.backend.model.StaffPermission;
 import com.mohamed.backend.repository.ClassRepository;
 import com.mohamed.backend.repository.StaffRepository;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,6 +35,11 @@ public class StaffService {
 
     @Autowired
     private SimpleEmail simpleEmail;
+
+    public Integer getStaffIdFromSession(HttpSession session) {
+        return (Integer) session.getAttribute("staffId");
+    }
+
 
     public Page<Staff> getStaff(Pageable pageable){
         return staffRepository.findAll(pageable);
@@ -63,17 +71,33 @@ public class StaffService {
             }
         }
 
+
+
         String password = String.valueOf(RandomNumberGenerator.generate8DigitNumber());
+        String cleanEmail = staffRequest.getEmail().trim();
+
+        List<StaffPermission> staffPermissionList = new ArrayList<>();
+
+        for (StaffPermission perm : staffRequest.getPermissions()){
+            if (perm == null || perm.getPermission() == null) {
+                throw new UnhandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
+            }
+            staffPermissionList.add(perm);
+        }
+
+        log.info("Permissions list {}", staffPermissionList);
 
         Staff staff = Staff.builder()
                 .name(staffRequest.getName())
-                .email(staffRequest.getEmail())
+                .email(cleanEmail)
                 .hash(HashUtils.sha256(password))
                 .classes(staffRequest.getClasses())
-                .permissions(staffRequest.getPermissions())
                 .build();
 
-        staff = staffRepository.save(staff);
+
+        staffPermissionList.forEach(perm -> perm.setStaff(staff));
+        staff.setPermissions(staffPermissionList);
+        staffRepository.save(staff);
 
         log.info("Staff saved to DB successfully: {}", staff);
 
@@ -97,5 +121,31 @@ public class StaffService {
         log.info("Registration successful");
 
         return new Response("تم التسجيل بنجاح");
+    }
+
+    @Transactional
+    public Response changeEmail(ChangeEmail newEmailReq, HttpSession httpSession) {
+        log.info("new email body: {}", newEmailReq);
+
+        if (newEmailReq.getEmail() == null || newEmailReq.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(newEmailReq.getEmail())) {
+            log.error("Invalid email: {}", newEmailReq.getEmail());
+            throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
+        }
+
+        if (staffRepository.existsByEmail(newEmailReq.getEmail())) {
+            throw new UnhandledRejection("البريد الإلكتروني مستخدم بالفعل");
+        }
+
+        Staff staff = staffRepository.findById(getStaffIdFromSession(httpSession))
+                .orElseThrow(() -> new UnhandledRejection("يرجى التأكد من البيانات"));
+
+        String cleanEmail = newEmailReq.getEmail().trim();
+
+        log.info("old staff object: {}", staff);
+        staff.setEmail(cleanEmail);
+        log.info("new staff object: {}", staff);
+        staffRepository.save(staff);
+        log.info("Email changed successfully");
+        return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
 }

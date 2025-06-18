@@ -1,4 +1,4 @@
-package com.mohamed.backend.Utils;
+package com.mohamed.backend.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
