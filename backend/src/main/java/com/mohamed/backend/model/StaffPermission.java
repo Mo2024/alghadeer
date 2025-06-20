@@ -18,6 +18,7 @@ public class StaffPermission {
     @SequenceGenerator(name = "staff_perm_seq", sequenceName = "staff_perm_sequence", initialValue = 1, allocationSize = 1)
     private Integer id;
 
+    @Column(name = "permission")
     @Enumerated(EnumType.STRING)
     private Permission permission;
 
