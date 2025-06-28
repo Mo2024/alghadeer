@@ -1,5 +1,7 @@
 package com.mohamed.backend.utils;
 
+import com.mohamed.backend.model.SemesterList;
+
 import java.time.LocalDate;
 
 public class ValidationUtils {
@@ -21,6 +23,15 @@ public class ValidationUtils {
 
     public static boolean isPastDate(LocalDate date) {
         return date != null && date.isBefore(LocalDate.now());
+    }
+
+    public static boolean isValidSemester(String value) {
+        for (SemesterList s : SemesterList.values()) {
+            if (s.name().equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
