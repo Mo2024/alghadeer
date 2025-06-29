@@ -18,18 +18,16 @@ public class CorrelationIdFilter implements Filter {
         try {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-            String correlationId = httpRequest.getHeader("X-Correlation-ID");
-            if (correlationId == null || correlationId.isBlank()) {
-                correlationId = UUID.randomUUID().toString();
-            }
-
+            String fullUuid = UUID.randomUUID().toString();
+            String correlationId = fullUuid.substring(fullUuid.lastIndexOf('-') + 1);
             MDC.put("cid", correlationId);
+
             MDC.put("appName", "alghadeer");
             MDC.put("thread", Thread.currentThread().getName());
 
             chain.doFilter(request, response);
         } finally {
-            MDC.clear(); // Clean up after request
+            MDC.clear();
         }
     }
 }

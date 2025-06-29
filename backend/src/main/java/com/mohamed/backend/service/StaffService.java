@@ -44,8 +44,9 @@ public class StaffService {
     @Autowired
     private SimpleEmail simpleEmail;
 
-    public Integer getStaffIdFromSession(HttpSession session) {
-        return (Integer) session.getAttribute("staffId");
+    public Integer getStaffId() {
+        StaffDetails staffDetails = (StaffDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return staffDetails.getId();
     }
 
 
@@ -56,15 +57,15 @@ public class StaffService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Response register(Staff staffRequest){
-        log.info("Staff info: {}", staffRequest);
+        log.info("Staff info:\n{}", staffRequest);
 
         if (staffRequest.getName() == null || staffRequest.getName().trim().isEmpty() || !ValidationUtils.isArabic(staffRequest.getName())) {
-            log.error("Invalid name: {}", staffRequest.getName());
+            log.error("Invalid name:\n{}", staffRequest.getName());
             throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         if (staffRequest.getEmail() == null || staffRequest.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(staffRequest.getEmail())) {
-            log.error("Invalid email: {}", staffRequest.getEmail());
+            log.error("Invalid email:\n{}", staffRequest.getEmail());
             throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
@@ -92,7 +93,7 @@ public class StaffService {
             staffPermissionList.add(perm);
         }
 
-        log.info("Permissions list {}", staffPermissionList);
+        log.info("Permissions list\n{}", staffPermissionList);
 
         Staff staff = Staff.builder()
                 .name(staffRequest.getName())
@@ -106,7 +107,7 @@ public class StaffService {
         staff.setPermissions(staffPermissionList);
         staffRepository.save(staff);
 
-        log.info("Staff saved to DB successfully: {}", staff);
+        log.info("Staff saved to DB successfully:\n{}", staff);
 
 
         String to = staff.getEmail();
@@ -120,7 +121,7 @@ public class StaffService {
             simpleEmail.sendSimpleEmail(to, subject, body);
             log.info("Password sent to email successfully");
         } catch (Exception e) {
-            log.error("Failed to send email to {}", to);
+            log.error("Failed to send email to\n{}", to);
             log.error(e.getMessage());
             throw new UnhandledRejection("حدث خطأ أثناء إرسال البريد الإلكتروني");
         }
@@ -131,11 +132,11 @@ public class StaffService {
     }
 
     @Transactional
-    public Response changeEmail(ChangeEmail newEmailReq, HttpSession httpSession) {
-        log.info("new email body: {}", newEmailReq);
+    public Response changeEmail(ChangeEmail newEmailReq) {
+        log.info("new email body:\n{}", newEmailReq);
 
         if (newEmailReq.getEmail() == null || newEmailReq.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(newEmailReq.getEmail())) {
-            log.error("Invalid email: {}", newEmailReq.getEmail());
+            log.error("Invalid email:\n{}", newEmailReq.getEmail());
             throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
@@ -143,14 +144,17 @@ public class StaffService {
             throw new UnhandledRejection("البريد الإلكتروني مستخدم بالفعل");
         }
 
-        Staff staff = staffRepository.findById(getStaffIdFromSession(httpSession))
-                .orElseThrow(() -> new UnhandledRejection("يرجى التأكد من البيانات"));
+        Staff staff = staffRepository.findById(getStaffId())
+                .orElseThrow(() -> {
+                    log.error("Staff not found");
+                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                });
 
         String cleanEmail = newEmailReq.getEmail().trim();
 
-        log.info("old staff object: {}", staff);
+        log.info("old staff object:\n{}", staff);
         staff.setEmail(cleanEmail);
-        log.info("new staff object: {}", staff);
+        log.info("new staff object:\n{}", staff);
         staffRepository.save(staff);
         log.info("Email changed successfully");
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
@@ -158,10 +162,13 @@ public class StaffService {
 
     public Response login(Login login, HttpSession session) {
         Staff staff = staffRepository.findByEmail(login.getUsername())
-                .orElseThrow(() -> new UnhandledRejection("يرجى التأكد من البيانات"));
+                .orElseThrow(() -> {
+                    log.error("Staff not found");
+                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                });
 
-        log.info("Login info {}", login);
-        log.info("Staff info {}", staff);
+        log.info("Login info\n{}", login);
+        log.info("Staff info\n{}", staff);
 
         if (login.getUsername() == null || login.getPassword() == null ||
                 login.getUsername().isBlank() || login.getPassword().isBlank() ||

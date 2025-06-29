@@ -45,12 +45,12 @@ public class StudentService {
 
     @Transactional
     public Response register(Student student, MultipartFile image, HttpSession session) throws IOException {
-        log.info("Registering student: {}", student);
-        log.info("Uploaded image - filename: {}, size: {} bytes, type: {}",
+        log.info("Registering student:\n{}", student);
+        log.info("Uploaded image - \n filename: {}, size: {} bytes, type: {}",
                 image.getOriginalFilename(), image.getSize(), image.getContentType());
 
         if (student.getName() == null || student.getName().trim().isEmpty() || !ValidationUtils.isArabic(student.getName())) {
-            log.error("Invalid name: {}", student.getName());
+            log.error("Invalid name:\n{}", student.getName());
             throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
@@ -60,39 +60,39 @@ public class StudentService {
         }
 
         if (student.getCpr() == null || !ValidationUtils.isValidCpr(student.getCpr())) {
-            log.error("Invalid CPR: {}", student.getCpr());
+            log.error("Invalid CPR:\n{}", student.getCpr());
             throw new UnhandledRejection("يرجى التأكد من إدخال الرقم الشخصي بشكل صحيح");
         }
 
         if (student.getTelephone() == null || !ValidationUtils.isValidTelephone(student.getTelephone())) {
-            log.error("Invalid telephone: {}", student.getTelephone());
+            log.error("Invalid telephone:\n{}", student.getTelephone());
             throw new UnhandledRejection("يرجى التأكد من إدخال رقم الهاتف بشكل صحيح");
         }
 
         if (student.getEmail() == null || student.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(student.getEmail())) {
-            log.error("Invalid email: {}", student.getEmail());
+            log.error("Invalid email:\n{}", student.getEmail());
             throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
         if (student.getDateOfBirth() == null || !ValidationUtils.isPastDate(student.getDateOfBirth())) {
-            log.error("Invalid date of birth: {}", student.getDateOfBirth());
+            log.error("Invalid date of birth:\n{}", student.getDateOfBirth());
             throw new UnhandledRejection("يرجى التأكد من إدخال تاريخ ميلاد بشكل صحيح");
         }
 
         String contentType = image.getContentType();
         if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-            log.error("Invalid image content type: {}", contentType);
+            log.error("Invalid image content type:\n{}", contentType);
             throw new UnhandledRejection("يرجى تحميل صورة بصيغة JPEG أو PNG");
         }
 
-        if (studentRepository.findByCpr(student.getCpr()).isPresent()) {
-            log.error("Duplicate CPR registration attempt: {}", student.getCpr());
+        if (studentRepository.existsByCpr(student.getCpr())) {
+            log.error("Duplicate CPR registration attempt:\n{}", student.getCpr());
             throw new UnhandledRejection("رقم الهوية مسجل من قبل");
         }
 
         byte[] resizedImage = imageUtils.resizeAndCompress(image);
         imageUtils.saveImageToFile(resizedImage, student.getCpr());
-        log.info("Image saved to file successfully for student: {}", student.getCpr());
+        log.info("Image saved to file successfully for student:\n{}", student.getCpr());
 
         String cleanEmail = student.getEmail().trim();
 
@@ -108,7 +108,7 @@ public class StudentService {
 
         newStudent = studentRepository.save(newStudent);
 
-        log.info("New student saved with ID: {}", newStudent.getId());
+        log.info("New student saved with ID:\n{}", newStudent.getId());
 
         StudentDetails studentDetails = new StudentDetails(newStudent);
         Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, Collections.emptyList());
@@ -116,19 +116,22 @@ public class StudentService {
 
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
 
-        log.info("Session created for student ID: {}", newStudent.getId());
+        log.info("Session created for student ID:\n{}", newStudent.getId());
 
-        log.info("Registration completed successfully for CPR: {}", newStudent.getCpr());
+        log.info("Registration completed successfully for CPR:\n{}", newStudent.getCpr());
 
         return new Response("تم التسجيل بنجاح");
     }
 
     public Response login(Login login, HttpSession session) {
         Student student = studentRepository.findByCpr(login.getUsername())
-                .orElseThrow(() -> new UnhandledRejection("يرجى التأكد من البيانات"));
+                .orElseThrow(() -> {
+                    log.error("Student not found");
+                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                });
 
-        log.info("Login info {}", login);
-        log.info("Student info {}", student);
+        log.info("Login info:\n{}", login);
+        log.info("Student info:\n{}", student);
 
         if (login.getUsername() == null || login.getPassword() == null ||
                 login.getUsername().isBlank() || login.getPassword().isBlank() ||
@@ -137,11 +140,11 @@ public class StudentService {
             throw new UnhandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else {
             StudentDetails studentDetails = new StudentDetails(student);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, Collections.emptyList());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, studentDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-            log.info("Student ID: {} logged in", student.getId());
+            log.info("Student ID:\n{} logged in", student.getId());
         }
         return new Response("تم تسجيل الدخول بنجاح");
     }

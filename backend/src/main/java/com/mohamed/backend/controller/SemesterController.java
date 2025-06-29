@@ -1,31 +1,31 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.Staff;
-import com.mohamed.backend.service.StaffService;
-import jakarta.servlet.http.HttpSession;
+import com.mohamed.backend.model.Semester;
+import com.mohamed.backend.service.SemesterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/staff")
-public class StaffController {
-
+@RequestMapping("/api/semester")
+public class SemesterController {
 
     @Autowired
-    private StaffService staffService;
+    private SemesterService semesterService;
 
-    @PostMapping("/admin/register")
-    public ResponseEntity<?> register(@RequestBody Staff staff){
+    @PostMapping("/admin/create")
+    public ResponseEntity<?> createSemester(@RequestBody Semester semester){
         try {
-            Response response = staffService.register(staff);
+            Response response = semesterService.createSemester(semester);
             return ResponseEntity.ok().body(response);
         } catch (UnhandledRejection e) {
             return ResponseEntity
@@ -44,10 +44,10 @@ public class StaffController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
+    @PostMapping("/student/enroll")
+    public ResponseEntity<?> enrollSemester(){
         try {
-            Response response = staffService.login(login, session);
+            Response response = semesterService.enrollSemester();
             return ResponseEntity.ok().body(response);
         } catch (UnhandledRejection e) {
             return ResponseEntity
@@ -65,4 +65,5 @@ public class StaffController {
                     .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
         }
     }
+
 }

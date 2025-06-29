@@ -20,8 +20,10 @@ public class StudentDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_STUDENT"));
     }
+
+    public Integer getId(){ return student.getId(); }
 
     @Override public String getUsername() { return student.getEmail(); }
     @Override public String getPassword() { return student.getHash(); }

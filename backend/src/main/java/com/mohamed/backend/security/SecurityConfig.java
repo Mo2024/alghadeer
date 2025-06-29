@@ -29,10 +29,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // explicitly protected
-                        .anyRequest().permitAll() // everything else allowed
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/supervisor/**").hasAnyRole("ADMIN","SUPERVISOR")
+                        .requestMatchers("/instructor/**").hasAnyRole("ADMIN","INSTRUCTOR")
+                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .anyRequest().permitAll()
                 )
-                .csrf(csrf -> csrf.disable()); // non-deprecated usage
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

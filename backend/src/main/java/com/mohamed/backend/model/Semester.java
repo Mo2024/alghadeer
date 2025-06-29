@@ -7,9 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Table(name = "semester")
+@Table(name = "semesters")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,12 +29,10 @@ public class Semester {
     @Enumerated(EnumType.STRING)
     private SemesterList semester;
 
-    @Column(name = "startDate")
-    private LocalDate startDate;
-
-    @Column(name = "endDate")
-    private LocalDate endDate;
+    @Column(name = "year")
+    private Integer year;
 
     @Column(name = "active")
     private Boolean active;
+
 }

@@ -20,9 +20,14 @@ public class StaffDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_STUDENT"));
-
+        return staff.getPermissions()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getPermission()))
+                .collect(Collectors.toList());
     }
+
+    public Integer getId(){ return staff.getId(); }
+
 
     @Override public String getUsername() { return staff.getEmail(); }
     @Override public String getPassword() { return staff.getHash(); }

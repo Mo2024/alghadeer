@@ -3,6 +3,7 @@ package com.mohamed.backend.utils;
 import com.mohamed.backend.model.SemesterList;
 
 import java.time.LocalDate;
+import java.time.Year;
 
 public class ValidationUtils {
     public static boolean isArabic(String text) {
@@ -33,5 +34,12 @@ public class ValidationUtils {
         }
         return false;
     }
+
+    public static boolean isValidYear(Integer year) {
+        if (year == null) return false;
+        int currentYear = Year.now().getValue();
+        return year >= currentYear;
+    }
+
 
 }
