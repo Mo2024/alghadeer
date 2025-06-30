@@ -89,7 +89,7 @@ public class SemesterService {
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
-                    return new RuntimeException("لا يوجد فصل دراسي نشط حالياً");
+                    return new UnhandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
 
         log.info("Current active semester\n{}", semester);
@@ -97,7 +97,7 @@ public class SemesterService {
         Student student = studentRepository.findById(studentDetails.getId())
                 .orElseThrow(() -> {
                     log.error("Student does not exist:\n{}", studentDetails.getId());
-                    return new RuntimeException("الطالب غير موجود");
+                    return new UnhandledRejection("الطالب غير موجود");
                 });
 
         log.info("Student enrolling\n{}", student);
@@ -118,5 +118,32 @@ public class SemesterService {
         log.info("Semester Enrollment saved successfully:\n{} ", semesterEnrollment);
 
         return new Response("تم تسجيل الطالب في الفصل الدراسي بنجاح");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public Response switchSemesterStatus(Integer semesterId) {
+
+        log.info("Semester ID:\n{}",semesterId);
+
+
+        Semester semester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> {
+                    log.error("Semester does not exist");
+                    return new UnhandledRejection("الفصل الدراسي غير موجود");
+                });
+
+        log.info("Semester Details:\n{}", semester);
+
+        if(!semester.getActive() && semesterRepository.existsByActive(true)) {
+            log.error("Cannot change semester status while another semester is active");
+            throw new UnhandledRejection("لا يمكن تغيير الحالة إلى نشط طالما يوجد فصل دراسي نشط حالياً");
+        }
+
+        semester.setActive(!semester.getActive());
+        semesterRepository.save(semester);
+        log.info("Semester status changed from {} to {} successfully", semester.getActive(), !semester.getActive());
+
+        return new Response("تم تحديث حالة الفصل الدراسي بنجاح");
     }
 }

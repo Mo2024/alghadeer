@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -26,6 +23,28 @@ public class SemesterController {
     public ResponseEntity<?> createSemester(@RequestBody Semester semester){
         try {
             Response response = semesterService.createSemester(semester);
+            return ResponseEntity.ok().body(response);
+        } catch (UnhandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage()));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+        }
+    }
+
+    @PutMapping("/admin/{semesterId}/toggle-status")
+    public ResponseEntity<?> switchSemesterStatus(@PathVariable Integer semesterId) {
+        try {
+            Response response = semesterService.switchSemesterStatus(semesterId);
             return ResponseEntity.ok().body(response);
         } catch (UnhandledRejection e) {
             return ResponseEntity
