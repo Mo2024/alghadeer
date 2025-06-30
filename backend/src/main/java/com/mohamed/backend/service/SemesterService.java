@@ -49,16 +49,32 @@ public class SemesterService {
             throw new UnhandledRejection("يرجى التأكد من إدخال الفصل صحيح");
         }
 
-        if (semesterReq.getYear() == null || !ValidationUtils.isValidYear(semesterReq.getYear())) {
-            log.error("Invalid year:\n{}", semesterReq.getYear());
-            throw new UnhandledRejection("يرجى التأكد من إدخال السنة بشكل صحيح");
+        if (semesterReq.getStartDate() == null || !ValidationUtils.isPastDate(semesterReq.getStartDate())) {
+            log.error("Invalid start date: {}", semesterReq.getStartDate());
+            throw new UnhandledRejection("يرجى التأكد من إدخال تاريخ إبتداء الفصل بشكل صحيح");
+        }
+
+        if (semesterReq.getEndDate() == null || !ValidationUtils.isPastDate(semesterReq.getEndDate())) {
+            log.error("Invalid end date: {}", semesterReq.getEndDate());
+            throw new UnhandledRejection("يرجى التأكد من إدخال تاريخ إنتهاء الفصل بشكل صحيح");
+        }
+
+        if (semesterReq.getStartDate().isAfter(semesterReq.getEndDate())) {
+            log.error("Start date is after end date: {} > {}", semesterReq.getStartDate(), semesterReq.getEndDate());
+            throw new UnhandledRejection("تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
         }
 
 
-        if (semesterRepository.existsByYearAndSemester(semesterReq.getYear(), semesterReq.getSemester())) {
-            log.error("Duplicate semester entry:\n{} - {}", semesterReq.getYear(), semesterReq.getSemester());
+        if (semesterRepository.existsByYearAndSemester(semesterReq.getStartDate().getYear(), semesterReq.getSemester())) {
+            log.error("Duplicate semester entry:\n{} - {}", semesterReq.getStartDate().getYear(), semesterReq.getSemester());
             throw new UnhandledRejection("الفصل الدراسي مسجل مسبقًا");
         }
+
+        if (semesterRepository.existsOverlappingSemester(semesterReq.getStartDate(), semesterReq.getEndDate())) {
+            log.error("Overlapping semester detected:\nStartDate: {}, EndDate: {}", semesterReq.getStartDate(), semesterReq.getEndDate());
+            throw new UnhandledRejection("يوجد فصل دراسي يتداخل مع هذا التاريخ");
+        }
+
 
         if (semesterRepository.existsByActive(true)) {
             log.error("Cannot create semester while another is active");
@@ -68,7 +84,8 @@ public class SemesterService {
         Semester semester = Semester.builder()
                 .name(semesterReq.getName())
                 .semester(semesterReq.getSemester())
-                .year(semesterReq.getYear())
+                .startDate(semesterReq.getStartDate())
+                .endDate(semesterReq.getEndDate())
                 .active(true)
                 .build();
 

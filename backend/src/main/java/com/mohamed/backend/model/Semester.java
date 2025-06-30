@@ -29,8 +29,11 @@ public class Semester {
     @Enumerated(EnumType.STRING)
     private SemesterList semester;
 
-    @Column(name = "year")
-    private Integer year;
+    @Column(name = "startDate")
+    private LocalDate startDate;
+
+    @Column(name = "endDate")
+    private LocalDate endDate;
 
     @Column(name = "active")
     private Boolean active;
