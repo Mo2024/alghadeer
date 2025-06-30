@@ -4,13 +4,11 @@ import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.Semester;
 import com.mohamed.backend.model.SemesterEnrollment;
-import com.mohamed.backend.model.Staff;
 import com.mohamed.backend.model.Student;
 import com.mohamed.backend.repository.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.SemesterRepository;
 import com.mohamed.backend.repository.StudentRepository;
 import com.mohamed.backend.security.StudentDetails;
-import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -139,28 +137,21 @@ public class SemesterService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Response switchSemesterStatus(Integer semesterId) {
+    public Response closeActiveSemester() {
 
-        log.info("Semester ID:\n{}",semesterId);
-
-
-        Semester semester = semesterRepository.findById(semesterId)
+        Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
-                    log.error("Semester does not exist");
-                    return new UnhandledRejection("الفصل الدراسي غير موجود");
+                    log.error("No active semester found");
+                    return new UnhandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
 
         log.info("Semester Details:\n{}", semester);
 
-        if(!semester.getActive() && semesterRepository.existsByActive(true)) {
-            log.error("Cannot change semester status while another semester is active");
-            throw new UnhandledRejection("لا يمكن تغيير الحالة إلى نشط طالما يوجد فصل دراسي نشط حالياً");
-        }
-
-        semester.setActive(!semester.getActive());
+        semester.setActive(false);
         semesterRepository.save(semester);
-        log.info("Semester status changed from {} to {} successfully", semester.getActive(), !semester.getActive());
 
-        return new Response("تم تحديث حالة الفصل الدراسي بنجاح");
+        log.info("Semester ID={} closed successfully", semester.getId());
+
+        return new Response("تم إغلاق الفصل الدراسي بنجاح");
     }
 }

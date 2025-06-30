@@ -41,10 +41,10 @@ public class SemesterController {
         }
     }
 
-    @PutMapping("/admin/{semesterId}/toggle-status")
-    public ResponseEntity<?> switchSemesterStatus(@PathVariable Integer semesterId) {
+    @PutMapping("/admin/close-semester")
+    public ResponseEntity<?> closeActiveSemester() {
         try {
-            Response response = semesterService.switchSemesterStatus(semesterId);
+            Response response = semesterService.closeActiveSemester();
             return ResponseEntity.ok().body(response);
         } catch (UnhandledRejection e) {
             return ResponseEntity
