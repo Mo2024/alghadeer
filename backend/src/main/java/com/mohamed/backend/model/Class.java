@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,5 +27,9 @@ public class Class {
 
     @ManyToMany(mappedBy = "classes")
     private List<Staff> staff;
+
+    @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClassSchedule> classSchedules = new ArrayList<>();
+
 
 }
