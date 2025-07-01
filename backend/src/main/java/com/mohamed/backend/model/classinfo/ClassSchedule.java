@@ -1,5 +1,6 @@
-package com.mohamed.backend.model;
+package com.mohamed.backend.model.classinfo;
 
+import com.mohamed.backend.model.enums.DayOfWeek;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

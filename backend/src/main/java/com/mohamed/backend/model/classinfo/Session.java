@@ -1,6 +1,8 @@
-package com.mohamed.backend.model;
+package com.mohamed.backend.model.classinfo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mohamed.backend.model.semester.Semester;
+import com.mohamed.backend.model.topics.MainTopic;
+import com.mohamed.backend.model.topics.SubTopic;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

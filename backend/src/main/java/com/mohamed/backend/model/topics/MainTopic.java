@@ -1,5 +1,6 @@
-package com.mohamed.backend.model;
+package com.mohamed.backend.model.topics;
 
+import com.mohamed.backend.model.classinfo.Session;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

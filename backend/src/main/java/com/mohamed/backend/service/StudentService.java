@@ -1,6 +1,5 @@
 package com.mohamed.backend.service;
 
-import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
@@ -8,7 +7,7 @@ import com.mohamed.backend.utils.ValidationUtils;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.Student;
+import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.repository.StudentRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,5 +1,6 @@
-package com.mohamed.backend.model;
+package com.mohamed.backend.model.semester;
 
+import com.mohamed.backend.model.enums.SemesterList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "semesters")

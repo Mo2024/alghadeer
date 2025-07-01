@@ -2,9 +2,9 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.Semester;
-import com.mohamed.backend.model.SemesterEnrollment;
-import com.mohamed.backend.model.Student;
+import com.mohamed.backend.model.semester.Semester;
+import com.mohamed.backend.model.semester.SemesterEnrollment;
+import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.repository.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.SemesterRepository;
 import com.mohamed.backend.repository.StudentRepository;

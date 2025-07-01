@@ -1,4 +1,4 @@
-package com.mohamed.backend.model;
+package com.mohamed.backend.model.enums;
 
 public enum Permission {
     ADMIN,

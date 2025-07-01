@@ -1,6 +1,6 @@
 package com.mohamed.backend.utils;
 
-import com.mohamed.backend.model.SemesterList;
+import com.mohamed.backend.model.enums.SemesterList;
 
 import java.time.LocalDate;
 import java.time.Year;

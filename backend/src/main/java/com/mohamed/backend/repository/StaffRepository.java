@@ -1,7 +1,6 @@
 package com.mohamed.backend.repository;
 
-import com.mohamed.backend.model.Staff;
-import com.mohamed.backend.model.Student;
+import com.mohamed.backend.model.user.Staff;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

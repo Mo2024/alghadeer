@@ -1,7 +1,7 @@
 package com.mohamed.backend.repository;
 
-import com.mohamed.backend.model.Semester;
-import com.mohamed.backend.model.SemesterList;
+import com.mohamed.backend.model.semester.Semester;
+import com.mohamed.backend.model.enums.SemesterList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -3,7 +3,7 @@ package com.mohamed.backend.controller;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.Staff;
+import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.service.StaffService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;

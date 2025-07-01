@@ -1,7 +1,7 @@
 package com.mohamed.backend.security;
 
 
-import com.mohamed.backend.model.Staff;
+import com.mohamed.backend.model.user.Staff;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor

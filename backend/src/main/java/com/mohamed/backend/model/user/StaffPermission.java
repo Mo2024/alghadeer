@@ -1,6 +1,7 @@
-package com.mohamed.backend.model;
+package com.mohamed.backend.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mohamed.backend.model.enums.Permission;
 import jakarta.persistence.*;
 import lombok.*;
 

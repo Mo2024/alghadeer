@@ -1,7 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Login;
-import com.mohamed.backend.model.StaffPermission;
+import com.mohamed.backend.model.user.StaffPermission;
 import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.RandomNumberGenerator;
@@ -10,8 +10,8 @@ import com.mohamed.backend.utils.ValidationUtils;
 import com.mohamed.backend.dto.ChangeEmail;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.Class;
-import com.mohamed.backend.model.Staff;
+import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.ClassRepository;
 import com.mohamed.backend.repository.StaffRepository;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +28,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
