@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.classinfo;
 
+import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,10 @@ public class Class {
 
     @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassSchedule> classSchedules = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
 
 
 }

@@ -1,5 +1,7 @@
 package com.mohamed.backend.model.semester;
 
+import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.enums.SemesterList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "semesters")
@@ -37,5 +41,10 @@ public class Semester {
 
     @Column(name = "active")
     private Boolean active;
+
+    @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Class> classes = new ArrayList<>();
+
+
 
 }
