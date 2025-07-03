@@ -1,14 +1,18 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
+import com.mohamed.backend.repository.ClassRepository;
 import com.mohamed.backend.repository.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.SemesterRepository;
 import com.mohamed.backend.repository.StudentRepository;
 import com.mohamed.backend.security.StudentDetails;
+import com.mohamed.backend.utils.Defaults;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -32,9 +37,12 @@ public class SemesterService {
     @Autowired
     private StudentRepository studentRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Autowired
+    private ClassRepository classRepository;
+
+//    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Response createSemester(Semester semesterReq) {
+    public Response createSemester(SemesterDto semesterReq) {
         log.info("Semester Request info:\n{}", semesterReq);
 
         if (semesterReq.getName() == null || semesterReq.getName().trim().isEmpty() || !ValidationUtils.isArabic(semesterReq.getName())) {
@@ -47,12 +55,12 @@ public class SemesterService {
             throw new UnhandledRejection("يرجى التأكد من إدخال الفصل صحيح");
         }
 
-        if (semesterReq.getStartDate() == null || !ValidationUtils.isPastDate(semesterReq.getStartDate())) {
+        if (semesterReq.getStartDate() == null || ValidationUtils.isPastDate(semesterReq.getStartDate())) {
             log.error("Invalid start date: {}", semesterReq.getStartDate());
             throw new UnhandledRejection("يرجى التأكد من إدخال تاريخ إبتداء الفصل بشكل صحيح");
         }
 
-        if (semesterReq.getEndDate() == null || !ValidationUtils.isPastDate(semesterReq.getEndDate())) {
+        if (semesterReq.getEndDate() == null || ValidationUtils.isPastDate(semesterReq.getEndDate())) {
             log.error("Invalid end date: {}", semesterReq.getEndDate());
             throw new UnhandledRejection("يرجى التأكد من إدخال تاريخ إنتهاء الفصل بشكل صحيح");
         }
@@ -88,6 +96,13 @@ public class SemesterService {
                 .build();
 
         semesterRepository.save(semester);
+
+        if(semesterReq.isDefaultClasses()){
+            List<Class> classes = Defaults.getDefaultClasses(semester);
+            classRepository.saveAll(classes);
+        } // else {
+//            create classes manually logic
+//        }
 
         log.info("Semester saved to DB successfully:\n{}", semester);
 

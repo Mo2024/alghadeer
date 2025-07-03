@@ -1,8 +1,8 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.service.SemesterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class SemesterController {
     private SemesterService semesterService;
 
     @PostMapping("/admin/create")
-    public ResponseEntity<?> createSemester(@RequestBody Semester semester){
+    public ResponseEntity<?> createSemester(@RequestBody SemesterDto semester){
         try {
             Response response = semesterService.createSemester(semester);
             return ResponseEntity.ok().body(response);
