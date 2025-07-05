@@ -1,8 +1,11 @@
 package com.mohamed.backend.utils;
 
+import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.model.enums.DayOfWeek;
 import com.mohamed.backend.model.enums.SemesterList;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Year;
 
 public class ValidationUtils {
@@ -39,6 +42,13 @@ public class ValidationUtils {
         if (year == null) return false;
         int currentYear = Year.now().getValue();
         return year >= currentYear;
+    }
+
+    public static boolean validateSchedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+        return dayOfWeek == null
+                || startTime == null
+                || endTime == null
+                || !startTime.isBefore(endTime);  // schedule is invalid
     }
 
 

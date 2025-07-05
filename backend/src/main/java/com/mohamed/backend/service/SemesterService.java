@@ -37,8 +37,10 @@ public class SemesterService {
     @Autowired
     private StudentRepository studentRepository;
 
+
+
     @Autowired
-    private ClassRepository classRepository;
+    private ClassService classService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
@@ -98,12 +100,11 @@ public class SemesterService {
         semesterRepository.save(semester);
 
         if(semesterReq.isDefaultClasses()){
-            List<Class> classes = Defaults.getDefaultClasses(semester);
-            classRepository.saveAll(classes);
+            log.info("calling class service...");
+            classService.createDefaultClasses(semester);
         }  else {
-//            for(Class class_ : semesterReq.getClasses()){
-//               Class class
-//            }
+            log.info("calling class service...");
+            classService.createCustomClasses(semesterReq.getClasses(), semester);
         }
 
         log.info("Semester saved to DB successfully:\n{}", semester);

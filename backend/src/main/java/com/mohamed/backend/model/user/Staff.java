@@ -2,10 +2,7 @@ package com.mohamed.backend.model.user;
 
 import com.mohamed.backend.model.classinfo.Class;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +38,15 @@ public class Staff {
             joinColumns = @JoinColumn(name = "staff_id"),
             inverseJoinColumns = @JoinColumn(name = "class_id")
     )
+    @ToString.Exclude
     private List<Class> classes;
+
+    public void addClass(Class newClass) {
+        if (this.classes == null) {
+            this.classes = new ArrayList<>();
+        }
+        this.classes.add(newClass);
+    }
+
 
 }
