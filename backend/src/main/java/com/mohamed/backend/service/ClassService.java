@@ -33,18 +33,18 @@ public class ClassService {
 
     @Transactional
     public void createDefaultClasses(Semester semester){
-        log.info("executing method [createDefaultClasses]");
+        log.info("executing method [ClassService].[createDefaultClasses]");
 
         List<Class> classes = Defaults.getDefaultClasses(semester);
         classRepository.saveAll(classes);
 
         log.info("Classes created successfully:\n {}", classes);
-        log.info("[createDefaultClasses] executed successfully");
+        log.info("[ClassService].[createDefaultClasses] executed successfully");
     }
 
     @Transactional
     public void createCustomClasses(List<Class> classes, Semester semester) {
-        log.info("Executing method [createCustomClasses]");
+        log.info("Executing method [ClassService].[createCustomClasses]");
         log.info("Request Parameter:\nClasses:\n{}\nSemester\n{}", classes, semester);
 
         for (Class class_ : classes) {
@@ -64,6 +64,7 @@ public class ClassService {
             List<Staff> validStaff = staffRepository.findAllById(staffIds);
 
             if (validStaff.size() != staffIds.size()) {
+                log.error("Invalid staff provided:\n{}", class_.getStaff());
                 throw new UnhandledRejection("يوجد طاقم غير صالح أو غير موجود");
             }
 
@@ -90,7 +91,7 @@ public class ClassService {
             log.info("Class Created Successfully:\n {}", savedClass);
         }
 
-        log.info("[createCustomClasses] executed successfully");
+        log.info("[ClassService].[createCustomClasses] executed successfully");
     }
 
 

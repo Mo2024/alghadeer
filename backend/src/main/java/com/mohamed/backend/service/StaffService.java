@@ -56,6 +56,8 @@ public class StaffService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Response register(Staff staffRequest){
+        log.info("executing method [StaffService].[register]");
+
         log.info("Staff info:\n{}", staffRequest);
 
         if (staffRequest.getName() == null || staffRequest.getName().trim().isEmpty() || !ValidationUtils.isArabic(staffRequest.getName())) {
@@ -126,12 +128,15 @@ public class StaffService {
         }
 
         log.info("Registration successful");
+        log.info("[StaffService].[register] executed successfully");
 
         return new Response("تم التسجيل بنجاح");
     }
 
     @Transactional
     public Response changeEmail(ChangeEmail newEmailReq) {
+        log.info("executing method [StaffService].[changeEmail]");
+
         log.info("new email body:\n{}", newEmailReq);
 
         if (newEmailReq.getEmail() == null || newEmailReq.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(newEmailReq.getEmail())) {
@@ -155,11 +160,16 @@ public class StaffService {
         staff.setEmail(cleanEmail);
         log.info("new staff object:\n{}", staff);
         staffRepository.save(staff);
-        log.info("Email changed successfully");
+        log.info("Email changed successfully")
+        ;
+        log.info("[StaffService].[changeEmail] executed successfully");
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
 
     public Response login(Login login, HttpSession session) {
+
+        log.info("executing method [StaffService].[login]");
+
         Staff staff = staffRepository.findByEmail(login.getUsername())
                 .orElseThrow(() -> {
                     log.error("Staff not found");
@@ -182,6 +192,8 @@ public class StaffService {
 
             log.info("Staff ID: {} logged in", staff.getId());
         }
+        log.info("[StaffService].[login] executed successfully");
+
         return new Response("تم تسجيل الدخول بنجاح");
     }
 

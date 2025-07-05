@@ -43,6 +43,7 @@ public class StudentService {
 
     @Transactional
     public Response register(Student student, MultipartFile image, HttpSession session) throws IOException {
+        log.info("executing method [StudentService].[register]");
         log.info("Registering student:\n{}", student);
         log.info("Uploaded image - \n filename: {}, size: {} bytes, type: {}",
                 image.getOriginalFilename(), image.getSize(), image.getContentType());
@@ -117,11 +118,14 @@ public class StudentService {
         log.info("Session created for student ID:\n{}", newStudent.getId());
 
         log.info("Registration completed successfully for CPR:\n{}", newStudent.getCpr());
+        log.info("[StudentService].[register] executed successfully");
 
         return new Response("تم التسجيل بنجاح");
     }
 
     public Response login(Login login, HttpSession session) {
+        log.info("executing method [StudentService].[login]");
+
         Student student = studentRepository.findByCpr(login.getUsername())
                 .orElseThrow(() -> {
                     log.error("Student not found");
@@ -144,6 +148,7 @@ public class StudentService {
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
             log.info("Student ID:\n{} logged in", student.getId());
         }
+        log.info("[StudentService].[login] executed successfully");
         return new Response("تم تسجيل الدخول بنجاح");
     }
 }

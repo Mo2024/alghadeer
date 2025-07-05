@@ -45,6 +45,8 @@ public class SemesterService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Response createSemester(SemesterDto semesterReq) {
+        log.info("executing method [createSemester]");
+
         log.info("Semester Request info:\n{}", semesterReq);
 
         if (semesterReq.getName() == null || semesterReq.getName().trim().isEmpty() || !ValidationUtils.isArabic(semesterReq.getName())) {
@@ -109,6 +111,7 @@ public class SemesterService {
 
         log.info("Semester saved to DB successfully:\n{}", semester);
 
+        log.info("[createSemester] executed successfully");
         return new Response("تم إنشاء الفصل بنجاح");
     }
 
@@ -116,6 +119,8 @@ public class SemesterService {
     @PreAuthorize("hasRole('STUDENT')")
     @Transactional
     public Response enrollSemester() {
+        log.info("executing method [SemesterService].[enrollSemester]");
+
         StudentDetails studentDetails = (StudentDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
@@ -150,12 +155,14 @@ public class SemesterService {
 
         log.info("Semester Enrollment saved successfully:\n{} ", semesterEnrollment);
 
+        log.info("[SemesterService].[enrollSemester] executed successfully");
         return new Response("تم تسجيل الطالب في الفصل الدراسي بنجاح");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Response closeActiveSemester() {
+        log.info("executing method [SemesterService].[closeActiveSemester]");
 
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
@@ -170,6 +177,7 @@ public class SemesterService {
 
         log.info("Semester ID={} closed successfully", semester.getId());
 
+        log.info("[SemesterService].[closeActiveSemester] executed successfully");
         return new Response("تم إغلاق الفصل الدراسي بنجاح");
     }
 }
