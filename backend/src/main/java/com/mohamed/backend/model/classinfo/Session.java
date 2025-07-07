@@ -48,4 +48,7 @@ public class Session {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendances = new ArrayList<>();
 
+    @Column(name = "cancelled")
+    private Boolean cancelled;
+
 }

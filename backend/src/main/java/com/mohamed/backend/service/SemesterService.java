@@ -103,7 +103,7 @@ public class SemesterService {
 
         if(semesterReq.isDefaultClasses()){
             log.info("calling class service...");
-            classService.createDefaultClasses(semester);
+            classService.createDefaultClasses(semester, semesterReq.getClassSchedules());
         }  else {
             log.info("calling class service...");
             classService.createCustomClasses(semesterReq.getClasses(), semester);

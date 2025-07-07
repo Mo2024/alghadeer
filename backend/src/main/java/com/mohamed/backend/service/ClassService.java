@@ -3,6 +3,7 @@ package com.mohamed.backend.service;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.ClassRepository;
@@ -31,12 +32,24 @@ public class ClassService {
     @Autowired
     private ClassScheduleRepository classScheduleRepository;
 
+    @Autowired
+    private SessionService sessionService;
+
     @Transactional
-    public void createDefaultClasses(Semester semester){
+    public void createDefaultClasses(Semester semester, List<List<ClassSchedule>> classSchedules){
         log.info("executing method [ClassService].[createDefaultClasses]");
 
         List<Class> classes = Defaults.getDefaultClasses(semester);
-        classRepository.saveAll(classes);
+        classes = classRepository.saveAll(classes);
+
+        for (int i = 0; i < classes.size(); i++) {
+            Class class_ = classes.get(i);
+            class_.setClassSchedules(classSchedules.get(i));
+            classRepository.save(class_);
+            log.info("Creating sessions for class: \n{}", class_);
+            sessionService.createSessions(class_);
+            log.info("Sessions created successfully for class: \n{}", class_);
+        }
 
         log.info("Classes created successfully:\n {}", classes);
         log.info("[ClassService].[createDefaultClasses] executed successfully");
@@ -87,6 +100,10 @@ public class ClassService {
             staffRepository.saveAll(validStaff);
 
             class_.setStaff(validStaff);
+
+            log.info("Creating sessions for class: \n{}", class_);
+            sessionService.createSessions(class_);
+            log.info("Sessions created successfully for class: \n{}", class_);
 
             log.info("Class Created Successfully:\n {}", savedClass);
         }

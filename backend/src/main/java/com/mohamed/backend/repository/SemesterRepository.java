@@ -5,10 +5,12 @@ import com.mohamed.backend.model.enums.SemesterList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
+@Repository
 public interface SemesterRepository extends JpaRepository<Semester, Integer> {
     @Query("SELECT COUNT(s) > 0 FROM Semester s WHERE YEAR(s.startDate) = :year AND s.semester = :semester")
     boolean existsByYearAndSemester(@Param("year") Integer year, @Param("semester") SemesterList semester);

@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.classinfo;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import jakarta.persistence.*;
@@ -36,6 +37,16 @@ public class Class {
     @ManyToOne
     @JoinColumn(name = "semester_id")
     private Semester semester;
+
+    @Override
+    public String toString() {
+        return "Class{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", semester=" + (semester != null ? semester.getId() : null) +
+                '}';
+    }
+
 
 
 }

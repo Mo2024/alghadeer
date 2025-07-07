@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mohamed.backend.model.classinfo.Class;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,7 +39,6 @@ public class Staff {
             joinColumns = @JoinColumn(name = "staff_id"),
             inverseJoinColumns = @JoinColumn(name = "class_id")
     )
-    @ToString.Exclude
     private List<Class> classes;
 
     public void addClass(Class newClass) {

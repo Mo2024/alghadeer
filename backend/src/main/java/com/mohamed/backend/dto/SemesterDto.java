@@ -1,6 +1,7 @@
 package com.mohamed.backend.dto;
 
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.enums.SemesterList;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -26,5 +27,7 @@ public class SemesterDto {
     private List<Class> classes = new ArrayList<>();
 
     private boolean defaultClasses;
+
+    private  List<List<ClassSchedule>> classSchedules;
 
 }
