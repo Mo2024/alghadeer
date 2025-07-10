@@ -4,6 +4,7 @@ import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.repository.SessionRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class SessionService {
     @Autowired
     private SessionRepository sessionRepository;
 
+    @Transactional
     public void createSessions(Class class_) {
         log.info("executing method [SessionService].[createSessions]");
         for (LocalDate startDate = class_.getSemester().getStartDate();
