@@ -36,16 +36,50 @@ public class ClassService {
     private SessionService sessionService;
 
     @Transactional
-    public void createDefaultClasses(Semester semester, List<List<ClassSchedule>> classSchedules){
+    public void createDefaultClasses(Semester semester, List<Class> classesReq){ //pls put validatioin for classses length
         log.info("executing method [ClassService].[createDefaultClasses]");
 
         List<Class> classes = Defaults.getDefaultClasses(semester);
         classes = classRepository.saveAll(classes);
 
         for (int i = 0; i < classes.size(); i++) {
+            Class classReq = classesReq.get(i);
             Class class_ = classes.get(i);
-            class_.setClassSchedules(classSchedules.get(i));
-            classRepository.save(class_);
+
+            class_.setClassSchedules(classReq.getClassSchedules());
+            class_.setStaff(classReq.getStaff());
+
+            List<Integer> staffIds = class_.getStaff().stream()
+                    .map(Staff::getId)
+                    .collect(Collectors.toList());
+
+            List<Staff> validStaff = staffRepository.findAllById(staffIds);
+
+            if (validStaff.size() != staffIds.size()) {
+                log.error("Invalid staff provided:\n{}", class_.getStaff());
+                throw new UnhandledRejection("يوجد طاقم غير صالح أو غير موجود");
+            }
+
+            if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
+                    .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
+                            classSchedule.getDayOfWeek(), classSchedule.getStartTime(), classSchedule.getEndTime()))) {
+                log.error("Invalid schedules:\n{}", class_.getClassSchedules());
+                throw new UnhandledRejection("يوجد جدول زمني غير صالح في الفصل");
+            }
+
+            class_.getClassSchedules().forEach(schedule -> schedule.setClass_(class_));
+            class_.setSemester(semester);
+
+            Class savedClass = classRepository.save(class_);
+
+            validStaff.forEach(staff -> {
+                staff.addClass(savedClass);
+            });
+
+            staffRepository.saveAll(validStaff);
+
+            class_.setStaff(validStaff);
+
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);
             log.info("Sessions created successfully for class: \n{}", class_);

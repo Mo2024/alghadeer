@@ -28,6 +28,4 @@ public class SemesterDto {
 
     private boolean defaultClasses;
 
-    private  List<List<ClassSchedule>> classSchedules;
-
 }
