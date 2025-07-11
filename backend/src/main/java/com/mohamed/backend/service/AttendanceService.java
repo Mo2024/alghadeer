@@ -4,6 +4,7 @@ import com.mohamed.backend.dto.AttendanceRequestDTO;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.classinfo.Attendance;
+import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.AttendanceRepository;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +52,15 @@ public class AttendanceService {
                     log.error("Session not found");
                     return new UnhandledRejection("يرجى التأكد من البيانات");
                 });
+
+        Class class_ = classRepository.findById(session.getClass_().getId())
+                .orElseThrow(() -> {
+                    log.error("class not found");
+                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                });
+
+//        if(LocalDate.now().isBefore(session.getDate()) && LocalTime.now().isBefore(class_.getClassSchedules()))
+
 
         boolean isAssigned = staffRepository.isAuthorizedToTakeAttendance(staffService.getStaffId(), session.getClass_().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
