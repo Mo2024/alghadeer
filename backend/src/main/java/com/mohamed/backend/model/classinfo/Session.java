@@ -51,4 +51,18 @@ public class Session {
     @Column(name = "cancelled")
     private Boolean cancelled;
 
+    @Override
+    public String toString() {
+        return "Session{" +
+                "id=" + id +
+                ", date=" + date +
+                ", mainTopic=" + (mainTopic != null ? mainTopic.getId() : null) +
+                ", subTopic=" + (subTopic != null ? subTopic.getId() : null) +
+                ", semester=" + (semester != null ? semester.getId() : null) +
+                ", class_=" + (class_ != null ? class_.getId() : null) +
+                ", cancelled=" + cancelled +
+                '}';
+    }
+
+
 }

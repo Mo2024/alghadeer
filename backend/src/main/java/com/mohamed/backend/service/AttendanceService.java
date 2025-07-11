@@ -5,6 +5,7 @@ import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.AttendanceRepository;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -52,15 +55,34 @@ public class AttendanceService {
                     log.error("Session not found");
                     return new UnhandledRejection("يرجى التأكد من البيانات");
                 });
-
         Class class_ = classRepository.findById(session.getClass_().getId())
                 .orElseThrow(() -> {
                     log.error("class not found");
                     return new UnhandledRejection("يرجى التأكد من البيانات");
                 });
 
-//        if(LocalDate.now().isBefore(session.getDate()) && LocalTime.now().isBefore(class_.getClassSchedules()))
+        if(LocalDate.now().isBefore(session.getDate())){
+            log.error("Staff tried to take attendance before date of session {}", session.getDate());
+            throw new UnhandledRejection("لا يمكنك تسجيل الحضور قبل تاريخ الحصة");
+        } else if (LocalDate.now().isEqual(session.getDate()) || LocalDate.now().isAfter(session.getDate())) {
+            LocalTime startTime = class_.getClassSchedules().stream()
+                    .filter(schedule -> schedule.getDayOfWeek().name().equals(LocalDate.now().getDayOfWeek().name()))
+                    .map(ClassSchedule::getStartTime)
+                    .findFirst()
+                    .orElseThrow(() -> {
+                        log.error("No schedule for this class:\n{}", class_);
+                        return new UnhandledRejection("لا يوجد جدول زمني لهذا الفصل");
+                    });
+            if(LocalTime.now().isBefore(startTime)){
+                log.error("Staff tried to take attendance before class start time {}", class_);
+                throw new UnhandledRejection("لا يمكنك تسجيل الحضور قبل وقت بدء الحصة");
+            }
+        }
 
+        if(session.getCancelled()){
+            log.error("Staff tried to take attendance to a cancelled session {}", session);
+            throw new UnhandledRejection("لا يمكنك تسجيل الحضور لحصة ملغاة");
+        }
 
         boolean isAssigned = staffRepository.isAuthorizedToTakeAttendance(staffService.getStaffId(), session.getClass_().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
