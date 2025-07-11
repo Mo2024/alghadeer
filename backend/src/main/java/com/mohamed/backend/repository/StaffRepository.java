@@ -23,4 +23,16 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
             @Param("classId") Integer classId
     );
 
+    @Query(value = """
+    SELECT COUNT(*) = 1
+    FROM staff_permission
+    WHERE staff_id = :staffId
+      AND permission = 'INSTRUCTOR'
+      AND (
+        SELECT COUNT(*) FROM staff_permission sp2 WHERE sp2.staff_id = :staffId
+      ) = 1
+""", nativeQuery = true)
+    boolean isInstructorOnly(@Param("staffId") Integer staffId);
+
+
 }

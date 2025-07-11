@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.user;
 
+import com.mohamed.backend.model.classinfo.Class;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -42,4 +44,11 @@ public class Student {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @ManyToMany
+    @JoinTable(
+            name = "student_class",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "class_id")
+    )
+    private List<Class> classes;
 }

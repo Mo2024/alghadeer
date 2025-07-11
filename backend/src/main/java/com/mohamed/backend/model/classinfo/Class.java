@@ -3,6 +3,7 @@ package com.mohamed.backend.model.classinfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
+import com.mohamed.backend.model.user.Student;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,9 @@ public class Class {
 
     @ManyToMany(mappedBy = "classes")
     private List<Staff> staff;
+
+    @ManyToMany(mappedBy = "classes")
+    private List<Student> students;
 
     @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassSchedule> classSchedules = new ArrayList<>();

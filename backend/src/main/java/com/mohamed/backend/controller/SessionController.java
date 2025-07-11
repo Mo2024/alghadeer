@@ -22,7 +22,7 @@ public class SessionController {
     @Autowired
     private AttendanceService attendanceService;
 
-    @PostMapping("/take-attendance")
+    @PostMapping("/instructor/take-attendance")
     public ResponseEntity<?> takeAttendance(@RequestBody AttendanceRequestDTO attendanceRequest){
         try {
             Response response = attendanceService.takeAttendance(attendanceRequest);
