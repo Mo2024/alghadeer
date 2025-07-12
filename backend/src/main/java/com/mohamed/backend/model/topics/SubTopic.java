@@ -33,6 +33,6 @@ public class SubTopic {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private MainTopic mainTopic;
 
-    @OneToMany(mappedBy = "subTopic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subTopic")
     private List<Session> sessions = new ArrayList<>();
 }
