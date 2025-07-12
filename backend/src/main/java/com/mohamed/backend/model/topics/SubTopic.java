@@ -1,6 +1,7 @@
 package com.mohamed.backend.model.topics;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.Session;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class SubTopic {
 
     @ManyToOne
     @JoinColumn(name = "main_topic_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private MainTopic mainTopic;
 
     @OneToMany(mappedBy = "subTopic", cascade = CascadeType.ALL, orphanRemoval = true)

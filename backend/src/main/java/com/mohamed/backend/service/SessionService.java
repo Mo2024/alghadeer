@@ -3,15 +3,13 @@ package com.mohamed.backend.service;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.classinfo.Session;
-import com.mohamed.backend.repository.SessionRepository;
+import com.mohamed.backend.repository.classinfo.SessionRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.Locale;
 
 @Service
 @Slf4j

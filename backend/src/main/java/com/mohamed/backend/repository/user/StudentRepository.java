@@ -1,4 +1,4 @@
-package com.mohamed.backend.repository;
+package com.mohamed.backend.repository.user;
 
 import com.mohamed.backend.model.user.Student;
 import org.springframework.data.jpa.repository.JpaRepository;

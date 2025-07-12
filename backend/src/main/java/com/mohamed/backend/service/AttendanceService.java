@@ -7,11 +7,10 @@ import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.classinfo.Session;
-import com.mohamed.backend.model.user.Staff;
-import com.mohamed.backend.repository.AttendanceRepository;
-import com.mohamed.backend.repository.ClassRepository;
-import com.mohamed.backend.repository.SessionRepository;
-import com.mohamed.backend.repository.StaffRepository;
+import com.mohamed.backend.repository.classinfo.AttendanceRepository;
+import com.mohamed.backend.repository.classinfo.ClassRepository;
+import com.mohamed.backend.repository.classinfo.SessionRepository;
+import com.mohamed.backend.repository.user.StaffRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -47,7 +44,7 @@ public class AttendanceService {
     @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response takeAttendance(AttendanceRequestDTO attendanceRequest){
-        log.info("executing method [takeAttendance]");
+        log.info("executing method [AttendanceService].[takeAttendance]");
 
         Integer sessionId = attendanceRequest.getSession().getId();
         Session session = sessionRepository.findById(sessionId)
@@ -108,7 +105,7 @@ public class AttendanceService {
 
         attendanceRepository.saveAll(attendanceRequest.getAttendances());
 
-        log.info("[takeAttendance] executed successfully");
+        log.info("[AttendanceService].[takeAttendance] executed successfully");
         return new Response("تم تسجيل الحضور بنجاح");
     }
 }

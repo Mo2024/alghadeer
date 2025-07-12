@@ -1,4 +1,4 @@
-package com.mohamed.backend.repository;
+package com.mohamed.backend.repository.semester;
 
 import com.mohamed.backend.model.semester.SemesterEnrollment;
 import org.springframework.data.jpa.repository.JpaRepository;

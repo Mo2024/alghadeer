@@ -3,16 +3,13 @@ package com.mohamed.backend.service;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
-import com.mohamed.backend.repository.ClassRepository;
-import com.mohamed.backend.repository.SemesterEnrollmentRepository;
-import com.mohamed.backend.repository.SemesterRepository;
-import com.mohamed.backend.repository.StudentRepository;
+import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
+import com.mohamed.backend.repository.semester.SemesterRepository;
+import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.security.StudentDetails;
-import com.mohamed.backend.utils.Defaults;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Slf4j

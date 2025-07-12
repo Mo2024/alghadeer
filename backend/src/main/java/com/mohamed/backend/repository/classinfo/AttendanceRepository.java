@@ -1,4 +1,4 @@
-package com.mohamed.backend.repository;
+package com.mohamed.backend.repository.classinfo;
 
 import com.mohamed.backend.model.classinfo.Attendance;
 import org.springframework.data.jpa.repository.JpaRepository;

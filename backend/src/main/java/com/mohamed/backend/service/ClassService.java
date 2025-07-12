@@ -1,14 +1,12 @@
 package com.mohamed.backend.service;
 
-import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
-import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
-import com.mohamed.backend.repository.ClassRepository;
-import com.mohamed.backend.repository.ClassScheduleRepository;
-import com.mohamed.backend.repository.StaffRepository;
+import com.mohamed.backend.repository.classinfo.ClassRepository;
+import com.mohamed.backend.repository.classinfo.ClassScheduleRepository;
+import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Defaults;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;

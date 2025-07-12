@@ -8,7 +8,7 @@ import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.user.Student;
-import com.mohamed.backend.repository.StudentRepository;
+import com.mohamed.backend.repository.user.StudentRepository;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
