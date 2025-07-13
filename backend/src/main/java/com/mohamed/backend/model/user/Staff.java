@@ -41,6 +41,9 @@ public class Staff {
     )
     private List<Class> classes;
 
+    @Column(name = "is_archived")
+    private Boolean archived;
+
     public void addClass(Class newClass) {
         if (this.classes == null) {
             this.classes = new ArrayList<>();

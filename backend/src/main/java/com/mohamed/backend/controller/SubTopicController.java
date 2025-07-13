@@ -21,7 +21,7 @@ public class SubTopicController {
     private SubTopicService subTopicService;
 
 
-    @PostMapping("/staff/create-sub-topic")
+    @PostMapping("/all/create-sub-topic")
     public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic){
         try {
             Response response = subTopicService.createSubTopic(subTopic);
@@ -43,7 +43,7 @@ public class SubTopicController {
         }
     }
 
-    @PostMapping("/staff/edit-sub-topic")
+    @PostMapping("/all/edit-sub-topic")
     public ResponseEntity<?> editSubTopic(@RequestBody SubTopic subTopic){
         try {
             Response response = subTopicService.editSubTopic(subTopic);
@@ -65,7 +65,7 @@ public class SubTopicController {
         }
     }
 
-    @PostMapping("/staff/delete-sub-topic")
+    @PostMapping("/all/delete-sub-topic")
     public ResponseEntity<?> deleteSubTopic(@RequestBody SubTopic subTopic){
         try {
             Response response = subTopicService.deleteSubTopic(subTopic);

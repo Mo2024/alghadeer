@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
     boolean existsByEmail(String email);
-    Optional<Staff> findByEmail(String email);
+    Optional<Staff> findByEmailAndArchived(String email, Boolean isArchived);
+    Optional<Staff> findByIdAndArchived(Integer id, Boolean isArchived);
 
     @Query(value = """
     SELECT COUNT(*) > 0

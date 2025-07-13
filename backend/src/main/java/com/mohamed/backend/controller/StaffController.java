@@ -65,4 +65,26 @@ public class StaffController {
                     .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
         }
     }
+
+    @PostMapping("/archive")
+    public ResponseEntity<?> archiveStaff(@RequestBody Staff staff){
+        try {
+            Response response = staffService.archiveStaff(staff);
+            return ResponseEntity.ok().body(response);
+        } catch (UnhandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage()));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+        }
+    }
 }

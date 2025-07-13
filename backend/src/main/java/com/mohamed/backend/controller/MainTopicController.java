@@ -22,7 +22,7 @@ public class MainTopicController {
     @Autowired
     MainTopicService mainTopicService;
 
-    @PostMapping("/staff/create-main-topic")
+    @PostMapping("/all/create-main-topic")
     public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic){
         try {
             Response response = mainTopicService.createMainTopic(mainTopic);
@@ -44,7 +44,7 @@ public class MainTopicController {
         }
     }
 
-    @PostMapping("/staff/edit-main-topic")
+    @PostMapping("/all/edit-main-topic")
     public ResponseEntity<?> editMainTopic(@RequestBody MainTopic mainTopic){
         try {
             Response response = mainTopicService.editMainTopic(mainTopic);
@@ -66,7 +66,7 @@ public class MainTopicController {
         }
     }
 
-    @PostMapping("/staff/delete-main-topic")
+    @PostMapping("/all/delete-main-topic")
     public ResponseEntity<?> deleteMainTopic(@RequestBody MainTopic mainTopic){
         try {
             Response response = mainTopicService.deleteMainTopic(mainTopic);

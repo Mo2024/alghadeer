@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/supervisor/**").hasAnyRole("ADMIN","SUPERVISOR")
                         .requestMatchers("/instructor/**").hasAnyRole("ADMIN","INSTRUCTOR","SUPERVISOR")
-                        .requestMatchers("/staff/**").hasAnyRole("ADMIN","INSTRUCTOR","SUPERVISOR")
+                        .requestMatchers("/all/**").hasAnyRole("ADMIN","INSTRUCTOR","SUPERVISOR")
                         .requestMatchers("/student/**").hasRole("STUDENT")
                         .anyRequest().permitAll()
                 )

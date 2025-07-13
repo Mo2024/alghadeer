@@ -101,6 +101,7 @@ public class StaffService {
                 .email(cleanEmail)
                 .hash(HashUtils.sha256(password))
                 .classes(staffRequest.getClasses())
+                .archived(false)
                 .build();
 
 
@@ -170,7 +171,7 @@ public class StaffService {
 
         log.info("executing method [StaffService].[login]");
 
-        Staff staff = staffRepository.findByEmail(login.getUsername())
+        Staff staff = staffRepository.findByEmailAndArchived(login.getUsername(),false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new UnhandledRejection("يرجى التأكد من البيانات");
@@ -195,6 +196,25 @@ public class StaffService {
         log.info("[StaffService].[login] executed successfully");
 
         return new Response("تم تسجيل الدخول بنجاح");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public Response archiveStaff(Staff staff){
+        log.info("executing method [StaffService].[archiveStaff]");
+
+        log.info("Request parameter:\n{}", staff);
+        Staff staffObj = staffRepository.findByIdAndArchived(staff.getId(),false)
+                .orElseThrow(() -> {
+                    log.error("Staff not found");
+                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                });
+
+        staffObj.setArchived(true);
+        staffRepository.save(staffObj);
+
+        log.info("[StaffService].[archiveStaff] executed successfully");
+        return new Response("تم أرشفة الموظف بنجاح");
     }
 
 }
