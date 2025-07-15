@@ -1,6 +1,7 @@
 package com.mohamed.backend.model.classinfo;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.model.user.Student;
@@ -42,6 +43,10 @@ public class Class {
     @ManyToOne
     @JoinColumn(name = "semester_id")
     private Semester semester;
+
+    @Transient
+    @JsonProperty("gradeClassAssignments")
+    private List<GradeClassAssignment> gradeClassAssignments;
 
     @Override
     public String toString() {

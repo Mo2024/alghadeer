@@ -3,6 +3,7 @@ package com.mohamed.backend.service;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
@@ -93,9 +94,20 @@ public class SemesterService {
                 .startDate(semesterReq.getStartDate())
                 .endDate(semesterReq.getEndDate())
                 .active(true)
+                .defaultClasses(semesterReq.isDefaultClasses())
                 .build();
 
         semesterRepository.save(semester);
+
+        int count = 0;
+        for (Class class_ : semesterReq.getClasses()) {
+            count += class_.getGradeClassAssignments() == null ? 0 : class_.getGradeClassAssignments().size();
+        }
+
+        if (count != 12) {
+            log.error("Grade Class Assignments is not equal to 12 (total grades)");
+            throw new UnhandledRejection("عدد تعيينات الصف الدراسي لا يساوي 12 (إجمالي الصفوف)");
+        }
 
         if(semesterReq.isDefaultClasses()){
             log.info("calling class service...");

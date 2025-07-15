@@ -42,6 +42,9 @@ public class Semester {
     @Column(name = "active")
     private Boolean active;
 
+    @Column(name = "default_classes")
+    private Boolean defaultClasses;
+
     @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Class> classes = new ArrayList<>();
 

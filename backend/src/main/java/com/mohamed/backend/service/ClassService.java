@@ -6,6 +6,7 @@ import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.ClassScheduleRepository;
+import com.mohamed.backend.repository.classinfo.GradeClassAssignmentRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Defaults;
 import com.mohamed.backend.utils.ValidationUtils;
@@ -32,6 +33,9 @@ public class ClassService {
 
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private GradeClassAssignmentRepository gradeClassAssignmentRepository;
 
     @Transactional
     public void createDefaultClasses(Semester semester, List<Class> classesReq){ //pls put validatioin for classses length
@@ -69,6 +73,16 @@ public class ClassService {
 
             class_.setStaff(staff);
             classRepository.save(class_);
+
+            class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
+                if(gradeClassAssignment.getGrade() == null) {
+                    log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
+                    throw new UnhandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
+                }
+                gradeClassAssignment.setSemester(class_.getSemester());
+                gradeClassAssignment.setClass_(class_);
+            });
+            gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
 
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);
@@ -115,6 +129,16 @@ public class ClassService {
 
             class_.setStaff(staff);
             classRepository.save(class_);
+
+            class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
+                if(gradeClassAssignment.getGrade() == null) {
+                    log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
+                    throw new UnhandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
+                }
+                gradeClassAssignment.setSemester(class_.getSemester());
+                gradeClassAssignment.setClass_(class_);
+            });
+            gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
 
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);
