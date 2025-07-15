@@ -3,6 +3,7 @@ package com.mohamed.backend.model.classinfo;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.model.topics.SubTopic;
+import com.mohamed.backend.model.user.Staff;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,10 +31,6 @@ public class Session {
     private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "main_topic_id")
-    private MainTopic mainTopic;
-
-    @ManyToOne
     @JoinColumn(name = "sub_topic_id")
     private SubTopic subTopic;
 
@@ -51,12 +48,15 @@ public class Session {
     @Column(name = "cancelled")
     private Boolean cancelled;
 
+    @ManyToOne
+    @JoinColumn(name = "staff_id")
+    private Staff staff;
+
     @Override
     public String toString() {
         return "Session{" +
                 "id=" + id +
                 ", date=" + date +
-                ", mainTopic=" + (mainTopic != null ? mainTopic.getId() : null) +
                 ", subTopic=" + (subTopic != null ? subTopic.getId() : null) +
                 ", semester=" + (semester != null ? semester.getId() : null) +
                 ", class_=" + (class_ != null ? class_.getId() : null) +

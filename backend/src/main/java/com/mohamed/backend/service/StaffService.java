@@ -149,7 +149,7 @@ public class StaffService {
             throw new UnhandledRejection("البريد الإلكتروني مستخدم بالفعل");
         }
 
-        Staff staff = staffRepository.findById(getStaffId())
+        Staff staff = staffRepository.findByIdAndArchived(getStaffId(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new UnhandledRejection("يرجى التأكد من البيانات");

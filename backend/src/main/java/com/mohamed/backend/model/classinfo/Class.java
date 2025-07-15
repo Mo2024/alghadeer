@@ -29,8 +29,9 @@ public class Class {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "classes")
-    private List<Staff> staff;
+    @ManyToOne
+    @JoinColumn(name = "staff_id")
+    private Staff staff;
 
     @ManyToMany(mappedBy = "classes")
     private List<Student> students;

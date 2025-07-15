@@ -29,8 +29,4 @@ public class MainTopic {
     @OneToMany(mappedBy = "mainTopic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubTopic> subTopics = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mainTopic")
-    private List<Session> sessions = new ArrayList<>();
-
-
 }

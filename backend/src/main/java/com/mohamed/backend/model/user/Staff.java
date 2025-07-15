@@ -2,6 +2,7 @@ package com.mohamed.backend.model.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.classinfo.Session;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,23 +34,13 @@ public class Staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StaffPermission> permissions = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "staff_class_assignment",
-            joinColumns = @JoinColumn(name = "staff_id"),
-            inverseJoinColumns = @JoinColumn(name = "class_id")
-    )
+    @OneToMany(mappedBy = "staff")
     private List<Class> classes;
+
+    @OneToMany(mappedBy = "staff")
+    private List<Session> sessions;
 
     @Column(name = "is_archived")
     private Boolean archived;
-
-    public void addClass(Class newClass) {
-        if (this.classes == null) {
-            this.classes = new ArrayList<>();
-        }
-        this.classes.add(newClass);
-    }
-
 
 }

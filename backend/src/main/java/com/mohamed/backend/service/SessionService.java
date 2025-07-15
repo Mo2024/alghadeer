@@ -32,8 +32,8 @@ public class SessionService {
                 if (startDate.getDayOfWeek().name().equals(classSchedule.getDayOfWeek().toString())) {
                     Session session = Session.builder()
                             .date(startDate)
-                            .mainTopic(null)
                             .subTopic(null)
+                            .staff(class_.getStaff())
                             .semester(class_.getSemester())
                             .class_(class_)
                             .cancelled(false)

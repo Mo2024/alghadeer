@@ -47,16 +47,15 @@ public class ClassService {
             class_.setClassSchedules(classReq.getClassSchedules());
             class_.setStaff(classReq.getStaff());
 
-            List<Integer> staffIds = class_.getStaff().stream()
-                    .map(Staff::getId)
-                    .collect(Collectors.toList());
+            Integer staffId = class_.getStaff().getId();
 
-            List<Staff> validStaff = staffRepository.findAllById(staffIds);
 
-            if (validStaff.size() != staffIds.size()) {
-                log.error("Invalid staff provided:\n{}", class_.getStaff());
-                throw new UnhandledRejection("يوجد طاقم غير صالح أو غير موجود");
-            }
+            Staff staff = staffRepository.findByIdAndArchived(staffId, false)
+                    .orElseThrow(() -> {
+                        log.error("Invalid staff provided:\n{}", class_.getStaff());
+                        throw new UnhandledRejection(" الطاقم غير صالح أو غير موجود");
+                    });;
+
 
             if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
                     .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
@@ -68,22 +67,14 @@ public class ClassService {
             class_.getClassSchedules().forEach(schedule -> schedule.setClass_(class_));
             class_.setSemester(semester);
 
-            Class savedClass = classRepository.save(class_);
-
-            validStaff.forEach(staff -> {
-                staff.addClass(savedClass);
-            });
-
-            staffRepository.saveAll(validStaff);
-
-            class_.setStaff(validStaff);
+            class_.setStaff(staff);
+            classRepository.save(class_);
 
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);
             log.info("Sessions created successfully for class: \n{}", class_);
+            log.info("Class Created Successfully:\n {}", class_);
         }
-
-        log.info("Classes created successfully:\n {}", classes);
         log.info("[ClassService].[createDefaultClasses] executed successfully");
     }
 
@@ -98,20 +89,19 @@ public class ClassService {
                 throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
             }
 
-            if (class_.getStaff() == null || class_.getStaff().isEmpty()) {
+            if (class_.getStaff() == null) {
                 throw new UnhandledRejection("يجب تحديد الطاقم");
             }
 
-            List<Integer> staffIds = class_.getStaff().stream()
-                    .map(Staff::getId)
-                    .collect(Collectors.toList());
+            Integer staffId = class_.getStaff().getId();
 
-            List<Staff> validStaff = staffRepository.findAllById(staffIds);
 
-            if (validStaff.size() != staffIds.size()) {
-                log.error("Invalid staff provided:\n{}", class_.getStaff());
-                throw new UnhandledRejection("يوجد طاقم غير صالح أو غير موجود");
-            }
+            Staff staff = staffRepository.findByIdAndArchived(staffId, false)
+                    .orElseThrow(() -> {
+                        log.error("Invalid staff provided:\n{}", class_.getStaff());
+                        throw new UnhandledRejection(" الطاقم غير صالح أو غير موجود");
+                    });;
+
 
             if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
                     .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
@@ -123,21 +113,14 @@ public class ClassService {
             class_.getClassSchedules().forEach(schedule -> schedule.setClass_(class_));
             class_.setSemester(semester);
 
-            Class savedClass = classRepository.save(class_);
-
-            validStaff.forEach(staff -> {
-                staff.addClass(savedClass);
-            });
-
-            staffRepository.saveAll(validStaff);
-
-            class_.setStaff(validStaff);
+            class_.setStaff(staff);
+            classRepository.save(class_);
 
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);
             log.info("Sessions created successfully for class: \n{}", class_);
 
-            log.info("Class Created Successfully:\n {}", savedClass);
+            log.info("Class Created Successfully:\n {}", class_);
         }
 
         log.info("[ClassService].[createCustomClasses] executed successfully");
