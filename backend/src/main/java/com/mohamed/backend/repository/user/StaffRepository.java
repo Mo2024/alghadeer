@@ -14,15 +14,6 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     Optional<Staff> findByEmailAndArchived(String email, Boolean isArchived);
     Optional<Staff> findByIdAndArchived(Integer id, Boolean isArchived);
 
-    @Query(value = """
-    SELECT COUNT(*) > 0
-    FROM staff_class_assignment
-    WHERE staff_id = :staffId AND class_id = :classId
-""", nativeQuery = true)
-    boolean isAuthorizedToTakeAttendance(
-            @Param("staffId") Integer staffId,
-            @Param("classId") Integer classId
-    );
 
     @Query(value = """
     SELECT COUNT(*) = 1

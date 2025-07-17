@@ -8,7 +8,7 @@ public enum Grade {
     FIFTH,
     SIXTH,
     SEVENTH,
-    EIGHTS,
+    EIGHTH,
     NINTH,
     TENTH,
     ELEVENTH,

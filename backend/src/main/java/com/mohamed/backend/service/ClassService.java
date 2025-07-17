@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,37 +77,29 @@ public class ClassService {
 
             class_.setStaff(staff);
             classRepository.save(class_);
+            classScheduleRepository.saveAll(class_.getClassSchedules());
 
-//            for (Grade grade: Grade.values()){
-//                switch (grade){
-//                    case FIRST, SECOND ->
-//                }
-//            }
-//
-//
-//
-//            switch (i){
-//                // if the iteration at the 1st class (1st and 2nd grade) then assign the
-//                case 0 -> {
-//                    List<GradeClassAssignment> assignments = new ArrayList<>(
-//                            List.of(
-//                                    new GradeClassAssignment(null, Grade.FIRST, null, class_),
-//                                    new GradeClassAssignment(null, Grade.SECOND, null, class_)
-//                            )
-//                    );
-//                    class_.setGradeClassAssignments(assignments);
-//                },
-//                c
-//            }
-//            class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
-//                if(gradeClassAssignment.getGrade() == null) {
-//                    log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
-//                    throw new UnhandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
-//                }
-//                gradeClassAssignment.setSemester(class_.getSemester());
-//                gradeClassAssignment.setClass_(class_);
-//            });
-//            gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
+            Map<Integer, List<Grade>> gradeAssignmentsMap = Map.of(
+                    0, List.of(Grade.FIRST, Grade.SECOND),
+                    1, List.of(Grade.THIRD),
+                    2, List.of(Grade.FOURTH),
+                    3, List.of(Grade.FIFTH),
+                    4, List.of(Grade.SIXTH),
+                    5, List.of(Grade.SEVENTH),
+                    6, List.of(Grade.EIGHTH),
+                    7, List.of(Grade.NINTH),
+                    8, List.of(Grade.TENTH, Grade.ELEVENTH, Grade.TWELFTH)
+            );
+
+            List<Grade> grades = gradeAssignmentsMap.get(i);
+            if (grades != null) {
+                List<GradeClassAssignment> assignments = grades.stream()
+                        .map(grade -> new GradeClassAssignment(null, grade, class_.getSemester(), class_))
+                        .collect(Collectors.toList());
+                class_.setGradeClassAssignments(assignments);
+                gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
+            }
+
 
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);
@@ -153,6 +146,7 @@ public class ClassService {
 
             class_.setStaff(staff);
             classRepository.save(class_);
+            classScheduleRepository.saveAll(class_.getClassSchedules());
 
             class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
                 if(gradeClassAssignment.getGrade() == null) {

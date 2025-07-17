@@ -32,7 +32,4 @@ public class GradeClassAssignment {
     @JoinColumn(name = "class_id")
     private Class class_;
 
-    @Column(name = "isDefault")
-    private Boolean isDefault;
-
 }

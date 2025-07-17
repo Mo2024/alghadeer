@@ -63,14 +63,14 @@ public class AttendanceService {
             throw new UnhandledRejection("لا يمكنك تسجيل الحضور قبل تاريخ الحصة");
         } else if (LocalDate.now().isEqual(session.getDate()) || LocalDate.now().isAfter(session.getDate())) {
             LocalTime startTime = class_.getClassSchedules().stream()
-                    .filter(schedule -> schedule.getDayOfWeek().name().equals(LocalDate.now().getDayOfWeek().name()))
+//                    .filter(schedule -> schedule.getDayOfWeek().name().equals(LocalDate.now().getDayOfWeek().name())) check this
                     .map(ClassSchedule::getStartTime)
                     .findFirst()
                     .orElseThrow(() -> {
                         log.error("No schedule for this class:\n{}", class_);
                         return new UnhandledRejection("لا يوجد جدول زمني لهذا الفصل");
                     });
-            if(LocalTime.now().isBefore(startTime)){
+            if(LocalTime.now().isBefore(startTime) && LocalDate.now().isBefore(session.getDate())){ // check this
                 log.error("Staff tried to take attendance before class start time {}", class_);
                 throw new UnhandledRejection("لا يمكنك تسجيل الحضور قبل وقت بدء الحصة");
             }
@@ -81,7 +81,7 @@ public class AttendanceService {
             throw new UnhandledRejection("لا يمكنك تسجيل الحضور لحصة ملغاة");
         }
 
-        boolean isAssigned = staffRepository.isAuthorizedToTakeAttendance(staffService.getStaffId(), session.getClass_().getId());
+        boolean isAssigned = sessionRepository.isAuthorizedToTakeAttendance(staffService.getStaffId(), session.getClass_().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
 
         if (!isAssigned && isInstructorOnly){

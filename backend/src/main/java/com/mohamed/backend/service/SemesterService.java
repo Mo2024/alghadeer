@@ -149,18 +149,10 @@ public class SemesterService {
                     return new UnhandledRejection("الطالب غير موجود");
                 });
 
-//        // Checks if the semester has default classes or custom classes
-//        if (semester.getDefaultClasses()){
-//            switch (grade){
-//                case Grade.FIRST, Grade.SECOND ->
-//            }
-//
-//        } else {
-//            Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
-//            student.getClasses().add(class_);
-//            studentRepository.save(student);
-//        }
-
+        // I do not need to validate here if the semester is active because above the semester is already fetched by activeness
+        Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
+        student.getClasses().add(class_);
+        studentRepository.save(student);
 
 
         log.info("Student enrolling\n{}", student);
