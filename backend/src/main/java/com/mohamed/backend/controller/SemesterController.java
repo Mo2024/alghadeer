@@ -3,6 +3,7 @@ package com.mohamed.backend.controller;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.service.SemesterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +65,9 @@ public class SemesterController {
     }
 
     @PostMapping("/student/enroll")
-    public ResponseEntity<?> enrollSemester(){
+    public ResponseEntity<?> enrollSemester(@RequestBody Grade grade){
         try {
-            Response response = semesterService.enrollSemester();
+            Response response = semesterService.enrollSemester(grade);
             return ResponseEntity.ok().body(response);
         } catch (UnhandledRejection e) {
             return ResponseEntity

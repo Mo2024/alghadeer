@@ -1,0 +1,68 @@
+You got it exactly right! Here’s the full picture to clear things up:
+
+---
+
+## How to create the initial Flyway migration (`V1__...`) when starting a project:
+
+### 1. Use Hibernate’s schema generation **to generate the initial full schema SQL**
+
+Add these properties **in your dev environment**:
+
+```properties
+spring.jpa.properties.javax.persistence.schema-generation.scripts.action=create
+spring.jpa.properties.javax.persistence.schema-generation.scripts.create-target=create.sql
+spring.jpa.properties.javax.persistence.schema-generation.create-source=metadata
+```
+
+When you run your app, Hibernate will generate a `create.sql` file containing the full schema (all your tables, columns, constraints).
+
+---
+
+### 2. Take that generated `create.sql` and **copy/paste it into** your Flyway migration folder as:
+
+```
+src/main/resources/db/migration/V1__init_schema.sql
+```
+
+---
+
+### 3. Then change your Spring Boot config for production:
+
+```properties
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.properties.javax.persistence.schema-generation.scripts.action=none
+```
+
+So Hibernate **stops generating schema or running anything**.
+
+---
+
+### 4. From now on, **all your schema changes** go in new Flyway migration files:
+
+E.g.,
+
+* `V2__add_description_to_grade.sql`
+* `V3__create_new_table.sql`
+
+---
+
+### Summary:
+
+| Step                          | What happens                                 |
+| ----------------------------- | -------------------------------------------- |
+| Generate full schema SQL      | Hibernate creates `create.sql`               |
+| Add SQL to Flyway migration   | Rename `create.sql` to `V1__init_schema.sql` |
+| Disable Hibernate auto schema | Set `ddl-auto=none`                          |
+| Manage all schema changes     | Write new incremental Flyway scripts         |
+
+---
+
+This way, you get:
+
+* A **safe, controlled production schema**
+* Versioned, auditable migrations
+* No surprise schema changes at runtime
+
+---
+
+If you want, I can help you generate that initial `create.sql` or help convert it into a Flyway migration!

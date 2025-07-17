@@ -4,9 +4,11 @@ import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
+import com.mohamed.backend.repository.classinfo.GradeClassAssignmentRepository;
 import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.user.StudentRepository;
@@ -34,7 +36,8 @@ public class SemesterService {
     @Autowired
     private StudentRepository studentRepository;
 
-
+    @Autowired
+    private GradeClassAssignmentRepository gradeClassAssignmentRepository;
 
     @Autowired
     private ClassService classService;
@@ -126,7 +129,7 @@ public class SemesterService {
 
     @PreAuthorize("hasRole('STUDENT')")
     @Transactional
-    public Response enrollSemester() {
+    public Response enrollSemester(Grade grade) {
         log.info("executing method [SemesterService].[enrollSemester]");
 
         StudentDetails studentDetails = (StudentDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -145,6 +148,20 @@ public class SemesterService {
                     log.error("Student does not exist:\n{}", studentDetails.getId());
                     return new UnhandledRejection("الطالب غير موجود");
                 });
+
+//        // Checks if the semester has default classes or custom classes
+//        if (semester.getDefaultClasses()){
+//            switch (grade){
+//                case Grade.FIRST, Grade.SECOND ->
+//            }
+//
+//        } else {
+//            Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
+//            student.getClasses().add(class_);
+//            studentRepository.save(student);
+//        }
+
+
 
         log.info("Student enrolling\n{}", student);
 

@@ -1,6 +1,5 @@
 package com.mohamed.backend.model.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.Session;
 import jakarta.persistence.*;

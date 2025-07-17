@@ -2,6 +2,8 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.classinfo.GradeClassAssignment;
+import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,15 +77,36 @@ public class ClassService {
             class_.setStaff(staff);
             classRepository.save(class_);
 
-            class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
-                if(gradeClassAssignment.getGrade() == null) {
-                    log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
-                    throw new UnhandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
-                }
-                gradeClassAssignment.setSemester(class_.getSemester());
-                gradeClassAssignment.setClass_(class_);
-            });
-            gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
+//            for (Grade grade: Grade.values()){
+//                switch (grade){
+//                    case FIRST, SECOND ->
+//                }
+//            }
+//
+//
+//
+//            switch (i){
+//                // if the iteration at the 1st class (1st and 2nd grade) then assign the
+//                case 0 -> {
+//                    List<GradeClassAssignment> assignments = new ArrayList<>(
+//                            List.of(
+//                                    new GradeClassAssignment(null, Grade.FIRST, null, class_),
+//                                    new GradeClassAssignment(null, Grade.SECOND, null, class_)
+//                            )
+//                    );
+//                    class_.setGradeClassAssignments(assignments);
+//                },
+//                c
+//            }
+//            class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
+//                if(gradeClassAssignment.getGrade() == null) {
+//                    log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
+//                    throw new UnhandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
+//                }
+//                gradeClassAssignment.setSemester(class_.getSemester());
+//                gradeClassAssignment.setClass_(class_);
+//            });
+//            gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
 
             log.info("Creating sessions for class: \n{}", class_);
             sessionService.createSessions(class_);

@@ -1,6 +1,8 @@
 package com.mohamed.backend.model.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.Class;
+import com.mohamed.backend.model.enums.Grade;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,4 +53,12 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "class_id")
     )
     private List<Class> classes;
+
+    public void addClass(Class class_) {
+        if (!classes.contains(class_)) {
+            classes.add(class_);
+            class_.getStudents().add(this); // also update the other side
+        }
+    }
+
 }

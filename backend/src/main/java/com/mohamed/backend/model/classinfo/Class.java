@@ -57,6 +57,11 @@ public class Class {
                 '}';
     }
 
-
+    public void addStudent(Student student) {
+        if (!students.contains(student)) {
+            students.add(student);
+            student.getClasses().add(this);
+        }
+    }
 
 }
