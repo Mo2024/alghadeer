@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -65,39 +66,38 @@ public class SessionService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
-    public Response cancelSession(Integer sessionId) {
-        log.info("executing method [SessionService].[cancelSession]");
+    public Response cancelSessions(List<Integer> sessionIds) {
+        log.info("executing method [SessionService].[cancelSessions]");
 
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> {
-                    log.error("Session not found");
-                    return new HandledRejection("يرجى التأكد من البيانات");
-                });
+        List<Session> sessions = sessionRepository.findByIdIn(sessionIds);
 
-        boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
-        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
-        boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
-        // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
-        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
-            log.error("Staff instructor is not assigned to this class/session");
-            throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لإلغاء الحصة");
+        for (Session session : sessions){
+            boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+            boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
+            boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
+            // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
+            if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
+                log.error("Staff instructor is not assigned to this class/session");
+                throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لإلغاء الحصة");
+            }
+
+            if (session.getCancelled()){
+                log.error("Staff tried to cancel a cancelled session {}", session);
+                throw new HandledRejection("لا يمكن إلغاء حصة تم إلغاؤها مسبقًا");
+            }
+
+            if(!session.getSemester().getActive()){
+                log.error("Staff tried to cancel a session from a closed semester {}", session);
+                throw new HandledRejection("لا يمكن إلغاء حصة من فصل منتهٍ");
+            }
+
+            session.setCancelled(true);
         }
 
-        if (session.getCancelled()){
-            log.error("Staff tried to cancel a cancelled session {}", session);
-            throw new HandledRejection("لا يمكن إلغاء حصة تم إلغاؤها مسبقًا");
-        }
+        sessionRepository.saveAll(sessions);
 
-        if(!session.getSemester().getActive()){
-            log.error("Staff tried to cancel a session from a closed semester {}", session);
-            throw new HandledRejection("لا يمكن إلغاء حصة من فصل منتهٍ");
-        }
-
-        session.setCancelled(true);
-        sessionRepository.save(session);
-
-        log.info("[SessionService].[cancelSession] executed successfully");
-        return new Response("تم إلغاء الحصة بنجاح");
+        log.info("[SessionService].[cancelSessions] executed successfully");
+        return new Response("تم إلغاء الحصص بنجاح");
     }
 
 }

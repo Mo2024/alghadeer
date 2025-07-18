@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/session")
@@ -60,9 +62,9 @@ public class SessionController {
         }
     }
 
-    @PostMapping("/instructor/cancel-session")
+    @PostMapping("/instructor/cancel-sessions")
     @Operation(
-            summary = "Cancels a class session",
+            summary = "Cancels a sessions in bulk (or individually too)",
             description = "Only admins/instructors/staff who is assigned to the class or session is authorized to perform this request."
     )
     @ApiResponses(value = {
@@ -71,9 +73,9 @@ public class SessionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> cancelSession(@RequestBody Integer sessionId){
+    public ResponseEntity<?> cancelSessions(@RequestBody List<Integer> sessionIds){
         try {
-            Response response = sessionService.cancelSession(sessionId);
+            Response response = sessionService.cancelSessions(sessionIds);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

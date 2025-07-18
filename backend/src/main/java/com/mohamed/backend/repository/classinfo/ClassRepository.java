@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ClassRepository  extends JpaRepository<Class, Integer> {
     @Query(value = """
@@ -31,4 +33,5 @@ public interface ClassRepository  extends JpaRepository<Class, Integer> {
             @Param("staffId") Integer staffId,
             @Param("classId") Integer classId
     );
+
 }
