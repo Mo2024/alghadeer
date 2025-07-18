@@ -18,7 +18,7 @@ public class GradeClassAssignment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "grade_class_assignment_seq")
-    @SequenceGenerator(name = "grade_class_assignment_seq", sequenceName = "grade_class_assignment_sequence", initialValue = 13, allocationSize = 1)
+    @SequenceGenerator(name = "grade_class_assignment_seq", sequenceName = "grade_class_assignment_sequence", initialValue = 1, allocationSize = 1)
     private Integer id;
 
     @Enumerated(EnumType.STRING)
