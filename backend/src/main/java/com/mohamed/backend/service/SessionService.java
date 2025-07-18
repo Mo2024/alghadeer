@@ -1,12 +1,15 @@
 package com.mohamed.backend.service;
 
+import com.mohamed.backend.dto.AddSubTopicDto;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.classinfo.Session;
+import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.SessionRepository;
+import com.mohamed.backend.repository.topic.SubTopicRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,9 @@ public class SessionService {
 
     @Autowired
     private StaffService staffService;
+
+    @Autowired
+    private SubTopicRepository subTopicRepository;
 
     @Transactional
     public void createSessions(Class class_) {
@@ -98,6 +104,51 @@ public class SessionService {
 
         log.info("[SessionService].[cancelSessions] executed successfully");
         return new Response("تم إلغاء الحصص بنجاح");
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @Transactional
+    public Response changeSubTopic(AddSubTopicDto addSubTopicDto) {
+        log.info("executing method [SessionService].[changeSubTopic]");
+
+
+        Session session = sessionRepository.findById(addSubTopicDto.getSessionId())
+                .orElseThrow(() -> {
+                    log.error("Session not found");
+                    return new HandledRejection("يرجى التأكد من البيانات");
+                });
+
+        SubTopic subTopic = subTopicRepository.findById(addSubTopicDto.getSubTopicId())
+                .orElseThrow(() -> {
+                    log.error("Sub topic not found");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
+                });
+
+        boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
+        boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
+        // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
+        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
+            log.error("Staff instructor is not assigned to this class/session");
+            throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لإلغاء الحصة");
+        }
+
+        if (session.getCancelled()){
+            log.error("Staff tried to change a sub-topic of a cancelled session {}", session);
+            throw new HandledRejection("لا يمكن تغيير الموضوع الفرعي لحصة تم إلغاؤها مسبقًا");
+        }
+
+        if(!session.getSemester().getActive()){
+            log.error("Staff tried to change a sub-topic of a closed semester {}", session);
+            throw new HandledRejection("لا يمكن تغيير الموضوع الفرعي لحصة في فصل دراسي مغلق");
+        }
+
+        session.setSubTopic(subTopic);
+
+        sessionRepository.save(session);
+
+        log.info("[SessionService].[changeSubTopic] executed successfully");
+        return new Response("تم تعيين الموضوع الفرعي للحصة بنجاح");
     }
 
 }
