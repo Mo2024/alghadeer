@@ -9,7 +9,7 @@ import com.mohamed.backend.utils.SimpleEmail;
 import com.mohamed.backend.utils.ValidationUtils;
 import com.mohamed.backend.dto.ChangeEmail;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
@@ -62,23 +62,23 @@ public class StaffService {
 
         if (staffRequest.getName() == null || staffRequest.getName().trim().isEmpty() || !ValidationUtils.isArabic(staffRequest.getName())) {
             log.error("Invalid name:\n{}", staffRequest.getName());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         if (staffRequest.getEmail() == null || staffRequest.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(staffRequest.getEmail())) {
             log.error("Invalid email:\n{}", staffRequest.getEmail());
-            throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
+            throw new HandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
         if (staffRepository.existsByEmail(staffRequest.getEmail())) {
-            throw new UnhandledRejection("هذا البريد الإلكتروني مستخدم مسبقاً");
+            throw new HandledRejection("هذا البريد الإلكتروني مستخدم مسبقاً");
         }
 
 
         //Validates that the class actually exists
         for (Class cls : staffRequest.getClasses()) {
             if (cls == null || cls.getId() == null || cls.getId() <= 0 || !classRepository.existsById(cls.getId())) {
-                throw new UnhandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
+                throw new HandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
             }
         }
 
@@ -89,7 +89,7 @@ public class StaffService {
 
         for (StaffPermission perm : staffRequest.getPermissions()){
             if (perm == null || perm.getPermission() == null) {
-                throw new UnhandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
+                throw new HandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
             }
             staffPermissionList.add(perm);
         }
@@ -125,7 +125,7 @@ public class StaffService {
         } catch (Exception e) {
             log.error("Failed to send email to\n{}", to);
             log.error(e.getMessage());
-            throw new UnhandledRejection("حدث خطأ أثناء إرسال البريد الإلكتروني");
+            throw new HandledRejection("حدث خطأ أثناء إرسال البريد الإلكتروني");
         }
 
         log.info("Registration successful");
@@ -142,17 +142,17 @@ public class StaffService {
 
         if (newEmailReq.getEmail() == null || newEmailReq.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(newEmailReq.getEmail())) {
             log.error("Invalid email:\n{}", newEmailReq.getEmail());
-            throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
+            throw new HandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
         if (staffRepository.existsByEmail(newEmailReq.getEmail())) {
-            throw new UnhandledRejection("البريد الإلكتروني مستخدم بالفعل");
+            throw new HandledRejection("البريد الإلكتروني مستخدم بالفعل");
         }
 
         Staff staff = staffRepository.findByIdAndArchived(getStaffId(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
-                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                    return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
         String cleanEmail = newEmailReq.getEmail().trim();
@@ -174,7 +174,7 @@ public class StaffService {
         Staff staff = staffRepository.findByEmailAndArchived(login.getUsername(),false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
-                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                    return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
         log.info("Login info\n{}", login);
@@ -184,7 +184,7 @@ public class StaffService {
                 login.getUsername().isBlank() || login.getPassword().isBlank() ||
                 !staff.getHash().equals(HashUtils.sha256(login.getPassword()))) {
             log.error("Invalid login attempt");
-            throw new UnhandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
+            throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else {
             StaffDetails staffDetails = new StaffDetails(staff);
             Authentication authentication = new UsernamePasswordAuthenticationToken(staffDetails, null, staffDetails.getAuthorities());
@@ -207,7 +207,7 @@ public class StaffService {
         Staff staffObj = staffRepository.findByIdAndArchived(staff.getId(),false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
-                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                    return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
         staffObj.setArchived(true);

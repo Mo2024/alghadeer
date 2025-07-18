@@ -1,7 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.repository.topic.MainTopicRepository;
 import com.mohamed.backend.utils.ValidationUtils;
@@ -27,7 +27,7 @@ public class MainTopicService {
 
         if (mainTopic.getName() == null || mainTopic.getName().trim().isEmpty() || !ValidationUtils.isArabic(mainTopic.getName())) {
             log.error("Invalid name:\n{}", mainTopic.getName());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         mainTopicRepository.save(mainTopic);
@@ -45,13 +45,13 @@ public class MainTopicService {
 
         if (mainTopic.getName() == null || mainTopic.getName().trim().isEmpty() || !ValidationUtils.isArabic(mainTopic.getName())) {
             log.error("Invalid name:\n{}", mainTopic.getName());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         mainTopicRepository.findById(mainTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
-                    return new UnhandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
 
         mainTopicRepository.save(mainTopic);
@@ -70,7 +70,7 @@ public class MainTopicService {
         mainTopicRepository.findById(mainTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
-                    return new UnhandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
 
         mainTopicRepository.delete(mainTopic);

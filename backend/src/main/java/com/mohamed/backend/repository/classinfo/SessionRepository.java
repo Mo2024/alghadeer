@@ -13,11 +13,11 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     @Query(value = """
     SELECT COUNT(*) > 0
     FROM sessions
-    WHERE staff_id = :staffId AND class_id = :classId
+    WHERE staff_id = :staffId AND id = :sessionId
 """, nativeQuery = true)
-    boolean isAuthorizedToTakeAttendance(
+    boolean isAuthorizedToTakeAttendanceForSession(
             @Param("staffId") Integer staffId,
-            @Param("classId") Integer classId
+            @Param("sessionId") Integer sessionId
     );
 
 }

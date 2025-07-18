@@ -1,9 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
-import com.mohamed.backend.model.classinfo.Session;
-import com.mohamed.backend.model.topics.MainTopic;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.repository.topic.MainTopicRepository;
 import com.mohamed.backend.repository.topic.SubTopicRepository;
@@ -35,13 +33,13 @@ public class SubTopicService {
 
         if (subTopic.getName() == null || subTopic.getName().trim().isEmpty() || !ValidationUtils.isArabic(subTopic.getName())) {
             log.error("Invalid name:\n{}", subTopic.getName());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         mainTopicRepository.findById(subTopic.getMainTopic().getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
-                    return new UnhandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
 
         subTopicRepository.save(subTopic);
@@ -59,18 +57,18 @@ public class SubTopicService {
 
         if (subTopic.getName() == null || subTopic.getName().trim().isEmpty() || !ValidationUtils.isArabic(subTopic.getName())) {
             log.error("Invalid name:\n{}", subTopic.getName());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         subTopicRepository.findById(subTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Sub topic not found");
-                    return new UnhandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
                 });
         mainTopicRepository.findById(subTopic.getMainTopic().getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
-                    return new UnhandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
 
         subTopicRepository.save(subTopic);
@@ -89,7 +87,7 @@ public class SubTopicService {
         subTopicRepository.findById(subTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Sub topic not found");
-                    return new UnhandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
+                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
                 });
 
         subTopicRepository.delete(subTopic);

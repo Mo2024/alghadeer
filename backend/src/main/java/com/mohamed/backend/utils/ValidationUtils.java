@@ -1,6 +1,5 @@
 package com.mohamed.backend.utils;
 
-import com.mohamed.backend.exceptions.UnhandledRejection;
 import com.mohamed.backend.model.enums.DayOfWeek;
 import com.mohamed.backend.model.enums.SemesterList;
 

@@ -2,7 +2,7 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.AttendanceRequestDTO;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
@@ -50,17 +50,17 @@ public class AttendanceService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> {
                     log.error("Session not found");
-                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                    return new HandledRejection("يرجى التأكد من البيانات");
                 });
         Class class_ = classRepository.findById(session.getClass_().getId())
                 .orElseThrow(() -> {
                     log.error("class not found");
-                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                    return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
         if(LocalDate.now().isBefore(session.getDate())){
             log.error("Staff tried to take attendance before date of session {}", session.getDate());
-            throw new UnhandledRejection("لا يمكنك تسجيل الحضور قبل تاريخ الحصة");
+            throw new HandledRejection("لا يمكنك تسجيل الحضور قبل تاريخ الحصة");
         } else if (LocalDate.now().isEqual(session.getDate()) || LocalDate.now().isAfter(session.getDate())) {
             LocalTime startTime = class_.getClassSchedules().stream()
 //                    .filter(schedule -> schedule.getDayOfWeek().name().equals(LocalDate.now().getDayOfWeek().name())) check this
@@ -68,37 +68,38 @@ public class AttendanceService {
                     .findFirst()
                     .orElseThrow(() -> {
                         log.error("No schedule for this class:\n{}", class_);
-                        return new UnhandledRejection("لا يوجد جدول زمني لهذا الفصل");
+                        return new HandledRejection("لا يوجد جدول زمني لهذا الفصل");
                     });
             if(LocalTime.now().isBefore(startTime) && LocalDate.now().isBefore(session.getDate())){ // check this
                 log.error("Staff tried to take attendance before class start time {}", class_);
-                throw new UnhandledRejection("لا يمكنك تسجيل الحضور قبل وقت بدء الحصة");
+                throw new HandledRejection("لا يمكنك تسجيل الحضور قبل وقت بدء الحصة");
             }
         }
 
         if(session.getCancelled()){
             log.error("Staff tried to take attendance to a cancelled session {}", session);
-            throw new UnhandledRejection("لا يمكنك تسجيل الحضور لحصة ملغاة");
+            throw new HandledRejection("لا يمكنك تسجيل الحضور لحصة ملغاة");
         }
 
-        boolean isAssigned = sessionRepository.isAuthorizedToTakeAttendance(staffService.getStaffId(), session.getClass_().getId());
+        boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
-
-        if (!isAssigned && isInstructorOnly){
-            log.error("Staff instructor is not assigned to this class");
-            throw new UnhandledRejection("المُدرّس غير مُعيّن في هذا الفصل الدراسي لأخذ الحضور");
+// idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
+        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
+            log.error("Staff instructor is not assigned to this class/session");
+            throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لأخذ الحضور");
         }
 
         Set<Integer> seenStudents = new HashSet<>();
         for (Attendance attendance : attendanceRequest.getAttendances()){
             if(!classRepository.isStudentInClass(attendance.getStudent().getId(), session.getClass_().getId())){
                 log.error("Student below is not assigned to the class:\n {}", attendance.getStudent());
-                throw new UnhandledRejection("بعض الطلاب غير مسجلين في هذا الفصل");
+                throw new HandledRejection("بعض الطلاب غير مسجلين في هذا الفصل");
             }
             int studentId = attendance.getStudent().getId();
             if (!seenStudents.add(studentId) || classRepository.isDuplicateAttendance(studentId, sessionId)) {
                 log.error("Duplicate attendance found for student id {}", studentId);
-                throw new UnhandledRejection("توجد تكرارات في تسجيل الحضور لنفس الطالب");
+                throw new HandledRejection("توجد تكرارات في تسجيل الحضور لنفس الطالب");
             }
             attendance.setSession(session);
         }

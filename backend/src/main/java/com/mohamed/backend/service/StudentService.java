@@ -6,7 +6,7 @@ import com.mohamed.backend.utils.ImageUtils;
 import com.mohamed.backend.utils.ValidationUtils;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.repository.user.StudentRepository;
 
@@ -50,43 +50,43 @@ public class StudentService {
 
         if (student.getName() == null || student.getName().trim().isEmpty() || !ValidationUtils.isArabic(student.getName())) {
             log.error("Invalid name:\n{}", student.getName());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
         if (student.getArea() == null || student.getArea().trim().isEmpty() || !ValidationUtils.isArabic(student.getArea())) {
             log.error("Invalid area: {}", student.getArea());
-            throw new UnhandledRejection("يرجى التأكد من إدخال اسم المنطقة بشكل صحيح وباللغة العربية");
+            throw new HandledRejection("يرجى التأكد من إدخال اسم المنطقة بشكل صحيح وباللغة العربية");
         }
 
         if (student.getCpr() == null || !ValidationUtils.isValidCpr(student.getCpr())) {
             log.error("Invalid CPR:\n{}", student.getCpr());
-            throw new UnhandledRejection("يرجى التأكد من إدخال الرقم الشخصي بشكل صحيح");
+            throw new HandledRejection("يرجى التأكد من إدخال الرقم الشخصي بشكل صحيح");
         }
 
         if (student.getTelephone() == null || !ValidationUtils.isValidTelephone(student.getTelephone())) {
             log.error("Invalid telephone:\n{}", student.getTelephone());
-            throw new UnhandledRejection("يرجى التأكد من إدخال رقم الهاتف بشكل صحيح");
+            throw new HandledRejection("يرجى التأكد من إدخال رقم الهاتف بشكل صحيح");
         }
 
         if (student.getEmail() == null || student.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(student.getEmail())) {
             log.error("Invalid email:\n{}", student.getEmail());
-            throw new UnhandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
+            throw new HandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
         if (student.getDateOfBirth() == null || !ValidationUtils.isPastDate(student.getDateOfBirth())) {
             log.error("Invalid date of birth:\n{}", student.getDateOfBirth());
-            throw new UnhandledRejection("يرجى التأكد من إدخال تاريخ ميلاد بشكل صحيح");
+            throw new HandledRejection("يرجى التأكد من إدخال تاريخ ميلاد بشكل صحيح");
         }
 
         String contentType = image.getContentType();
         if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
             log.error("Invalid image content type:\n{}", contentType);
-            throw new UnhandledRejection("يرجى تحميل صورة بصيغة JPEG أو PNG");
+            throw new HandledRejection("يرجى تحميل صورة بصيغة JPEG أو PNG");
         }
 
         if (studentRepository.existsByCpr(student.getCpr())) {
             log.error("Duplicate CPR registration attempt:\n{}", student.getCpr());
-            throw new UnhandledRejection("رقم الهوية مسجل من قبل");
+            throw new HandledRejection("رقم الهوية مسجل من قبل");
         }
 
         byte[] resizedImage = imageUtils.resizeAndCompress(image);
@@ -129,7 +129,7 @@ public class StudentService {
         Student student = studentRepository.findByCpr(login.getUsername())
                 .orElseThrow(() -> {
                     log.error("Student not found");
-                    return new UnhandledRejection("يرجى التأكد من البيانات");
+                    return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
         log.info("Login info:\n{}", login);
@@ -139,7 +139,7 @@ public class StudentService {
                 login.getUsername().isBlank() || login.getPassword().isBlank() ||
                 !student.getHash().equals(HashUtils.sha256(login.getPassword()))) {
             log.error("Invalid login attempt");
-            throw new UnhandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
+            throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else {
             StudentDetails studentDetails = new StudentDetails(student);
             Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, studentDetails.getAuthorities());

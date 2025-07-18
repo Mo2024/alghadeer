@@ -2,9 +2,13 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.service.StaffService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/staff")
+@Tag(name = "Staff Management", description = "Operations related to staff entity")
 public class StaffController {
 
 
@@ -23,11 +28,21 @@ public class StaffController {
     private StaffService staffService;
 
     @PostMapping("/admin/register")
+    @Operation(
+            summary = "Creates a new staff",
+            description = "Only admins are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> register(@RequestBody Staff staff){
         try {
             Response response = staffService.register(staff);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
@@ -45,11 +60,21 @@ public class StaffController {
     }
 
     @PostMapping("/login")
+    @Operation(
+            summary = "Login request for staff",
+            description = "This request will only check for staff, students do not use this route."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
         try {
             Response response = staffService.login(login, session);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
@@ -67,11 +92,21 @@ public class StaffController {
     }
 
     @PostMapping("/archive")
+    @Operation(
+            summary = "Archives a staff account (soft delete)",
+            description = "Only admins are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> archiveStaff(@RequestBody Staff staff){
         try {
             Response response = staffService.archiveStaff(staff);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));

@@ -1,6 +1,6 @@
 package com.mohamed.backend.service;
 
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.GradeClassAssignment;
 import com.mohamed.backend.model.enums.Grade;
@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,7 +60,7 @@ public class ClassService {
             Staff staff = staffRepository.findByIdAndArchived(staffId, false)
                     .orElseThrow(() -> {
                         log.error("Invalid staff provided:\n{}", class_.getStaff());
-                        throw new UnhandledRejection(" الطاقم غير صالح أو غير موجود");
+                        throw new HandledRejection(" الطاقم غير صالح أو غير موجود");
                     });;
 
 
@@ -69,7 +68,7 @@ public class ClassService {
                     .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
                             classSchedule.getDayOfWeek(), classSchedule.getStartTime(), classSchedule.getEndTime()))) {
                 log.error("Invalid schedules:\n{}", class_.getClassSchedules());
-                throw new UnhandledRejection("يوجد جدول زمني غير صالح في الفصل");
+                throw new HandledRejection("يوجد جدول زمني غير صالح في الفصل");
             }
 
             class_.getClassSchedules().forEach(schedule -> schedule.setClass_(class_));
@@ -117,11 +116,11 @@ public class ClassService {
         for (Class class_ : classes) {
             if (class_.getName() == null || class_.getName().trim().isEmpty() || !ValidationUtils.isArabic(class_.getName())) {
                 log.error("Invalid name:\n{}", class_.getName());
-                throw new UnhandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+                throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
             }
 
             if (class_.getStaff() == null) {
-                throw new UnhandledRejection("يجب تحديد الطاقم");
+                throw new HandledRejection("يجب تحديد الطاقم");
             }
 
             Integer staffId = class_.getStaff().getId();
@@ -130,7 +129,7 @@ public class ClassService {
             Staff staff = staffRepository.findByIdAndArchived(staffId, false)
                     .orElseThrow(() -> {
                         log.error("Invalid staff provided:\n{}", class_.getStaff());
-                        throw new UnhandledRejection(" الطاقم غير صالح أو غير موجود");
+                        throw new HandledRejection(" الطاقم غير صالح أو غير موجود");
                     });;
 
 
@@ -138,7 +137,7 @@ public class ClassService {
                     .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
                             classSchedule.getDayOfWeek(), classSchedule.getStartTime(), classSchedule.getEndTime()))) {
                 log.error("Invalid schedules:\n{}", class_.getClassSchedules());
-                throw new UnhandledRejection("يوجد جدول زمني غير صالح في الفصل");
+                throw new HandledRejection("يوجد جدول زمني غير صالح في الفصل");
             }
 
             class_.getClassSchedules().forEach(schedule -> schedule.setClass_(class_));
@@ -151,7 +150,7 @@ public class ClassService {
             class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
                 if(gradeClassAssignment.getGrade() == null) {
                     log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
-                    throw new UnhandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
+                    throw new HandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
                 }
                 gradeClassAssignment.setSemester(class_.getSemester());
                 gradeClassAssignment.setClass_(class_);

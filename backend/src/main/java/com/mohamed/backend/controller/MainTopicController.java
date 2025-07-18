@@ -1,33 +1,45 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.service.MainTopicService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/main-topics")
+@Tag(name = "Main-topic Management", description = "Operations related to main-topic entity")
 public class MainTopicController {
 
     @Autowired
     MainTopicService mainTopicService;
 
     @PostMapping("/all/create-main-topic")
+    @Operation(
+            summary = "Creates a main topic",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic){
         try {
             Response response = mainTopicService.createMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
@@ -44,12 +56,22 @@ public class MainTopicController {
         }
     }
 
-    @PostMapping("/all/edit-main-topic")
+    @PutMapping("/all/edit-main-topic")
+    @Operation(
+            summary = "Edits an existing main topic",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> editMainTopic(@RequestBody MainTopic mainTopic){
         try {
             Response response = mainTopicService.editMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
@@ -66,12 +88,22 @@ public class MainTopicController {
         }
     }
 
-    @PostMapping("/all/delete-main-topic")
+    @DeleteMapping("/all/delete-main-topic")
+    @Operation(
+            summary = "Deletes a main topic",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> deleteMainTopic(@RequestBody MainTopic mainTopic){
         try {
             Response response = mainTopicService.deleteMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));

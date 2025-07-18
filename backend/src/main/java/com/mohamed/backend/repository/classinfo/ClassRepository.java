@@ -21,4 +21,14 @@ public interface ClassRepository  extends JpaRepository<Class, Integer> {
     WHERE student_id = :studentId AND session_id = :sessionId;
 """, nativeQuery = true)
     boolean isDuplicateAttendance(@Param("studentId") Integer studentId, @Param("sessionId") Integer sessionId);
+
+    @Query(value = """
+    SELECT COUNT(*) > 0
+    FROM classes
+    WHERE staff_id = :staffId AND id = :classId
+""", nativeQuery = true)
+    boolean isAuthorizedToTakeAttendanceForClass(
+            @Param("staffId") Integer staffId,
+            @Param("classId") Integer classId
+    );
 }

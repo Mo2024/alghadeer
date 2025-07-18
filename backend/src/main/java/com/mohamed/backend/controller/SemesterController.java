@@ -2,9 +2,13 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
-import com.mohamed.backend.exceptions.UnhandledRejection;
+import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.service.SemesterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,17 +19,38 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/semester")
+@Tag(name = "Semester Management", description = "Operations related to semester lifecycle and student enrollment")
 public class SemesterController {
 
     @Autowired
     private SemesterService semesterService;
 
     @PostMapping("/admin/create")
+    @Operation(
+            summary = "Creates a semester",
+            description = """
+                    This request performs a lot of operations including:
+                     \
+                    1) Semester Creation
+                    2) Classes Creation
+                    3) Class Schedule Creation
+                    4) Session Creation
+                    5) Grade to class mapping/creation (Ex. putting 1st and 2nd grade in one class)
+                    6) Assigns a staff/instructor for a single class and sessions (one to many relationship)
+                    
+                    Only admins are authorized to perform this request."""
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> createSemester(@RequestBody SemesterDto semester){
         try {
             Response response = semesterService.createSemester(semester);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
@@ -43,11 +68,21 @@ public class SemesterController {
     }
 
     @PutMapping("/admin/close-semester")
+    @Operation(
+            summary = "Closes the current active semester",
+            description = "Only admins are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> closeActiveSemester() {
         try {
             Response response = semesterService.closeActiveSemester();
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
@@ -65,11 +100,21 @@ public class SemesterController {
     }
 
     @PostMapping("/student/enroll")
+    @Operation(
+            summary = "Enrolls the students in the semester and assigns them to a class based on their grade",
+            description = "Only students are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
     public ResponseEntity<?> enrollSemester(@RequestBody Grade grade){
         try {
             Response response = semesterService.enrollSemester(grade);
             return ResponseEntity.ok().body(response);
-        } catch (UnhandledRejection e) {
+        } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
                     .body(new Response(e.getMessage()));
