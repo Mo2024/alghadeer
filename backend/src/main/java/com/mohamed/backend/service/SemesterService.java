@@ -151,6 +151,7 @@ public class SemesterService {
 
         // I do not need to validate here if the semester is active because above the semester is already fetched by activeness
         Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
+        log.info("Fetched Class:\n {}", class_);
         student.getClasses().add(class_);
         studentRepository.save(student);
 
