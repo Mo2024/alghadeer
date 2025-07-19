@@ -1,5 +1,7 @@
 package com.mohamed.backend.service;
 
+import com.mohamed.backend.dto.ChangeStudentClassDto;
+import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.GradeClassAssignment;
@@ -10,11 +12,13 @@ import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.ClassScheduleRepository;
 import com.mohamed.backend.repository.classinfo.GradeClassAssignmentRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
+import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.utils.Defaults;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +43,9 @@ public class ClassService {
 
     @Autowired
     private GradeClassAssignmentRepository gradeClassAssignmentRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Transactional
     public void createDefaultClasses(Semester semester, List<Class> classesReq){ //pls put validatioin for classses length
@@ -167,6 +174,45 @@ public class ClassService {
         log.info("[ClassService].[createCustomClasses] executed successfully");
     }
 
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public Response changeStudentClass(ChangeStudentClassDto changeStudentClassDto){
+        log.info("Executing method [ClassService].[changeStudentClass]");
+        log.info("Request Parameter: {}", changeStudentClassDto);
 
+        if (changeStudentClassDto.getStudentsId().isEmpty()) {
+            log.warn("No students provided to transfer");
+            throw new HandledRejection("لم يتم تقديم طلاب للتحويل");
+        }
+
+        Class class_ = classRepository.findById(changeStudentClassDto.getClassId())
+                .orElseThrow(() -> {
+                    log.error("class not found");
+                    return new HandledRejection("يرجى التأكد من البيانات");
+                });
+
+        int alreadyInClassCount = classRepository.countStudentsAlreadyInClass(changeStudentClassDto.getClassId(), changeStudentClassDto.getStudentsId());
+        if (alreadyInClassCount > 0) {
+            log.error("Some students are already in this class");
+            throw new HandledRejection("بعض الطلاب موجودين مسبقاً في الصف المحدد");
+        }
+
+        int foundStudents = studentRepository.countByIdIn(changeStudentClassDto.getStudentsId());
+        if (foundStudents != changeStudentClassDto.getStudentsId().size()) {
+            log.error("Some students do not exist");
+            throw new HandledRejection("بعض الطلاب غير مسجلين");
+        }
+
+
+        classRepository.transferStudentsToClassInSemester(changeStudentClassDto.getStudentsId(), changeStudentClassDto.getClassId(), class_.getSemester().getId());
+
+        log.info("Transferred {} students to class {} for semester {}",
+                changeStudentClassDto.getStudentsId().size(),
+                changeStudentClassDto.getClassId(),
+                class_.getSemester().getId());
+
+        log.info("[ClassService].[changeStudentClass] executed successfully");
+        return new Response("تم تغيير الصف بنجاح");
+    }
 
 }
