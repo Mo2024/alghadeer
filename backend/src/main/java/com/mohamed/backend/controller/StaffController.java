@@ -91,7 +91,7 @@ public class StaffController {
         }
     }
 
-    @PostMapping("/archive")
+    @PostMapping("/admin/archive")
     @Operation(
             summary = "Archives a staff account (soft delete)",
             description = "Only admins are authorized to perform this request."
