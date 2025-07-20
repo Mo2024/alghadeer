@@ -14,6 +14,10 @@ export class StaffService {
 
   constructor(private http: HttpClient) { }
 
+  getAuth(body: any): Observable<any> {
+    return this.http.get(`${this.url}/get-auth`, { withCredentials: true });
+  }
+
   login(body: any): Observable<any> {
     return this.http.post(`${this.url}/login`, body, { withCredentials: true });
   }
