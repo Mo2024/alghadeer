@@ -3,6 +3,7 @@ package com.mohamed.backend.model.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.enums.Grade;
+import com.mohamed.backend.model.enums.Permission;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "students")
@@ -53,6 +55,9 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "class_id")
     )
     private List<Class> classes;
+
+    @Transient
+    private Map<String, Boolean> permissionBooleanMap;
 
     public void addClass(Class class_) {
         if (!classes.contains(class_)) {

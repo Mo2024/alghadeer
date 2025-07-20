@@ -1,6 +1,7 @@
 package com.mohamed.backend.security;
 
 
+import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.Staff;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -26,6 +28,7 @@ public class StaffDetails implements UserDetails {
     }
 
     public Integer getId(){ return staff.getId(); }
+    public Map<Permission, Boolean> getPermissions(){ return staff.getPermissionBooleanMap(); };
 
 
     @Override public String getUsername() { return staff.getEmail(); }

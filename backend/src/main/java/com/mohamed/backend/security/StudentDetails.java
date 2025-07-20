@@ -1,5 +1,6 @@
 package com.mohamed.backend.security;
 
+import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.Student;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 @AllArgsConstructor
 public class StudentDetails implements UserDetails {
@@ -22,6 +24,8 @@ public class StudentDetails implements UserDetails {
     }
 
     public Integer getId(){ return student.getId(); }
+    public Map<String, Boolean> getPermissions(){ return student.getPermissionBooleanMap(); };
+
 
     @Override public String getUsername() { return student.getEmail(); }
     @Override public String getPassword() { return student.getHash(); }

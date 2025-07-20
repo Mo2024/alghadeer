@@ -1,5 +1,6 @@
 package com.mohamed.backend.service;
 
+import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
@@ -30,6 +31,8 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -45,7 +48,7 @@ public class StudentService {
         return studentRepository.findAll(pageable);
     }
 
-    public Collection<? extends GrantedAuthority> getStudentAuthentication(){
+    public Map<String, Boolean> getStudentAuthentication(){
         log.info("executing method [StudentService].[getStudentAuthentication]");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -56,7 +59,7 @@ public class StudentService {
             StudentDetails studentDetails = (StudentDetails) auth.getPrincipal();
             log.info("User is authenticated successfully");
             log.info("[StudentService].[getStudentAuthentication] executed successfully");
-            return studentDetails.getAuthorities();
+            return studentDetails.getPermissions();
         } else {
             log.error("Unauthorized access");
             throw new AuthorizationDeniedException("Access Denied");
@@ -131,6 +134,10 @@ public class StudentService {
 
         log.info("New student saved with ID:\n{}", newStudent.getId());
 
+        Map<String, Boolean> permissionBooleanMap = new HashMap<>();
+        permissionBooleanMap.put("STUDENT", true);
+        newStudent.setPermissionBooleanMap(permissionBooleanMap);
+
         StudentDetails studentDetails = new StudentDetails(newStudent);
         Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -154,15 +161,22 @@ public class StudentService {
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
+
         log.info("Login info:\n{}", login);
         log.info("Student info:\n{}", student);
 
         if (login.getUsername() == null || login.getPassword() == null ||
-                login.getUsername().isBlank() || login.getPassword().isBlank() ||
-                !student.getHash().equals(HashUtils.sha256(login.getPassword()))) {
-            log.error("Invalid login attempt");
+                login.getUsername().isBlank() || login.getPassword().isBlank()) {
+            log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
-        } else {
+        } else if(!student.getHash().equals(HashUtils.sha256(login.getPassword()))){
+            log.error("Invalid login attempt");
+            throw new HandledRejection("اسم المستخدم أو كلمة المرور غير صحيحة");
+        } else if(student.getHash().equals(HashUtils.sha256(login.getPassword()))){
+            Map<String, Boolean> permissionBooleanMap = new HashMap<>();
+            permissionBooleanMap.put("STUDENT", true);
+            student.setPermissionBooleanMap(permissionBooleanMap);
+
             StudentDetails studentDetails = new StudentDetails(student);
             Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, studentDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

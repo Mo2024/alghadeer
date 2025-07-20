@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -107,7 +108,7 @@ public class StudentController {
     })
     public ResponseEntity<?> getStudentAuthentication(){
         try {
-            Collection<? extends GrantedAuthority> response = studentService.getStudentAuthentication();
+            Map<String, Boolean> response = studentService.getStudentAuthentication();
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

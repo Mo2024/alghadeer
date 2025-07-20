@@ -2,11 +2,13 @@ package com.mohamed.backend.model.user;
 
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.Session;
+import com.mohamed.backend.model.enums.Permission;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "staff")
@@ -41,5 +43,8 @@ public class Staff {
 
     @Column(name = "is_archived")
     private Boolean archived;
+
+    @Transient
+    private Map<Permission, Boolean> permissionBooleanMap;
 
 }

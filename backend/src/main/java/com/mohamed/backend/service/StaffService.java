@@ -1,6 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Login;
+import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.StaffPermission;
 import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.utils.HashUtils;
@@ -30,9 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -52,7 +51,7 @@ public class StaffService {
         return staffDetails.getId();
     }
 
-    public Collection<? extends GrantedAuthority> getStaffAuthentication(){
+    public Map<Permission, Boolean> getStaffAuthentication(){
         log.info("executing method [StaffService].[getStaffAuthentication]");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -62,7 +61,7 @@ public class StaffService {
             StaffDetails staffDetails = (StaffDetails) auth.getPrincipal();
             log.info("User is authenticated successfully");
             log.info("[StaffService].[getStaffAuthentication] executed successfully");
-            return staffDetails.getAuthorities();
+            return staffDetails.getPermissions();
         } else {
             log.error("Unauthorized access");
             throw new AuthorizationDeniedException("Access Denied");
@@ -202,11 +201,17 @@ public class StaffService {
         log.info("Staff info\n{}", staff);
 
         if (login.getUsername() == null || login.getPassword() == null ||
-                login.getUsername().isBlank() || login.getPassword().isBlank() ||
-                !staff.getHash().equals(HashUtils.sha256(login.getPassword()))) {
-            log.error("Invalid login attempt");
+                login.getUsername().isBlank() || login.getPassword().isBlank()) {
+            log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
-        } else {
+        } else if (!staff.getHash().equals(HashUtils.sha256(login.getPassword()))){
+            log.error("Invalid login attempt");
+            throw new HandledRejection("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        } else if (staff.getHash().equals(HashUtils.sha256(login.getPassword()))){
+            Map<Permission, Boolean> permissionBooleanMap = new HashMap<>();
+            staff.getPermissions().forEach(staffPermission -> permissionBooleanMap.put(staffPermission.getPermission(),true));
+            staff.setPermissionBooleanMap(permissionBooleanMap);
+
             StaffDetails staffDetails = new StaffDetails(staff);
             Authentication authentication = new UsernamePasswordAuthenticationToken(staffDetails, null, staffDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

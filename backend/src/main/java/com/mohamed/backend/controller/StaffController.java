@@ -3,6 +3,7 @@ package com.mohamed.backend.controller;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
+import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.service.StaffService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -139,7 +141,7 @@ public class StaffController {
     })
     public ResponseEntity<?> getStaffAuthentication(){
         try {
-            Collection<? extends GrantedAuthority> response = staffService.getStaffAuthentication();
+            Map<Permission, Boolean> response = staffService.getStaffAuthentication();
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
