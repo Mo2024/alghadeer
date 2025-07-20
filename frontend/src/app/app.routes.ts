@@ -10,6 +10,6 @@ export const routes: Routes = [
         path: 'staff/admin/register',
         component: RegisterComponent,
         canActivate: [staffGuard, roleGuard],
-        data: { role: 'ROLE_ADMIN' }
+        data: { role: 'ADMIN' }
     },
 ];

@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg bg-ahlulbayt-green rounded-bottom-4">
+    <div class="container-fluid">
+        <img src="assets/alghadeer.png" alt="Logo" width="50" height="40" class="d-inline-block align-top me-2" />
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="w-100 d-flex justify-content-between">
+                <!-- Main Menu (e.g. الصفوف, المواضيع) -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item"
+                        *ngIf="staffService.hasPermission('ADMIN') || staffService.hasPermission('SUPERVISOR') || staffService.hasPermission('INSTRUCTOR')">
+                        <a class="nav-link nav-font" href="/staff/instructor/classes">الصفوف</a>
+                    </li>
+                    <li class="nav-item dropdown"
+                        *ngIf="staffService.hasPermission('ADMIN') || staffService.hasPermission('SUPERVISOR') || staffService.hasPermission('INSTRUCTOR')">
+                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            المواضيع
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" routerLink="/staff/instructor/main-topic">المواضيع الرئيسية</a>
+                            </li>
+                            <li><a class="dropdown-item" routerLink="/staff/instructor/sub-topic">المواضيع الفرعية</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"
+                        *ngIf="staffService.hasPermission('ADMIN') || staffService.hasPermission('SUPERVISOR') || staffService.hasPermission('INSTRUCTOR')">
+                        <a class="nav-link nav-font" href="/staff/instructor/attendance">تسجيل الحضور</a>
+                    </li>
+                </ul>
+
+                <!-- Login/Logout/Register Links -->
+                <ul class="navbar-nav">
+                    <li class="nav-item" *ngIf="staffService.isPermissionsEmpty() && isStaffRoute()">
+                        <a class="nav-link nav-font" href="/staff/login">تسجيل الدخول</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="!staffService.isPermissionsEmpty() && isStaffRoute()">
+                        <a class="nav-link nav-font" href="/staff/logout">تسجيل الخروج</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="!isStaffRoute() && !studentService.isPermissionsEmpty()">
+                        <a class="nav-link nav-font" href="/logout">تسجيل الخروج</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="!isStaffRoute() && studentService.isPermissionsEmpty()">
+                        <a class="nav-link nav-font" href="/login">تسجيل الدخول</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="!isStaffRoute() && studentService.isPermissionsEmpty()">
+                        <a class="nav-link nav-font" href="/register">إنشاء حساب</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</nav>

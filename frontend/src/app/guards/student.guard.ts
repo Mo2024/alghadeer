@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { StudentService } from '../services/student.service';
 import { catchError, map, of } from 'rxjs';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 
 export const studentGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
