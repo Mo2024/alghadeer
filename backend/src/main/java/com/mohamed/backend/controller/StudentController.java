@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -73,6 +76,38 @@ public class StudentController {
     public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
         try {
             Response response = studentService.login(login, session);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage()));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+        }
+    }
+
+    @GetMapping("/get-auth")
+    @Operation(
+            summary = "Verifies that the student is authenticated before proceeding to a page or task",
+            description = "This request is dedicated only for students"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getStudentAuthentication(){
+        try {
+            Collection<? extends GrantedAuthority> response = studentService.getStudentAuthentication();
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

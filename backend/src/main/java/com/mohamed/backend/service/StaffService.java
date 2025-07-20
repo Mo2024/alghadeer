@@ -53,6 +53,7 @@ public class StaffService {
     }
 
     public Collection<? extends GrantedAuthority> getStaffAuthentication(){
+        log.info("executing method [StaffService].[getStaffAuthentication]");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("Fetching authentication details: \n {}", auth);
@@ -60,6 +61,7 @@ public class StaffService {
         if(auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
             StaffDetails staffDetails = (StaffDetails) auth.getPrincipal();
             log.info("User is authenticated successfully");
+            log.info("[StaffService].[getStaffAuthentication] executed successfully");
             return staffDetails.getAuthorities();
         } else {
             log.error("Unauthorized access");

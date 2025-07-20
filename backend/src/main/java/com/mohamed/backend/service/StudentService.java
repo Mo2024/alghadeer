@@ -15,8 +15,11 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
+import java.util.Collection;
 import java.util.Collections;
 
 @Service
@@ -39,6 +43,24 @@ public class StudentService {
 
     public Page<Student> getStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
+    }
+
+    public Collection<? extends GrantedAuthority> getStudentAuthentication(){
+        log.info("executing method [StudentService].[getStudentAuthentication]");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("Fetching authentication details: \n {}", auth);
+
+        if(auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
+            StudentDetails studentDetails = (StudentDetails) auth.getPrincipal();
+            log.info("User is authenticated successfully");
+            log.info("[StudentService].[getStudentAuthentication] executed successfully");
+            return studentDetails.getAuthorities();
+        } else {
+            log.error("Unauthorized access");
+            throw new AuthorizationDeniedException("Access Denied");
+        }
     }
 
     @Transactional
