@@ -21,13 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -46,6 +50,21 @@ public class StaffService {
     public Integer getStaffId() {
         StaffDetails staffDetails = (StaffDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return staffDetails.getId();
+    }
+
+    public Collection<? extends GrantedAuthority> getStaffAuthentication(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("Fetching authentication details: \n {}", auth);
+
+        if(auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
+            StaffDetails staffDetails = (StaffDetails) auth.getPrincipal();
+            log.info("User is authenticated successfully");
+            return staffDetails.getAuthorities();
+        } else {
+            log.error("Unauthorized access");
+            throw new AuthorizationDeniedException("Access Denied");
+        }
     }
 
 

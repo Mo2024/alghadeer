@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -105,6 +108,38 @@ public class StaffController {
     public ResponseEntity<?> archiveStaff(@RequestBody Staff staff){
         try {
             Response response = staffService.archiveStaff(staff);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage()));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+        }
+    }
+
+    @GetMapping("/get-auth")
+    @Operation(
+            summary = "Verifies that the user is authenticated before proceeding to a page or task",
+            description = "This request is dedicated only for staff"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getStaffAuthentication(){
+        try {
+            Collection<? extends GrantedAuthority> response = staffService.getStaffAuthentication();
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
