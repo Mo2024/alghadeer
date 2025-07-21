@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { StudentService } from '../services/student.service';
 
 export const roleGuard: CanActivateFn = (route, state) => {
-  const allowedRoles: string[] = route.data['roles'];
+  const allowedRole: string = route.data['role'];
   const router = inject(Router);
   const staffService = inject(StaffService)
   const studentService = inject(StudentService)
@@ -17,15 +17,16 @@ export const roleGuard: CanActivateFn = (route, state) => {
         if (!environment.production) {
           console.log(res);
         }
-        const permissionsMap = res as Map<string, boolean>;
-        const hasAccess = Array.from(permissionsMap.keys()).some(role => allowedRoles.includes(role) && permissionsMap.get(role) === true);
-        if (permissionsMap.get('STUDENT')) {
-          studentService.setPermissions(permissionsMap);
-        } else if (permissionsMap.get('ADMIN') || permissionsMap.get('SUPERVISOR') || permissionsMap.get('INSTRUCTOR')) {
-          staffService.setPermissions(permissionsMap);
+        const permissionsMap = res as { [key: string]: boolean };
+        if (allowedRole === 'INSTRUCTOR' && (permissionsMap['INSTRUCTOR'] || permissionsMap['SUPERVISOR'] || permissionsMap['ADMIN'])) {
+          return true;
+        } else if (allowedRole === 'SUPERVISOR' && (permissionsMap['SUPERVISOR'] || permissionsMap['ADMIN'])) {
+          return true;
+        } else if (allowedRole === 'ADMIN' && permissionsMap['ADMIN']) {
+          return true;
+        } else if (allowedRole === 'STUDENT' && permissionsMap['STUDENT']) {
+          return true;
         }
-
-        if (hasAccess) return true;
 
         router.navigate(['/unauthorized']);
         return false;
@@ -37,7 +38,6 @@ export const roleGuard: CanActivateFn = (route, state) => {
       if (!environment.production) {
         console.log(error)
       }
-      staffService.setPermissions(new Map());
       router.navigate(['/unauthorized']);
       return of(false);
     })

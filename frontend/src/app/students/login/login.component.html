@@ -1,0 +1,33 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    تسجيل الدخول
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+
+                        <div class="form-group mb-1">
+                            <label for="cpr" class="mb-1">رقم الهوية</label>
+                            <input type="text" [(ngModel)]="cpr" name="cpr" class="form-control" id="cpr"
+                                placeholder="يرجى إدخال رقم الهوية">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="password" class="mb-1">كلمة المرور</label>
+                            <input type="password" [(ngModel)]="password" name="password" class="form-control"
+                                id="password" placeholder="يرجى إدخال كلمة المرور">
+                        </div>
+
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">تسجيل الدخول</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

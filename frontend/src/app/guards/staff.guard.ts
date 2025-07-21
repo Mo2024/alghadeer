@@ -14,8 +14,11 @@ export const staffGuard: CanActivateFn = (route, state) => {
         if (!environment.production) {
           console.log(res);
         }
+
         return true;
       }
+      const stringified = JSON.stringify(new Map());
+      localStorage.setItem('permissions', stringified);
       router.navigate(['/staff/login'])
       return false;
     }),
@@ -23,6 +26,8 @@ export const staffGuard: CanActivateFn = (route, state) => {
       if (!environment.production) {
         console.log(error)
       }
+      const stringified = JSON.stringify(new Map());
+      localStorage.setItem('permissions', stringified);
       router.navigate(['/staff/login']);
       return of(false);
     })

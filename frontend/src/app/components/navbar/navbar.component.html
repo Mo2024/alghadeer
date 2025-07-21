@@ -10,11 +10,11 @@
                 <!-- Main Menu (e.g. الصفوف, المواضيع) -->
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item"
-                        *ngIf="staffService.hasPermission('ADMIN') || staffService.hasPermission('SUPERVISOR') || staffService.hasPermission('INSTRUCTOR')">
+                        *ngIf="permissionsService.hasPermission('ADMIN') || permissionsService.hasPermission('SUPERVISOR') || permissionsService.hasPermission('INSTRUCTOR')">
                         <a class="nav-link nav-font" href="/staff/instructor/classes">الصفوف</a>
                     </li>
                     <li class="nav-item dropdown"
-                        *ngIf="staffService.hasPermission('ADMIN') || staffService.hasPermission('SUPERVISOR') || staffService.hasPermission('INSTRUCTOR')">
+                        *ngIf="permissionsService.hasPermission('ADMIN') || permissionsService.hasPermission('SUPERVISOR') || permissionsService.hasPermission('INSTRUCTOR')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             المواضيع
@@ -27,30 +27,30 @@
                         </ul>
                     </li>
                     <li class="nav-item"
-                        *ngIf="staffService.hasPermission('ADMIN') || staffService.hasPermission('SUPERVISOR') || staffService.hasPermission('INSTRUCTOR')">
+                        *ngIf="permissionsService.hasPermission('ADMIN') || permissionsService.hasPermission('SUPERVISOR') || permissionsService.hasPermission('INSTRUCTOR')">
                         <a class="nav-link nav-font" href="/staff/instructor/attendance">تسجيل الحضور</a>
                     </li>
                 </ul>
 
                 <!-- Login/Logout/Register Links -->
                 <ul class="navbar-nav">
-                    <li class="nav-item" *ngIf="staffService.isPermissionsEmpty() && isStaffRoute()">
+                    <li class="nav-item" *ngIf="permissionsService.isPermissionsEmpty() && isStaffRoute()">
                         <a class="nav-link nav-font" href="/staff/login">تسجيل الدخول</a>
                     </li>
 
-                    <li class="nav-item" *ngIf="!staffService.isPermissionsEmpty() && isStaffRoute()">
+                    <li class="nav-item" *ngIf="!permissionsService.isPermissionsEmpty() && isStaffRoute()">
                         <a class="nav-link nav-font" href="/staff/logout">تسجيل الخروج</a>
                     </li>
 
-                    <li class="nav-item" *ngIf="!isStaffRoute() && !studentService.isPermissionsEmpty()">
+                    <li class="nav-item" *ngIf="!isStaffRoute() && !permissionsService.isPermissionsEmpty()">
                         <a class="nav-link nav-font" href="/logout">تسجيل الخروج</a>
                     </li>
 
-                    <li class="nav-item" *ngIf="!isStaffRoute() && studentService.isPermissionsEmpty()">
+                    <li class="nav-item" *ngIf="!isStaffRoute() && permissionsService.isPermissionsEmpty()">
                         <a class="nav-link nav-font" href="/login">تسجيل الدخول</a>
                     </li>
 
-                    <li class="nav-item" *ngIf="!isStaffRoute() && studentService.isPermissionsEmpty()">
+                    <li class="nav-item" *ngIf="!isStaffRoute() && permissionsService.isPermissionsEmpty()">
                         <a class="nav-link nav-font" href="/register">إنشاء حساب</a>
                     </li>
                 </ul>

@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StudentService } from '../../services/student.service';
+import { PermissionsService } from '../../services/permissions.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,12 +15,12 @@ import { StudentService } from '../../services/student.service';
 })
 export class NavbarComponent {
 
-  constructor(public staffService: StaffService, public router: Router, public studentService: StudentService) { }
+  constructor(public permissionsService: PermissionsService, public router: Router) { }
 
   ngOnInit() {
     if (!environment.production) {
-      console.log(this.staffService.getPermissions());
-      console.log(this.staffService.hasPermission('ADMIN'));
+      console.log(this.permissionsService.getPermissions());
+      console.log(this.permissionsService.hasPermission('ADMIN'));
     }
   }
 

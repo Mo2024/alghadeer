@@ -1,11 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../services/toast.service';
-import { ToastComponent } from '../../components/toast/toast.component';
-import { StaffService } from '../../services/staff.service';
+import { StudentService } from '../../services/student.service';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.development';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -16,26 +15,22 @@ import { environment } from '../../../environments/environment';
 })
 export class LoginComponent {
 
-  email: string = '';
+  cpr: string = '';
   password: string = '';
   isDisabled: boolean = false;
 
 
-  constructor(private toastService: ToastService, private staffService: StaffService, private router: Router) { }
+  constructor(private toastService: ToastService, private studentService: StudentService, private router: Router) { }
 
-
-  ngOnInit() {
-
-  }
 
   onSubmit() {
-    if (!this.email.trim() || !this.password.trim()) {
+    if (!this.cpr.trim() || !this.password.trim()) {
       this.toastService.show('يرجى التأكد من تعبئة جميع الحقول', 'error');
       return;
     }
     this.isDisabled = true;
-    const body = { username: this.email, password: this.password }
-    this.staffService.login(body).subscribe({
+    const body = { username: this.cpr, password: this.password }
+    this.studentService.login(body).subscribe({
       next: async (res) => {
         this.isDisabled = false;
         if (!environment.production) {
@@ -43,8 +38,13 @@ export class LoginComponent {
         }
 
         const permissionsMap = res.object as Map<string, boolean>;
+        console.log(permissionsMap)
         const stringified = JSON.stringify(permissionsMap);
         localStorage.setItem('permissions', stringified);
+
+        // if (permissionsMap.get('STUDENT')) {
+        //   this.studentService.setPermissions(permissionsMap);
+        // }
 
         this.toastService.clear()
         this.router.navigate(['/']);
@@ -53,6 +53,7 @@ export class LoginComponent {
         if (!environment.production) {
           console.log(error)
         }
+
         const stringified = JSON.stringify(new Map());
         localStorage.setItem('permissions', stringified);
         if (error.error.status === 400) {

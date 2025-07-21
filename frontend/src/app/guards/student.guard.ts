@@ -16,6 +16,8 @@ export const studentGuard: CanActivateFn = (route, state) => {
         }
         return true;
       }
+      const stringified = JSON.stringify(new Map());
+      localStorage.setItem('permissions', stringified);
       router.navigate(['/student/login'])
       return false;
     }),
@@ -23,6 +25,8 @@ export const studentGuard: CanActivateFn = (route, state) => {
       if (!environment.production) {
         console.log(error)
       }
+      const stringified = JSON.stringify(new Map());
+      localStorage.setItem('permissions', stringified);
       router.navigate(['/student/login']);
       return of(false);
     })
