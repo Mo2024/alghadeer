@@ -1,0 +1,44 @@
+.toast {
+    position: relative;
+    /* or just remove position */
+    margin: auto auto;
+    /* some vertical spacing */
+    /* max-width: 00px; */
+    width: 80%;
+    /* default: nearly full width */
+    max-width: 600px;
+    /* don't exceed 400px on desktop */
+    /* or your preferred width */
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    direction: rtl;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    /* Remove top, left, transform, z-index */
+}
+
+
+.toast.success {
+    background-color: #28a745;
+}
+
+.toast.error {
+    background-color: #dc3545;
+}
+
+.toast .close-btn {
+    margin-right: auto;
+    /* push X to the far left in RTL */
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.toast.fade-out {
+    opacity: 0;
+}
