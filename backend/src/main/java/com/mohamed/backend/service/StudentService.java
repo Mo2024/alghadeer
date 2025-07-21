@@ -149,7 +149,7 @@ public class StudentService {
         log.info("Registration completed successfully for CPR:\n{}", newStudent.getCpr());
         log.info("[StudentService].[register] executed successfully");
 
-        return new Response("تم التسجيل بنجاح");
+        return new Response("تم التسجيل بنجاح", studentDetails.getPermissions());
     }
 
     public Response login(Login login, HttpSession session) {
@@ -160,6 +160,7 @@ public class StudentService {
                     log.error("Student not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        StudentDetails studentDetails = new StudentDetails(student);
 
 
         log.info("Login info:\n{}", login);
@@ -177,7 +178,6 @@ public class StudentService {
             permissionBooleanMap.put("STUDENT", true);
             student.setPermissionBooleanMap(permissionBooleanMap);
 
-            StudentDetails studentDetails = new StudentDetails(student);
             Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, studentDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -185,6 +185,6 @@ public class StudentService {
             log.info("Student ID:\n{} logged in", student.getId());
         }
         log.info("[StudentService].[login] executed successfully");
-        return new Response("تم تسجيل الدخول بنجاح");
+        return new Response("تم تسجيل الدخول بنجاح", studentDetails.getPermissions());
     }
 }

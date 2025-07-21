@@ -199,6 +199,7 @@ public class StaffService {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        StaffDetails staffDetails = new StaffDetails(staff);
 
         log.info("Login info\n{}", login);
         log.info("Staff info\n{}", staff);
@@ -215,7 +216,6 @@ public class StaffService {
             staff.getPermissions().forEach(staffPermission -> permissionBooleanMap.put(staffPermission.getPermission(),true));
             staff.setPermissionBooleanMap(permissionBooleanMap);
 
-            StaffDetails staffDetails = new StaffDetails(staff);
             Authentication authentication = new UsernamePasswordAuthenticationToken(staffDetails, null, staffDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
@@ -223,8 +223,7 @@ public class StaffService {
             log.info("Staff ID: {} logged in", staff.getId());
         }
         log.info("[StaffService].[login] executed successfully");
-
-        return new Response("تم تسجيل الدخول بنجاح");
+        return new Response("تم تسجيل الدخول بنجاح", staffDetails.getPermissions());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
