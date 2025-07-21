@@ -49,17 +49,17 @@ public class SessionController {
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new Response(e.getMessage()));
+                    .body(new Response(e.getMessage(), 400));
         } catch (AuthorizationDeniedException e) {
             log.error("Authorization Denied error:", e);
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", 403));
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 500));
         }
     }
 
@@ -81,17 +81,17 @@ public class SessionController {
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new Response(e.getMessage()));
+                    .body(new Response(e.getMessage(), 400));
         } catch (AuthorizationDeniedException e) {
             log.error("Authorization Denied error:", e);
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", 403));
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 500));
         }
     }
 
@@ -113,17 +113,17 @@ public class SessionController {
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new Response(e.getMessage()));
+                    .body(new Response(e.getMessage(), 400));
         } catch (AuthorizationDeniedException e) {
             log.error("Authorization Denied error:", e);
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد"));
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", 403));
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني"));
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 500));
         }
     }
 

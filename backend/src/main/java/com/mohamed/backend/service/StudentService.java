@@ -118,7 +118,7 @@ public class StudentService {
         imageUtils.saveImageToFile(resizedImage, student.getCpr());
         log.info("Image saved to file successfully for student:\n{}", student.getCpr());
 
-        String cleanEmail = student.getEmail().trim();
+        String cleanEmail = student.getEmail().trim().toLowerCase();
 
         Student newStudent = Student.builder()
                 .cpr(student.getCpr())

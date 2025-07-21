@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")  // Enable CORS for API endpoints
-                .allowedOrigins(frontendOrigin)  // Allow requests from Angular's localhost
+                .allowedOriginPatterns("*")  // Allow requests from Angular's localhost
                 .allowedMethods("GET", "POST", "PUT", "DELETE")  // Allow specific HTTP methods
                 .allowedHeaders("*")  // Allow any header
                 .allowCredentials(true);  // Allow credentials (if needed)

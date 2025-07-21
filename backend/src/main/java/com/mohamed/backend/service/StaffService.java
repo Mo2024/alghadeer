@@ -103,7 +103,7 @@ public class StaffService {
         }
 
         String password = String.valueOf(RandomNumberGenerator.generate8DigitNumber());
-        String cleanEmail = staffRequest.getEmail().trim();
+        String cleanEmail = staffRequest.getEmail().trim().toLowerCase();
 
         List<StaffPermission> staffPermissionList = new ArrayList<>();
 
@@ -175,14 +175,13 @@ public class StaffService {
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
-        String cleanEmail = newEmailReq.getEmail().trim();
+        String cleanEmail = newEmailReq.getEmail().trim().toLowerCase();;
 
         log.info("old staff object:\n{}", staff);
         staff.setEmail(cleanEmail);
         log.info("new staff object:\n{}", staff);
         staffRepository.save(staff);
-        log.info("Email changed successfully")
-        ;
+        log.info("Email changed successfully");
         log.info("[StaffService].[changeEmail] executed successfully");
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
@@ -190,6 +189,10 @@ public class StaffService {
     public Response login(Login login, HttpSession session) {
 
         log.info("executing method [StaffService].[login]");
+
+        log.info("Email used for attempt: {}", login.getUsername());
+
+        login.setUsername(login.getUsername().trim().toLowerCase());
 
         Staff staff = staffRepository.findByEmailAndArchived(login.getUsername(),false)
                 .orElseThrow(() -> {
