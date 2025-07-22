@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StudentService } from '../../services/student.service';
 import { PermissionsService } from '../../services/permissions.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,9 @@ import { PermissionsService } from '../../services/permissions.service';
 })
 export class NavbarComponent {
 
+  permissions = new Map<string, boolean>();
+  private subscription!: Subscription;
+
   constructor(public permissionsService: PermissionsService, public router: Router) { }
 
   ngOnInit() {
@@ -22,6 +26,22 @@ export class NavbarComponent {
       console.log(this.permissionsService.getPermissions());
       console.log(this.permissionsService.hasPermission('ADMIN'));
     }
+    this.subscription = this.permissionsService.permissions$.subscribe(perms => {
+      this.permissions = perms;
+    });
+  }
+
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  hasPermission(role: string): boolean {
+    return this.permissions.get(role) === true;
+  }
+
+  isPermissionsEmpty(): boolean {
+    return this.permissions.size === 0;
   }
 
   isStaffRoute(): boolean {

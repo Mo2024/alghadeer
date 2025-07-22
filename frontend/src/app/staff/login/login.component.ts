@@ -6,6 +6,7 @@ import { ToastComponent } from '../../components/toast/toast.component';
 import { StaffService } from '../../services/staff.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { PermissionsService } from '../../services/permissions.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,7 @@ export class LoginComponent {
   isDisabled: boolean = false;
 
 
-  constructor(private toastService: ToastService, private staffService: StaffService, private router: Router) { }
+  constructor(private permissionService: PermissionsService, private toastService: ToastService, private staffService: StaffService, private router: Router) { }
 
 
   ngOnInit() {
@@ -46,6 +47,8 @@ export class LoginComponent {
         const stringified = JSON.stringify(permissionsMap);
         localStorage.setItem('permissions', stringified);
 
+        this.permissionService.setPermissions(permissionsMap);
+
         this.toastService.clear()
         this.router.navigate(['/']);
       },
@@ -53,7 +56,9 @@ export class LoginComponent {
         if (!environment.production) {
           console.log(error)
         }
-        const stringified = JSON.stringify(new Map());
+        const emptyMap = new Map();
+        const stringified = JSON.stringify(emptyMap);
+        this.permissionService.setPermissions(emptyMap);
         localStorage.setItem('permissions', stringified);
         if (error.error.status === 400) {
           this.toastService.show(error.error.message, 'error');
