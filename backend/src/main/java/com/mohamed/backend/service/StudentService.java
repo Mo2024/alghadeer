@@ -70,8 +70,7 @@ public class StudentService {
     public Response register(Student student, MultipartFile image, HttpSession session) throws IOException {
         log.info("executing method [StudentService].[register]");
         log.info("Registering student:\n{}", student);
-        log.info("Uploaded image - \n filename: {}, size: {} bytes, type: {}",
-                image.getOriginalFilename(), image.getSize(), image.getContentType());
+
 
         if (student.getName() == null || student.getName().trim().isEmpty() || !ValidationUtils.isArabic(student.getName())) {
             log.error("Invalid name:\n{}", student.getName());
@@ -103,20 +102,27 @@ public class StudentService {
             throw new HandledRejection("يرجى التأكد من إدخال تاريخ ميلاد بشكل صحيح");
         }
 
-        String contentType = image.getContentType();
-        if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-            log.error("Invalid image content type:\n{}", contentType);
-            throw new HandledRejection("يرجى تحميل صورة بصيغة JPEG أو PNG");
-        }
-
         if (studentRepository.existsByCpr(student.getCpr())) {
             log.error("Duplicate CPR registration attempt:\n{}", student.getCpr());
             throw new HandledRejection("رقم الهوية مسجل من قبل");
         }
 
-        byte[] resizedImage = imageUtils.resizeAndCompress(image);
-        imageUtils.saveImageToFile(resizedImage, student.getCpr());
-        log.info("Image saved to file successfully for student:\n{}", student.getCpr());
+        if (image != null && !image.isEmpty()) {
+            String contentType = image.getContentType();
+            if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+                log.error("Invalid image content type:\n{}", contentType);
+                throw new HandledRejection("يرجى تحميل صورة بصيغة JPEG أو PNG");
+            }
+
+            log.info("Uploaded image - filename: {}, size: {} bytes, type: {}",
+                    image.getOriginalFilename(), image.getSize(), contentType);
+
+            byte[] resizedImage = imageUtils.resizeAndCompress(image);
+            imageUtils.saveImageToFile(resizedImage, student.getCpr());
+            log.info("Image saved to file successfully for student:\n{}", student.getCpr());
+        } else {
+            log.info("No image uploaded or image is empty");
+        }
 
         String cleanEmail = student.getEmail().trim().toLowerCase();
 

@@ -42,7 +42,7 @@ public class StudentController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> register(@ModelAttribute Student student, @RequestParam("image") MultipartFile image, HttpSession session){
+    public ResponseEntity<?> register(@ModelAttribute Student student, @RequestParam(value = "image", required = false) MultipartFile image, HttpSession session){
         try {
             Response response = studentService.register(student, image, session);
             return ResponseEntity.ok().body(response);
