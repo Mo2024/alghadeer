@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PermissionsService } from '../../services/permissions.service';
 
 @Component({
   selector: 'app-register',
@@ -28,7 +29,7 @@ export class RegisterComponent {
 
 
 
-  constructor(private toastService: ToastService, private studentService: StudentService, private router: Router) { }
+  constructor(private permissionService: PermissionsService, private toastService: ToastService, private studentService: StudentService, private router: Router) { }
 
 
   onFileSelected(event: Event): void {
@@ -98,6 +99,13 @@ export class RegisterComponent {
           console.log(res)
         }
 
+        const permissionsMap = res.object as Map<string, boolean>;
+        console.log(permissionsMap)
+        const stringified = JSON.stringify(permissionsMap);
+        localStorage.setItem('permissions', stringified);
+        this.permissionService.setPermissions(permissionsMap)
+
+
         this.toastService.clear()
         this.router.navigate(['/student']);
       },
@@ -105,6 +113,10 @@ export class RegisterComponent {
         if (!environment.production) {
           console.log(error)
         }
+
+        const emptyMap = new Map();
+        const stringified = JSON.stringify(emptyMap);
+        this.permissionService.setPermissions(emptyMap);
 
         if (error.error.status === 400) {
           this.toastService.show(error.error.message, 'error');
