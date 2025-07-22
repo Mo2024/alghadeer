@@ -1,1 +1,74 @@
-<p>register works!</p>
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    تسجيل الدخول
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+
+                        <div class="form-group mb-1">
+                            <label for="name" class="mb-1">إسم الطالب</label>
+                            <input type="name" [(ngModel)]="name" name="name" class="form-control" id="name"
+                                placeholder="يرجى إدخال إسم الطالب">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="area" class="mb-1">المنطقة</label>
+                            <input type="area" [(ngModel)]="area" name="area" class="form-control" id="area"
+                                placeholder="يرجى إدخال إسم المنطقة">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="cpr" class="mb-1">الرقم الشخصي</label>
+                            <input type="text" pattern="^\d{9}$" maxlength="9" [(ngModel)]="cpr" name="cpr"
+                                class="form-control" id="cpr" placeholder="يرجى إدخال الرقم الشخصي">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="telephone" class="mb-1">رقم الهاتف</label>
+                            <input type="text" pattern="^\d{8}$" maxlength="8" [(ngModel)]="telephone" name="telephone"
+                                class="form-control" id="telephone" placeholder="يرجى إدخال رقم الهاتف">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="email" class="mb-1">البريد الإلكتروني</label>
+                            <input type="text" [(ngModel)]="email" name="email" class="form-control" id="email"
+                                placeholder="يرجى إدخال بريدك الإلكتروني">
+                        </div>
+                        <div class="form-group mb-1" dir="rtl" style="text-align: right;">
+                            <label for="dateOfBirth" class="mb-1">تاريخ الميلاد</label>
+                            <input type="date" [(ngModel)]="dateOfBirth" name="dateOfBirth" class="form-control"
+                                id="dateOfBirth" dir="rtl" style="text-align: right;">
+                        </div>
+
+
+                        <div class="form-group mb-1" dir="rtl" style="text-align: right;">
+                            <label for="image" class="mb-1">الصورة الشخصية (اختياري)</label>
+
+                            <div class="custom-file">
+                                <input type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)"
+                                    id="image" style="display:none" #fileInput>
+                                <button style="margin-inline-end: 12px;" type="button" (click)="fileInput.click()"
+                                    class="custom-upload-btn">اختر
+                                    ملف</button>
+
+
+                                <span>{{ selectedFileName || 'لم يتم اختيار ملف' }}</span>
+                            </div>
+                        </div>
+
+
+
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">تسجيل الدخول</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

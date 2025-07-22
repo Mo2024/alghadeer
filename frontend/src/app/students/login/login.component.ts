@@ -46,7 +46,7 @@ export class LoginComponent {
 
 
         this.toastService.clear()
-        this.router.navigate(['/']);
+        this.router.navigate(['/student']);
       },
       error: (error) => {
         if (!environment.production) {

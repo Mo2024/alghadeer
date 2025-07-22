@@ -1,0 +1,17 @@
+.full-height {
+    height: 100vh;
+}
+
+.custom-upload-btn {
+    border: 1px solid #666;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-upload-btn:hover {
+    background-color: #ddd;
+}
