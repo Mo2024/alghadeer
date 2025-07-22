@@ -94,14 +94,6 @@ public class StaffService {
             throw new HandledRejection("هذا البريد الإلكتروني مستخدم مسبقاً");
         }
 
-
-        //Validates that the class actually exists
-        for (Class cls : staffRequest.getClasses()) {
-            if (cls == null || cls.getId() == null || cls.getId() <= 0 || !classRepository.existsById(cls.getId())) {
-                throw new HandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
-            }
-        }
-
         String password = String.valueOf(RandomNumberGenerator.generate8DigitNumber());
         String cleanEmail = staffRequest.getEmail().trim().toLowerCase();
 
@@ -120,7 +112,6 @@ public class StaffService {
                 .name(staffRequest.getName())
                 .email(cleanEmail)
                 .hash(HashUtils.sha256(password))
-                .classes(staffRequest.getClasses())
                 .archived(false)
                 .build();
 
