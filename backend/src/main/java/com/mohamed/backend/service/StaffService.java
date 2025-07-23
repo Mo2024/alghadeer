@@ -51,24 +51,6 @@ public class StaffService {
         return staffDetails.getId();
     }
 
-    public Map<Permission, Boolean> getStaffAuthentication(){
-        log.info("executing method [StaffService].[getStaffAuthentication]");
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Fetching authentication details: \n {}", auth);
-
-        if(auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-            StaffDetails staffDetails = (StaffDetails) auth.getPrincipal();
-            log.info("User is authenticated successfully");
-            log.info("[StaffService].[getStaffAuthentication] executed successfully");
-            return staffDetails.getPermissions();
-        } else {
-            log.error("Unauthorized access");
-            throw new AuthorizationDeniedException("Access Denied");
-        }
-    }
-
-
     public Page<Staff> getStaff(Pageable pageable){
         return staffRepository.findAll(pageable);
     }

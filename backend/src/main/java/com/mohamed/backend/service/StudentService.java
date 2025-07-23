@@ -56,23 +56,7 @@ public class StudentService {
         return studentDetails.getId();
     }
 
-    public Map<String, Boolean> getStudentAuthentication(){
-        log.info("executing method [StudentService].[getStudentAuthentication]");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Fetching authentication details: \n {}", auth);
-
-        if(auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-            StudentDetails studentDetails = (StudentDetails) auth.getPrincipal();
-            log.info("User is authenticated successfully");
-            log.info("[StudentService].[getStudentAuthentication] executed successfully");
-            return studentDetails.getPermissions();
-        } else {
-            log.error("Unauthorized access");
-            throw new AuthorizationDeniedException("Access Denied");
-        }
-    }
 
     @Transactional
     public Response register(Student student, MultipartFile image, HttpSession session) throws IOException {
@@ -201,19 +185,5 @@ public class StudentService {
         log.info("[StudentService].[login] executed successfully");
         return new Response("تم تسجيل الدخول بنجاح", studentDetails.getPermissions());
     }
-
-    public Response logout(HttpSession session, HttpServletResponse response) {
-        log.info("executing method [StudentService].[logout]");
-
-        SecurityContextHolder.clearContext();
-
-        if (session != null) {
-            session.invalidate();
-        }
-
-        log.info("[StudentService].[logout] executed successfully");
-        return new Response("تم تسجيل الخروج بنجاح");
-    }
-
 
 }
