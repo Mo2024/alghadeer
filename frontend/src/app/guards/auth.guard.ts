@@ -1,17 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { StaffService } from '../services/staff.service';
 import { catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PermissionsService } from '../services/permissions.service';
+import { AuthService } from '../services/auth.service';
 
-export const staffGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = (route, state) => {
   const allowedRole: string = route.data['role'];
   const router = inject(Router);
-  const staffService = inject(StaffService)
+  const authService = inject(AuthService)
   const permissionService = inject(PermissionsService)
 
-  return staffService.getAuth().pipe(
+  return authService.getAuth().pipe(
     map((res: any) => {
       if (res) {
         if (!environment.production) {
@@ -24,6 +24,8 @@ export const staffGuard: CanActivateFn = (route, state) => {
           return true;
         } else if (allowedRole === 'ADMIN' && permissionsMap['ADMIN']) {
           return true;
+        } else if (allowedRole === 'STUDENT' && permissionsMap['STUDENT']) {
+          return true;
         }
 
         router.navigate(['/unauthorized']);
@@ -33,7 +35,11 @@ export const staffGuard: CanActivateFn = (route, state) => {
         const stringified = JSON.stringify(emptyMap);
         localStorage.setItem('permissions', stringified);
         permissionService.setPermissions(emptyMap);
-        router.navigate(['/staff/login'])
+        if (state.url.includes('/staff/')) {
+          router.navigate(['/staff/login'])
+        } else {
+          router.navigate(['/login'])
+        }
         return false;
       }
     }),
@@ -47,7 +53,11 @@ export const staffGuard: CanActivateFn = (route, state) => {
       localStorage.setItem('permissions', stringified);
       permissionService.setPermissions(emptyMap);
 
-      router.navigate(['/staff/login']);
+      if (state.url.includes('/staff/')) {
+        router.navigate(['/staff/login'])
+      } else {
+        router.navigate(['/login'])
+      }
       return of(false);
     })
   )
