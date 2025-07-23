@@ -6,15 +6,13 @@ import { RegisterComponent } from './staff/admin/register/register.component';
 import { RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
 import { studentGuard } from './guards/student.guard';
 import { StudentComponent } from './students/student/student.component';
-import { staffRoleGuard } from './guards/staff-role.guard';
-import { studentRoleGuard } from './guards/student-role.guard';
 
 export const routes: Routes = [
     { path: 'staff/login', component: LoginComponent },
     {
         path: 'staff/admin/register',
         component: RegisterComponent,
-        canActivate: [staffGuard, staffRoleGuard],
+        canActivate: [staffGuard],
         data: { role: 'ADMIN' }
     },
 
@@ -23,7 +21,7 @@ export const routes: Routes = [
     {
         path: 'student',
         component: StudentComponent,
-        canActivate: [studentGuard, studentRoleGuard],
+        canActivate: [studentGuard],
         data: { role: "STUDENT" }
     },
 

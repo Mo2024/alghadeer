@@ -11,7 +11,7 @@ export const staffGuard: CanActivateFn = (route, state) => {
   const staffService = inject(StaffService)
   const permissionService = inject(PermissionsService)
 
-  return staffService.getAuth({}).pipe(
+  return staffService.getAuth().pipe(
     map((res: any) => {
       if (res) {
         if (!environment.production) {

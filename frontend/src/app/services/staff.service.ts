@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -14,9 +14,17 @@ export class StaffService {
 
   constructor(private http: HttpClient) { }
 
-  getAuth(body: any): Observable<any> {
-    return this.http.get(`${this.url}/get-auth`, { withCredentials: true });
+  getAuth(): Observable<any> {
+    return this.http.get(`${this.url}/get-auth`, {
+      headers: new HttpHeaders({
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }),
+      withCredentials: true
+    });
   }
+
 
   login(body: any): Observable<any> {
     return this.http.post(`${this.url}/login`, body, { withCredentials: true });

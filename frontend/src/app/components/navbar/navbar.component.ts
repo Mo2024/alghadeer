@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { StaffService } from '../../services/staff.service';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StudentService } from '../../services/student.service';
 import { PermissionsService } from '../../services/permissions.service';
 import { Subscription } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-navbar',
@@ -19,7 +19,7 @@ export class NavbarComponent {
   permissions = new Map<string, boolean>();
   private subscription!: Subscription;
 
-  constructor(public permissionsService: PermissionsService, public router: Router) { }
+  constructor(public toastService: ToastService, public permissionsService: PermissionsService, public router: Router, private studentService: StudentService) { }
 
   ngOnInit() {
     if (!environment.production) {
@@ -46,5 +46,30 @@ export class NavbarComponent {
 
   isStaffRoute(): boolean {
     return this.router.url.includes('/staff/');
+  }
+
+
+  logout() {
+    this.studentService.logout().subscribe({
+      next: (res) => {
+        if (res) {
+          const emptyMap = new Map();
+          const stringified = JSON.stringify(emptyMap);
+          this.permissionsService.setPermissions(emptyMap);
+          localStorage.setItem('permissions', stringified);
+          console.log("logout done?")
+          this.toastService.show(res.message, 'success');
+          this.router.navigate(['/']);
+        }
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error);
+        }
+        if (error.error.status === "ALGD-500") {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    });
   }
 }

@@ -39,11 +39,11 @@
                     </li>
 
                     <li class="nav-item" *ngIf="!isPermissionsEmpty() && isStaffRoute()">
-                        <a class="nav-link nav-font" href="/staff/logout">تسجيل الخروج</a>
+                        <a class="nav-link nav-font" href="javascript:void(0)" (click)="logout()">تسجيل الخروج</a>
                     </li>
 
                     <li class="nav-item" *ngIf="!isStaffRoute() && !isPermissionsEmpty()">
-                        <a class="nav-link nav-font" href="/logout">تسجيل الخروج</a>
+                        <a class="nav-link nav-font" href="javascript:void(0)" (click)="logout()">تسجيل الخروج</a>
                     </li>
 
                     <li class="nav-item" *ngIf="!isStaffRoute() && isPermissionsEmpty()">
