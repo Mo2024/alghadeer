@@ -12,6 +12,8 @@ import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.repository.user.StudentRepository;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -199,4 +201,19 @@ public class StudentService {
         log.info("[StudentService].[login] executed successfully");
         return new Response("تم تسجيل الدخول بنجاح", studentDetails.getPermissions());
     }
+
+    public Response logout(HttpSession session, HttpServletResponse response) {
+        log.info("executing method [StudentService].[logout]");
+
+        SecurityContextHolder.clearContext();
+
+        if (session != null) {
+            session.invalidate();
+        }
+
+        log.info("[StudentService].[logout] executed successfully");
+        return new Response("تم تسجيل الخروج بنجاح");
+    }
+
+
 }
