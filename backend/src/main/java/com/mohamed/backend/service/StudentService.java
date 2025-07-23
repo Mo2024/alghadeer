@@ -1,6 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.model.enums.Permission;
+import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
@@ -46,6 +47,11 @@ public class StudentService {
 
     public Page<Student> getStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
+    }
+
+    public Integer getStudentId() {
+        StudentDetails studentDetails = (StudentDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return studentDetails.getId();
     }
 
     public Map<String, Boolean> getStudentAuthentication(){

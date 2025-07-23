@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 public class Response {
     private String message;
     private Object object;
-    private int status;
+    private String status;
 
     public Response(String message) {
         this.message = message;
     }
 
-    public Response(String message, int status) {
+    public Response(String message, String status) {
         this.message = message;
         this.status = status;
     }

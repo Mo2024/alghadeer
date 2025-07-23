@@ -175,7 +175,7 @@ public class ClassService {
     }
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public Response changeStudentClass(ChangeStudentClassDto changeStudentClassDto){
         log.info("Executing method [ClassService].[changeStudentClass]");
         log.info("Request Parameter: {}", changeStudentClassDto);

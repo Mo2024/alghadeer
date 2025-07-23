@@ -19,7 +19,7 @@ public class MainTopicService {
     private MainTopicRepository mainTopicRepository;
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response createMainTopic(MainTopic mainTopic) {
         log.info("executing method [TopicService].[createMainTopic]");
 
@@ -37,7 +37,7 @@ public class MainTopicService {
     }
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response editMainTopic(MainTopic mainTopic) {
         log.info("executing method [TopicService].[editMainTopic]");
 
@@ -61,7 +61,7 @@ public class MainTopicService {
     }
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response deleteMainTopic(MainTopic mainTopic) {
         log.info("executing method [TopicService].[deleteMainTopic]");
 

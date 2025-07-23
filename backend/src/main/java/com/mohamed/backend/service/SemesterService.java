@@ -31,6 +31,9 @@ public class SemesterService {
     private SemesterRepository semesterRepository;
 
     @Autowired
+    private StudentService studentService;
+
+    @Autowired
     private SemesterEnrollmentRepository semesterEnrollmentRepository;
 
     @Autowired
@@ -42,7 +45,7 @@ public class SemesterService {
     @Autowired
     private ClassService classService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
     public Response createSemester(SemesterDto semesterReq) {
         log.info("executing method [createSemester]");
@@ -127,7 +130,7 @@ public class SemesterService {
     }
 
 
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
     @Transactional
     public Response enrollSemester(Grade grade) {
         log.info("executing method [SemesterService].[enrollSemester]");
@@ -177,7 +180,7 @@ public class SemesterService {
         return new Response("تم تسجيل الطالب في الفصل الدراسي بنجاح");
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
     public Response closeActiveSemester() {
         log.info("executing method [SemesterService].[closeActiveSemester]");
@@ -197,5 +200,18 @@ public class SemesterService {
 
         log.info("[SemesterService].[closeActiveSemester] executed successfully");
         return new Response("تم إغلاق الفصل الدراسي بنجاح");
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
+    @Transactional
+    public boolean isEnrolled() {
+
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+
+        return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentService.getStudentId(), semester.getId());
     }
 }

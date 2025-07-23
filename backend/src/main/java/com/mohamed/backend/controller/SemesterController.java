@@ -53,17 +53,17 @@ public class SemesterController {
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new Response(e.getMessage(), 400));
+                    .body(new Response(e.getMessage(), "ALGD-400"));
         } catch (AuthorizationDeniedException e) {
             log.error("Authorization Denied error:", e);
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", 403));
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 500));
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
         }
     }
 
@@ -85,17 +85,17 @@ public class SemesterController {
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new Response(e.getMessage(), 400));
+                    .body(new Response(e.getMessage(), "ALGD-400"));
         } catch (AuthorizationDeniedException e) {
             log.error("Authorization Denied error:", e);
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", 403));
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 500));
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
         }
     }
 
@@ -110,24 +110,56 @@ public class SemesterController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> enrollSemester(@RequestBody Grade grade){
+    public ResponseEntity<?> enrollSemester(@RequestBody String grade){
         try {
-            Response response = semesterService.enrollSemester(grade);
+            Response response = semesterService.enrollSemester(Grade.valueOf(grade));
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new Response(e.getMessage(), 400));
+                    .body(new Response(e.getMessage(), "ALGD-400"));
         } catch (AuthorizationDeniedException e) {
             log.error("Authorization Denied error:", e);
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", 403));
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 500));
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/student/is-enrolled")
+    @Operation(
+            summary = "Checks if students are enrolled or not",
+            description = "Only students are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> isEnrolled(){
+        try {
+            boolean response = semesterService.isEnrolled();
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
         }
     }
 

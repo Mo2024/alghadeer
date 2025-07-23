@@ -73,7 +73,7 @@ public class StaffService {
         return staffRepository.findAll(pageable);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
     public Response register(Staff staffRequest){
         log.info("executing method [StaffService].[register]");
@@ -145,6 +145,7 @@ public class StaffService {
         return new Response("تم التسجيل بنجاح");
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
     public Response changeEmail(ChangeEmail newEmailReq) {
         log.info("executing method [StaffService].[changeEmail]");
@@ -217,7 +218,7 @@ public class StaffService {
         return new Response("تم تسجيل الدخول بنجاح", staffDetails.getPermissions());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
     public Response archiveStaff(Staff staff){
         log.info("executing method [StaffService].[archiveStaff]");

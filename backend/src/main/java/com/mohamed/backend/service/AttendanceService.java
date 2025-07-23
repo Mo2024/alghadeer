@@ -42,7 +42,7 @@ public class AttendanceService {
     private SessionRepository sessionRepository;
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response takeAttendance(AttendanceRequestDTO attendanceRequest){
         log.info("executing method [AttendanceService].[takeAttendance]");
 

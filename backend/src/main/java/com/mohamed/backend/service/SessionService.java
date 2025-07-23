@@ -70,7 +70,7 @@ public class SessionService {
         log.info("[SessionService].[createSessions] executed successfully");
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
     public Response cancelSessions(List<Integer> sessionIds) {
         log.info("executing method [SessionService].[cancelSessions]");
@@ -106,7 +106,7 @@ public class SessionService {
         return new Response("تم إلغاء الحصص بنجاح");
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
     public Response changeSubTopic(AddSubTopicDto addSubTopicDto) {
         log.info("executing method [SessionService].[changeSubTopic]");

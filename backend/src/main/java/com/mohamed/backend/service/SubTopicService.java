@@ -25,7 +25,7 @@ public class SubTopicService {
 
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response createSubTopic(SubTopic subTopic) {
         log.info("executing method [TopicService].[createSubTopic]");
 
@@ -49,7 +49,7 @@ public class SubTopicService {
     }
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response editSubTopic(SubTopic subTopic) {
         log.info("executing method [TopicService].[editSubTopic]");
 
@@ -78,7 +78,7 @@ public class SubTopicService {
     }
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public Response deleteSubTopic(SubTopic subTopic) {
         log.info("executing method [TopicService].[deleteSubTopic]");
 
