@@ -58,14 +58,14 @@ export class RegisterComponent {
           console.log(error)
         }
 
-        if (error.error.status === 400) {
+        if (error.error.status === "ALGD-400") {
           this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === 403) {
+        } else if (error.error.status === "ALGD-403") {
           this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === 500) {
+        } else if (error.error.status === "ALGD-500") {
           this.toastService.show(error.error.message, 'error');
         } else {
-          this.toastService.show(error.error.message || "حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
         }
         this.isDisabled = false;
       }

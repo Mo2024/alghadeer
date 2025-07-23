@@ -18,6 +18,10 @@ export class SemesterService {
     return this.http.put(`${this.url}/admin/close-semester`, body, { withCredentials: true });
   }
 
+  isEnrolled(): Observable<any> {
+    return this.http.get(`${this.url}/student/is-enrolled`, { withCredentials: true });
+  }
+
   enrollStudent(body: any): Observable<any> {
     return this.http.post(`${this.url}/student/enroll`, body, { withCredentials: true });
   }

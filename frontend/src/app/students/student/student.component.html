@@ -1,0 +1,45 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div *ngIf="displayedEnrollment" class="card">
+                <div class="card-header">
+                    تسجيل الفصل الدراسي
+                </div>
+                <div class="card-body">
+                    <form>
+
+                        <div class="form-group mb-1">
+                            <label for="grade" class="form-label">الصف الدراسي</label>
+                            <select class="form-select" [(ngModel)]="grade" name="grade">
+                                <option [value]="''">اختر الصف</option>
+                                <option value="FIRST">أول ابتدائي</option>
+                                <option value="SECOND">ثاني ابتدائي</option>
+                                <option value="THIRD">ثالث ابتدائي</option>
+                                <option value="FOURTH">رابع ابتدائي</option>
+                                <option value="FIFTH">خامس ابتدائي</option>
+                                <option value="SIXTH">سادس ابتدائي</option>
+                                <option value="SEVENTH">أول إعدادي</option>
+                                <option value="EIGHTH">ثاني إعدادي</option>
+                                <option value="NINTH">ثالث إعدادي</option>
+                                <option value="TENTH">أول ثانوي</option>
+                                <option value="ELEVENTH">ثاني ثانوي</option>
+                                <option value="TWELFTH">ثالث ثانوي</option>
+                            </select>
+                        </div>
+
+
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit"
+                                (click)="enrollToSemester()">
+                                تسجيل الفصل
+                            </button>
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

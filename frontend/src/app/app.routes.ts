@@ -4,19 +4,27 @@ import { LoginComponent as StudentLoginComponent } from './students/login/login.
 import { staffGuard } from './guards/staff.guard';
 import { RegisterComponent } from './staff/admin/register/register.component';
 import { RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
-import { roleGuard } from './guards/role.guard';
 import { studentGuard } from './guards/student.guard';
+import { StudentComponent } from './students/student/student.component';
+import { staffRoleGuard } from './guards/staff-role.guard';
+import { studentRoleGuard } from './guards/student-role.guard';
 
 export const routes: Routes = [
     { path: 'staff/login', component: LoginComponent },
     {
         path: 'staff/admin/register',
         component: RegisterComponent,
-        canActivate: [staffGuard, roleGuard],
+        canActivate: [staffGuard, staffRoleGuard],
         data: { role: 'ADMIN' }
     },
 
     { path: 'login', component: StudentLoginComponent },
     { path: 'register', component: StudentRegisterComponent },
+    {
+        path: 'student',
+        component: StudentComponent,
+        canActivate: [studentGuard, studentRoleGuard],
+        data: { role: "STUDENT" }
+    },
 
 ];

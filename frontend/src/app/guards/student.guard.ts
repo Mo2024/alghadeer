@@ -20,7 +20,7 @@ export const studentGuard: CanActivateFn = (route, state) => {
       }
       const stringified = JSON.stringify(new Map());
       localStorage.setItem('permissions', stringified);
-      router.navigate(['/student/login'])
+      router.navigate(['/login'])
       return false;
     }),
     catchError((error) => {
@@ -31,7 +31,7 @@ export const studentGuard: CanActivateFn = (route, state) => {
       const stringified = JSON.stringify(emptyMap);
       permissionService.setPermissions(emptyMap);
       localStorage.setItem('permissions', stringified);
-      router.navigate(['/student/login']);
+      router.navigate(['/login']);
       return of(false);
     })
   )
