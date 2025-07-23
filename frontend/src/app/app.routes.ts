@@ -5,23 +5,25 @@ import { RegisterComponent } from './staff/admin/register/register.component';
 import { RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
 import { StudentComponent } from './students/student/student.component';
 import { authGuard } from './guards/auth.guard';
+import { MainPageComponent } from './main-page/main-page.component';
 
 export const routes: Routes = [
-    { path: 'staff/login', component: LoginComponent },
+    { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
+    { path: 'staff/login', component: LoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
     {
         path: 'staff/admin/register',
         component: RegisterComponent,
         canActivate: [authGuard],
-        data: { role: 'ADMIN' }
+        data: { role: 'ADMIN', accessControlled: true }
     },
 
-    { path: 'login', component: StudentLoginComponent },
-    { path: 'register', component: StudentRegisterComponent },
+    { path: 'login', component: StudentLoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
+    { path: 'register', component: StudentRegisterComponent, canActivate: [authGuard], data: { accessControlled: false } },
     {
         path: 'student',
         component: StudentComponent,
         canActivate: [authGuard],
-        data: { role: "STUDENT" }
+        data: { role: "STUDENT", accessControlled: true }
     },
 
 ];

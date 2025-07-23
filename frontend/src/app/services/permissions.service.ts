@@ -8,23 +8,8 @@ import { environment } from '../../environments/environment';
 export class PermissionsService {
 
   private permissionsSubject = new BehaviorSubject<Map<string, boolean>>(new Map());
-  private permissionsMap: Map<string, boolean> = new Map();
 
   permissions$ = this.permissionsSubject.asObservable();
-
-  constructor() {
-    this.loadPermissions();
-  }
-
-  private loadPermissions() {
-    const stored = localStorage.getItem('permissions');
-    if (stored) {
-      this.permissionsMap = JSON.parse(stored);
-      this.setPermissions(this.permissionsMap)
-    } else {
-      this.setPermissions(new Map());
-    }
-  }
 
   setPermissions(permissions: Map<string, boolean>) {
     const map = new Map<string, boolean>(Object.entries(permissions));

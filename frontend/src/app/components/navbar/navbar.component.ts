@@ -53,11 +53,7 @@ export class NavbarComponent {
     this.studentService.logout().subscribe({
       next: (res) => {
         if (res) {
-          const emptyMap = new Map();
-          const stringified = JSON.stringify(emptyMap);
-          this.permissionsService.setPermissions(emptyMap);
-          localStorage.setItem('permissions', stringified);
-          console.log("logout done?")
+          this.permissionsService.setPermissions(new Map());
           this.toastService.show(res.message, 'success');
           this.router.navigate(['/']);
         }

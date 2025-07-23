@@ -40,8 +40,6 @@ export class LoginComponent {
 
         const permissionsMap = res.object as Map<string, boolean>;
         console.log(permissionsMap)
-        const stringified = JSON.stringify(permissionsMap);
-        localStorage.setItem('permissions', stringified);
         this.permissionService.setPermissions(permissionsMap)
 
 
@@ -53,11 +51,8 @@ export class LoginComponent {
           console.log(error)
         }
 
-        const emptyMap = new Map();
-        const stringified = JSON.stringify(emptyMap);
-        this.permissionService.setPermissions(emptyMap);
+        this.permissionService.setPermissions(new Map());
 
-        localStorage.setItem('permissions', stringified);
         if (error.error.status === "ALGD-400") {
           this.toastService.show(error.error.message, 'error');
         } else if (error.error.status === "ALGD-403") {
