@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { StaffService } from '../../../services/staff.service';
 import { environment } from '../../../../environments/environment';
 import { ToastService } from '../../../services/toast.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ConfirmDeleteComponent } from './confirm-delete/confirm-delete.component';
 
 @Component({
   selector: 'app-staff',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ConfirmDeleteComponent],
   templateUrl: './staff.component.html',
   styleUrl: './staff.component.css'
 })
@@ -17,6 +18,13 @@ export class StaffComponent {
   pageNumber: number = 0;
   page?: any = {};
   staff: any;
+
+  confirmDeleteDisplay: boolean = false;
+
+  @Input() staffId!: number;
+  // @Input() staffId!: number;
+  @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();
+
 
   constructor(private staffService: StaffService, private toastService: ToastService) { }
 
@@ -91,5 +99,19 @@ export class StaffComponent {
 
     console.log(`Navigated to page ${newPage + 1}`);
   }
+
+  toggleConfirmDeleteJv(): void {
+    if (this.confirmDeleteDisplay) {
+      document.body.classList.add('body-no-scroll');
+    } else {
+      document.body.classList.remove('body-no-scroll');
+    }
+    this.confirmDeleteDisplay = !this.confirmDeleteDisplay;
+  }
+
+  showToast(message: string, status: 'success' | 'error') {
+    this.toastService.show(message, status);
+  }
+
 
 }

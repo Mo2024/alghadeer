@@ -1,0 +1,35 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card border-dark custom-radius">
+                    <div
+                        class="card-header d-flex justify-content-between  align-items-center bg-ahlulbayt-green custom-radius">
+                        تأكيد الحذف
+                        <button type="button" class="btn-close" aria-label="Close"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="mb-4 text-center">
+                            <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3"></i> <!-- Warning icon -->
+                            <h5 class="text-danger">هل أنت متأكد؟</h5>
+                            <p class="mb-0">سيتم حذف بيانات الموظف ولن يمكن استرجاعها.</p>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-3">
+                            <button type="button" class="btn btn-danger px-4" (click)="deleteJv()">
+                                <i class="bi bi-trash-fill me-2"></i>حذف
+                            </button>
+                            <button type="button" class="btn bg-ahlulbayt-green px-4" (click)="emitCloseClicked()">
+                                إلغاء
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -26,8 +26,8 @@
                                 <td><a class="text-body">{{ staffObj.name }}</a></td>
                                 <td><a class="text-body">{{ getRoleLabel(staffObj.permissions[0].permission) }}</a></td>
                                 <td>
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="حذف"
-                                        class="px-2 text-danger">
+                                    <a (click)="toggleConfirmDeleteJv()" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="حذف" class="px-2 text-danger">
                                         <i class="bx bx-trash-alt font-size-18"></i>
                                     </a>
                                 </td>
@@ -81,3 +81,6 @@
 
 
 </div>
+
+<app-confirm-delete *ngIf="confirmDeleteDisplay" [closeClicked]="closeClicked" [staffId]="staffId"
+    (closeClickedDelete)="toggleConfirmDeleteJv()"></app-confirm-delete>
