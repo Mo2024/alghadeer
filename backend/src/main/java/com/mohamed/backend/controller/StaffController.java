@@ -1,5 +1,6 @@
 package com.mohamed.backend.controller;
 
+import com.mohamed.backend.dto.ArchiveDto;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.StaffView;
@@ -111,9 +112,9 @@ public class StaffController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> archiveStaff(@RequestBody Staff staff){
+    public ResponseEntity<?> archiveStaff(@RequestBody ArchiveDto archiveDto){
         try {
-            Response response = staffService.archiveStaff(staff);
+            Page<StaffView> response = staffService.archiveStaff(archiveDto);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

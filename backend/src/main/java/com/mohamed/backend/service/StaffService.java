@@ -1,7 +1,6 @@
 package com.mohamed.backend.service;
 
-import com.mohamed.backend.dto.Login;
-import com.mohamed.backend.dto.StaffView;
+import com.mohamed.backend.dto.*;
 import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.StaffPermission;
 import com.mohamed.backend.security.StaffDetails;
@@ -9,8 +8,6 @@ import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.RandomNumberGenerator;
 import com.mohamed.backend.utils.SimpleEmail;
 import com.mohamed.backend.utils.ValidationUtils;
-import com.mohamed.backend.dto.ChangeEmail;
-import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.user.Staff;
@@ -21,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -204,21 +202,27 @@ public class StaffService {
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Response archiveStaff(Staff staff){
+    public Page<StaffView> archiveStaff(ArchiveDto archiveDto){
         log.info("executing method [StaffService].[archiveStaff]");
 
-        log.info("Request parameter:\n{}", staff);
-        Staff staffObj = staffRepository.findByIdAndArchived(staff.getId(),false)
+        log.info("Request parameter:\n{}", archiveDto);
+        Staff staffObj = staffRepository.findByIdAndArchived(archiveDto.getStaff().getId(),false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
+        if (staffObj.getId().equals(getStaffId())){
+            log.error("Staff tried to archive himself");
+            throw new HandledRejection("لا يمكنك أرشفة نفسك");
+        }
+
         staffObj.setArchived(true);
         staffRepository.save(staffObj);
 
         log.info("[StaffService].[archiveStaff] executed successfully");
-        return new Response("تم أرشفة الموظف بنجاح");
+        Pageable pageable = PageRequest.of(archiveDto.getPage(), archiveDto.getSize());
+        return getStaff(pageable);
     }
 
 }
