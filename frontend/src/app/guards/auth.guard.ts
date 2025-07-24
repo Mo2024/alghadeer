@@ -64,7 +64,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
       permissionService.setPermissions(new Map());
 
-      if (!['/staff/login', '/login'].includes(state.url)) {
+      if (!['/staff/login', '/login'].includes(state.url) && accessControlled) {
         if (state.url.includes('/staff/')) {
           router.navigate(['/staff/login']);
         } else {
