@@ -32,8 +32,4 @@ export class StudentService {
     return this.http.post(`${this.url}/register`, body, { withCredentials: true });
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.url}/logout`, {}, { withCredentials: true });
-  }
-
 }

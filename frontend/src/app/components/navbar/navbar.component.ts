@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { StudentService } from '../../services/student.service';
 import { PermissionsService } from '../../services/permissions.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -19,7 +20,7 @@ export class NavbarComponent {
   permissions = new Map<string, boolean>();
   private subscription!: Subscription;
 
-  constructor(public toastService: ToastService, public permissionsService: PermissionsService, public router: Router, private studentService: StudentService) { }
+  constructor(public toastService: ToastService, public permissionsService: PermissionsService, public router: Router, private authService: AuthService) { }
 
   ngOnInit() {
     if (!environment.production) {
@@ -50,7 +51,7 @@ export class NavbarComponent {
 
 
   logout() {
-    this.studentService.logout().subscribe({
+    this.authService.logout().subscribe({
       next: (res) => {
         if (res) {
           this.permissionsService.setPermissions(new Map());
