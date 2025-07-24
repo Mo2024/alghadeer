@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
 export class StaffComponent {
 
   pageNumber: number = 0;
-  page: any;
+  page?: any = {};
   staff: any;
 
   constructor(private staffService: StaffService, private toastService: ToastService) { }
@@ -24,6 +24,16 @@ export class StaffComponent {
   ngOnInit() {
     this.getStaff(this.pageNumber);
   }
+
+  getRoleLabel(permission: any): string {
+    switch (permission) {
+      case 'ADMIN': return 'مدير';
+      case 'SUPERVISOR': return 'مشرف';
+      case 'TEACHER': return 'معلم';
+      default: return 'غير معروف';
+    }
+  }
+
 
   getStaff(pageNumber: number) {
     this.staffService.getStaff(pageNumber).subscribe({

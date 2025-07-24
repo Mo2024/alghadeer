@@ -16,16 +16,18 @@
                             <tr>
                                 <th scope="col" class="ps-4" style="width: 50px;">الرقم</th>
                                 <th scope="col">الاسم</th>
+                                <th scope="col">الصلاحية</th>
                                 <th scope="col" style="width: 100px;">حذف</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let staffObj of staff">
                                 <td class="ps-4">{{ staffObj.id }}</td>
-                                <td><a href="#" class="text-body">{{ staffObj.name }}</a></td>
+                                <td><a class="text-body">{{ staffObj.name }}</a></td>
+                                <td><a class="text-body">{{ getRoleLabel(staffObj.permissions[0].permission) }}</a></td>
                                 <td>
-                                    <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="حذف" class="px-2 text-danger">
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="حذف"
+                                        class="px-2 text-danger">
                                         <i class="bx bx-trash-alt font-size-18"></i>
                                     </a>
                                 </td>
