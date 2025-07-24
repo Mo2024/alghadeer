@@ -19,6 +19,8 @@ export const authGuard: CanActivateFn = (route, state) => {
           if (!environment.production) {
             console.log(res);
           }
+          permissionService.setPermissions(res);
+
           const permissionsMap = res as { [key: string]: boolean };
           if (allowedRole === 'INSTRUCTOR' && (permissionsMap['INSTRUCTOR'] || permissionsMap['SUPERVISOR'] || permissionsMap['ADMIN'])) {
             return true;
@@ -29,8 +31,6 @@ export const authGuard: CanActivateFn = (route, state) => {
           } else if (allowedRole === 'STUDENT' && permissionsMap['STUDENT']) {
             return true;
           }
-
-          permissionService.setPermissions(res);
 
           router.navigate(['/unauthorized']);
           return false;

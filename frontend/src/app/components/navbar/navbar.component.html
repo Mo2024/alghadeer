@@ -19,10 +19,23 @@
                             aria-expanded="false">
                             المواضيع
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
                             <li><a class="dropdown-item" routerLink="/staff/instructor/main-topic">المواضيع الرئيسية</a>
                             </li>
                             <li><a class="dropdown-item" routerLink="/staff/instructor/sub-topic">المواضيع الفرعية</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN')">
+                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            المدير
+                        </a>
+                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
+                            <li><a class="dropdown-item" routerLink="/staff/admin/staff">الطاقم</a>
+                            </li>
+                            <li><a class="dropdown-item" routerLink="/staff/admin/semesters">الفصول</a>
                             </li>
                         </ul>
                     </li>
