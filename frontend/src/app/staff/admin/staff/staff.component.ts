@@ -1,0 +1,85 @@
+import { Component } from '@angular/core';
+import { StaffService } from '../../../services/staff.service';
+import { environment } from '../../../../environments/environment';
+import { ToastService } from '../../../services/toast.service';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+@Component({
+  selector: 'app-staff',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './staff.component.html',
+  styleUrl: './staff.component.css'
+})
+export class StaffComponent {
+
+  pageNumber: number = 0;
+  page: any;
+  staff: any;
+
+  constructor(private staffService: StaffService, private toastService: ToastService) { }
+
+
+  ngOnInit() {
+    this.getStaff(this.pageNumber);
+  }
+
+  getStaff(pageNumber: number) {
+    this.staffService.getStaff(pageNumber).subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+        if (res) {
+          this.page = res;
+          this.staff = res.content
+        }
+
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
+  }
+
+  toArabicNumeral(num: number): string {
+    const easternArabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return num
+      .toString()
+      .split('')
+      .map(digit => easternArabicNumerals[+digit])
+      .join('');
+  }
+
+  goToPage(newPage: number) {
+    // Check bounds
+    if (newPage < 0 || newPage >= this.page.totalPages) {
+      return; // Ignore invalid page numbers
+    }
+
+    this.page.number = newPage;
+    this.page.first = newPage === 0;
+    this.page.last = newPage === this.page.totalPages - 1;
+
+    this.getStaff(newPage);
+
+    // Here you should load data for the new page, e.g.:
+    // this.loadPageData(newPage);
+
+    console.log(`Navigated to page ${newPage + 1}`);
+  }
+
+}

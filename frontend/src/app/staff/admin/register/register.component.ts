@@ -46,11 +46,7 @@ export class RegisterComponent {
         if (!environment.production) {
           console.log(res)
         }
-
-        this.email = '';
-        this.name = '';
-        this.role = '';
-
+        this.router.navigate(['/staff/admin/staff']);
         this.toastService.show('تم تسجيل الطاقم بنجاح', 'success');
       },
       error: (error) => {

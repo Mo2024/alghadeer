@@ -6,13 +6,21 @@ import { RegisterComponent as StudentRegisterComponent } from './students/regist
 import { StudentComponent } from './students/student/student.component';
 import { authGuard } from './guards/auth.guard';
 import { MainPageComponent } from './main-page/main-page.component';
+import { StaffComponent } from './staff/admin/staff/staff.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
+
     { path: 'staff/login', component: LoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
     {
         path: 'staff/admin/register',
         component: RegisterComponent,
+        canActivate: [authGuard],
+        data: { role: 'ADMIN', accessControlled: true }
+    },
+    {
+        path: 'staff/admin/staff',
+        component: StaffComponent,
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },

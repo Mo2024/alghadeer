@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -9,6 +9,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class StaffService {
 
   private apiUrl = environment.apiUrl;
+  private pageSize = environment.pageSize;
 
   url = `${this.apiUrl}/api/staff`;
 
@@ -28,6 +29,10 @@ export class StaffService {
 
   login(body: any): Observable<any> {
     return this.http.post(`${this.url}/login`, body, { withCredentials: true });
+  }
+
+  getStaff(page: number): Observable<any> {
+    return this.http.get(`${this.url}/admin/get-staff?page=${page}&size=${this.pageSize}`, { withCredentials: true });
   }
 
   register(body: any): Observable<any> {
