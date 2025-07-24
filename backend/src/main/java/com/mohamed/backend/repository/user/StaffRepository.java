@@ -1,18 +1,23 @@
 package com.mohamed.backend.repository.user;
 
+import com.mohamed.backend.dto.StaffView;
 import com.mohamed.backend.model.user.Staff;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
+
 
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
     boolean existsByEmail(String email);
     Optional<Staff> findByEmailAndArchived(String email, Boolean isArchived);
     Optional<Staff> findByIdAndArchived(Integer id, Boolean isArchived);
+
+    Page<StaffView> findAllByArchivedFalse(Pageable pageable);
 
 
     @Query(value = """

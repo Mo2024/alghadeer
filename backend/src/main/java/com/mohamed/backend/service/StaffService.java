@@ -1,6 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Login;
+import com.mohamed.backend.dto.StaffView;
 import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.StaffPermission;
 import com.mohamed.backend.security.StaffDetails;
@@ -51,8 +52,9 @@ public class StaffService {
         return staffDetails.getId();
     }
 
-    public Page<Staff> getStaff(Pageable pageable){
-        return staffRepository.findAll(pageable);
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
+    public Page<StaffView> getStaff(Pageable pageable){
+        return staffRepository.findAllByArchivedFalse(pageable);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
