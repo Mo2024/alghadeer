@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToastService } from '../../services/toast.service';
-import { ToastComponent } from '../../components/toast/toast.component';
-import { StaffService } from '../../services/staff.service';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { PermissionsService } from '../../services/permissions.service';
-
+import { PermissionsService } from '../../services/auth/permissions.service';
+import { ToastService } from '../../services/toast.service';
+import { StaffService } from '../../services/user/staff.service';
+import { environment } from '../../../environments/environment.development';
 @Component({
   selector: 'app-login',
   standalone: true,

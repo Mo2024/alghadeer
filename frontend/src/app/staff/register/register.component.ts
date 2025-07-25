@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { PermissionsService } from '../../../services/permissions.service';
-import { ToastService } from '../../../services/toast.service';
-import { StaffService } from '../../../services/staff.service';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { ToastService } from '../../services/toast.service';
+import { StaffService } from '../../services/user/staff.service';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-register',
   standalone: true,

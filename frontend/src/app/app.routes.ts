@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './staff/login/login.component';
 import { LoginComponent as StudentLoginComponent } from './students/login/login.component';
-import { RegisterComponent } from './staff/admin/register/register.component';
-import { RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
+import { RegisterComponent, RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
 import { StudentComponent } from './students/student/student.component';
 import { authGuard } from './guards/auth.guard';
 import { MainPageComponent } from './main-page/main-page.component';

@@ -2,8 +2,9 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { PermissionsService } from '../services/permissions.service';
-import { AuthService } from '../services/auth.service';
+import { PermissionsService } from '../services/auth/permissions.service';
+import { AuthService } from '../services/auth/auth.service';
+
 
 export const authGuard: CanActivateFn = (route, state) => {
   const allowedRole: string = route.data['role'];

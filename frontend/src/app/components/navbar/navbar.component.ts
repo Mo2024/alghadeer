@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { StudentService } from '../../services/student.service';
-import { PermissionsService } from '../../services/permissions.service';
+import { StudentService } from '../../services/user/student.service';
+import { PermissionsService } from '../../services/auth/permissions.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',

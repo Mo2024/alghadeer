@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { StaffService } from '../../../../services/staff.service';
+import { StaffService } from '../../../../services/user/staff.service';
 
 @Component({
   selector: 'app-confirm-delete',

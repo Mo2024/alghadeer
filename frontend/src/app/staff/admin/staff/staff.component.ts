@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { StaffService } from '../../../services/staff.service';
+import { StaffService } from '../../../services/user/staff.service';
 import { environment } from '../../../../environments/environment';
 import { ToastService } from '../../../services/toast.service';
 import { CommonModule } from '@angular/common';

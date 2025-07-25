@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
-import { StudentService } from '../../services/student.service';
+import { StudentService } from '../../services/user/student.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PermissionsService } from '../../services/permissions.service';
+import { PermissionsService } from '../../services/auth/permissions.service';
 
 @Component({
   selector: 'app-register',

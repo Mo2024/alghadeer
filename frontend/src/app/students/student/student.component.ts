@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SemesterService } from '../../services/semester.service';
+import { SemesterService } from '../../services/semester/semester.service';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../services/toast.service';
 import { CommonModule } from '@angular/common';
