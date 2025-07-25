@@ -15,14 +15,13 @@ import { ConfirmDeleteComponent } from './confirm-delete/confirm-delete.componen
 })
 export class StaffComponent {
 
-  pageNumber: number = 0;
-  page?: any = {};
+  @Input() staffId!: number;
+  @Input() pageNumber: number = 0;
+  @Input() page: any = {};
   staff: any;
-
   confirmDeleteDisplay: boolean = false;
 
-  @Input() staffId!: number;
-  // @Input() staffId!: number;
+
   @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();
 
 
@@ -100,17 +99,27 @@ export class StaffComponent {
     console.log(`Navigated to page ${newPage + 1}`);
   }
 
-  toggleConfirmDeleteJv(): void {
+  toggleConfirmDeleteStaff(staffId: number): void {
+    this.staffId = staffId;
+    this.pageNumber = this.page.number;
+
     if (this.confirmDeleteDisplay) {
-      document.body.classList.add('body-no-scroll');
-    } else {
       document.body.classList.remove('body-no-scroll');
+    } else {
+      document.body.classList.add('body-no-scroll');
     }
+
     this.confirmDeleteDisplay = !this.confirmDeleteDisplay;
   }
 
-  showToast(message: string, status: 'success' | 'error') {
+
+  showToast = (message: string, status: 'success' | 'error') => {
     this.toastService.show(message, status);
+  };
+
+  handlePageChange(page: any) {
+    this.page = page ?? {}
+    this.staff = page.content
   }
 
 

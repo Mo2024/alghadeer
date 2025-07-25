@@ -24,9 +24,10 @@
                             <tr *ngFor="let staffObj of staff">
                                 <td class="ps-4">{{ staffObj.id }}</td>
                                 <td><a class="text-body">{{ staffObj.name }}</a></td>
-                                <td><a class="text-body">{{ getRoleLabel(staffObj.permissions[0].permission) }}</a></td>
+                                <td><a class="text-body">{{ getRoleLabel(staffObj.permissions[0]?.permission) }}</a>
+                                </td>
                                 <td>
-                                    <a (click)="toggleConfirmDeleteJv()" data-bs-toggle="tooltip"
+                                    <a (click)="toggleConfirmDeleteStaff(staffObj.id)" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="حذف" class="px-2 text-danger">
                                         <i class="bx bx-trash-alt font-size-18"></i>
                                     </a>
@@ -82,5 +83,6 @@
 
 </div>
 
-<app-confirm-delete *ngIf="confirmDeleteDisplay" [closeClicked]="closeClicked" [staffId]="staffId"
-    (closeClickedDelete)="toggleConfirmDeleteJv()"></app-confirm-delete>
+<app-confirm-delete *ngIf="confirmDeleteDisplay" [showToast]="showToast" [closeClicked]="closeClicked"
+    [staffId]="staffId" [pageNumber]="pageNumber" (closeClickedDelete)="toggleConfirmDeleteStaff(staffId)"
+    (page)="handlePageChange($event)"></app-confirm-delete>

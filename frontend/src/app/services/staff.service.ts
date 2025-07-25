@@ -40,6 +40,6 @@ export class StaffService {
   }
 
   archive(body: any): Observable<any> {
-    return this.http.post(`${this.url}/admin/archive`, body, { withCredentials: true });
+    return this.http.put(`${this.url}/admin/archive`, body, { withCredentials: true });
   }
 }
