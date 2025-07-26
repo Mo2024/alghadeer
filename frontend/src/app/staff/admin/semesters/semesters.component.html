@@ -1,1 +1,99 @@
-<p>semesters works!</p>
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-end mb-3">
+            <button type="button" class="btn btn-primary" [routerLink]="['/staff/admin/semesters/create']">
+                <i class="bx bx-plus me-1"></i> إضافة الطاقم
+            </button>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="">
+                <div class="table-responsive">
+                    <table class="table project-list-table table-nowrap align-middle table-borderless">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="ps-4" style="width: 50px;">الرقم</th>
+                                <th scope="col">الاسم</th>
+                                <th scope="col">الفصل</th>
+                                <th scope="col">تاريخ البدء</th>
+                                <th scope="col">تاريخ الانتهاء</th>
+                                <th scope="col" style="width: 100px;">إغلاق</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let semester of semesters">
+                                <td class="ps-4">{{ semester.id }}</td>
+                                <td>{{ semester.name }}</td>
+                                <td>{{ getSemesterLabel(semester.semester) }}</td>
+                                <td>{{ semester.startDate | date:'yyyy-MM-dd' }}</td>
+                                <td>{{ semester.endDate | date:'yyyy-MM-dd' }}</td>
+                                <td>
+                                    <a *ngIf="semester.active; else disabledClose"
+                                        (click)="toggleConfirmCloseSemester(semester.id)" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="إغلاق" class="px-2 text-danger">
+                                        <i class="bx bx-x-circle" style="font-size: 24px;"></i>
+                                    </a>
+
+                                    <ng-template #disabledClose>
+                                        <span class="px-2 text-secondary"
+                                            style="cursor: not-allowed; filter: grayscale(100%);">
+                                            <i class="bx bx-x-circle font-size-18"></i>
+                                        </span>
+                                    </ng-template>
+                                </td>
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-0 align-items-center pb-4" dir="ltr">
+        <div class="col-12 text-center">
+            <ul class="pagination justify-content-center mb-0 flex-row">
+
+                <!-- Previous Button -->
+                <li class="page-item" [class.disabled]="page.first">
+                    <a class="page-link" (click)="goToPage(page.number - 1)" *ngIf="!page.first">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </a>
+                    <span class="page-link" *ngIf="page.first">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </span>
+                </li>
+
+                <!-- Page Numbers (RTL - highest to lowest) -->
+                <ng-container *ngFor="let p of [].constructor(page.totalPages); let i = index">
+                    <li class="page-item" [class.active]="(page.totalPages - 1 - i) === page.number">
+                        <a class="page-link" (click)="goToPage(page.totalPages - 1 - i)">
+                            {{ toArabicNumeral(page.totalPages - i) }}
+                        </a>
+                    </li>
+                </ng-container>
+
+                <!-- Next Button -->
+                <li class="page-item" [class.disabled]="page.last">
+                    <a class="page-link" (click)="goToPage(page.number + 1)" *ngIf="!page.last">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </a>
+                    <span class="page-link" *ngIf="page.last">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </span>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+
+
+</div>
+
+<app-confirm-close *ngIf="confirmCloseDisplay" [showToast]="showToast" [closeClicked]="closeClicked"
+    [semesterId]="semesterId" [pageNumber]="pageNumber" (closeClickedClose)="toggleConfirmCloseSemester(semesterId)"
+    (page)="handlePageChange($event)"></app-confirm-close>
