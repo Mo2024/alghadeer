@@ -2,7 +2,7 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
-import com.mohamed.backend.dto.StaffView;
+import com.mohamed.backend.dto.SemesterView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.enums.Grade;
@@ -49,8 +49,8 @@ public class SemesterService {
     private ClassService classService;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public Page<Semester> getSemesters(Pageable pageable){
-        return semesterRepository.findAll(pageable);
+    public Page<SemesterView> getSemesters(Pageable pageable){
+        return semesterRepository.findAllByOrderByIdDesc(pageable);
     }
 
 
@@ -191,7 +191,7 @@ public class SemesterService {
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Response closeActiveSemester() {
+    public Page<SemesterView> closeActiveSemester(Pageable pageable) {
         log.info("executing method [SemesterService].[closeActiveSemester]");
 
         Semester semester = semesterRepository.findByActive(true)
@@ -208,7 +208,7 @@ public class SemesterService {
         log.info("Semester ID={} closed successfully", semester.getId());
 
         log.info("[SemesterService].[closeActiveSemester] executed successfully");
-        return new Response("تم إغلاق الفصل الدراسي بنجاح");
+        return semesterRepository.findAllByOrderByIdDesc(pageable);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")

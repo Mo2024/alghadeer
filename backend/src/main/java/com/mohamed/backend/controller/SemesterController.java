@@ -2,6 +2,7 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
+import com.mohamed.backend.dto.SemesterView;
 import com.mohamed.backend.dto.StaffView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.enums.Grade;
@@ -83,9 +84,10 @@ public class SemesterController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> closeActiveSemester() {
+    public ResponseEntity<?> closeActiveSemester(@RequestParam int page, @RequestParam int size) {
         try {
-            Response response = semesterService.closeActiveSemester();
+            Pageable pageable = PageRequest.of(page, size);
+            Page<SemesterView> response = semesterService.closeActiveSemester(pageable);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -182,7 +184,7 @@ public class SemesterController {
     public ResponseEntity<?> getSemesters(@RequestParam int page, @RequestParam int size){
         try {
             Pageable pageable = PageRequest.of(page, size);
-            Page<Semester> response = semesterService.getSemesters(pageable);
+            Page<SemesterView> response = semesterService.getSemesters(pageable);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

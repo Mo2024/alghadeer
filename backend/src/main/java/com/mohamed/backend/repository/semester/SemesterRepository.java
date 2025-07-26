@@ -1,7 +1,10 @@
 package com.mohamed.backend.repository.semester;
 
+import com.mohamed.backend.dto.SemesterView;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.enums.SemesterList;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +17,8 @@ import java.util.Optional;
 public interface SemesterRepository extends JpaRepository<Semester, Integer> {
     @Query("SELECT COUNT(s) > 0 FROM Semester s WHERE YEAR(s.startDate) = :year AND s.semester = :semester")
     boolean existsByYearAndSemester(@Param("year") Integer year, @Param("semester") SemesterList semester);
+
+    Page<SemesterView> findAllByOrderByIdDesc(Pageable pageable);
 
     @Query("""
     SELECT COUNT(s) > 0
