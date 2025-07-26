@@ -1,12 +1,14 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './staff/login/login.component';
 import { LoginComponent as StudentLoginComponent } from './students/login/login.component';
-import { RegisterComponent, RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
+import { RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
+import { RegisterComponent as StaffRegisterComponent } from './staff/admin/staff/register/register.component';
 import { StudentComponent } from './students/student/student.component';
 import { authGuard } from './guards/auth.guard';
 import { MainPageComponent } from './main-page/main-page.component';
 import { StaffComponent } from './staff/admin/staff/staff.component';
 import { SemestersComponent } from './staff/admin/semesters/semesters.component';
+import { CreateComponent } from './staff/admin/semesters/create/create.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
@@ -14,7 +16,7 @@ export const routes: Routes = [
     { path: 'staff/login', component: LoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
     {
         path: 'staff/admin/register',
-        component: RegisterComponent,
+        component: StaffRegisterComponent,
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },
@@ -27,6 +29,12 @@ export const routes: Routes = [
     {
         path: 'staff/admin/semesters',
         component: SemestersComponent,
+        canActivate: [authGuard],
+        data: { role: 'ADMIN', accessControlled: true }
+    },
+    {
+        path: 'staff/admin/semesters/create',
+        component: CreateComponent,
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },
