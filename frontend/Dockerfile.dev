@@ -1,0 +1,11 @@
+FROM node:20
+
+# Set working directory in the container
+WORKDIR /app
+
+# Install Angular CLI globally
+RUN npm install -g @angular/cli@17
+
+# Default command to run when container starts
+CMD ["bash", "-c", "npm install && ng serve --host 0.0.0.0 --poll=2000"]
+
