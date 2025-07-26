@@ -2,6 +2,7 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
+import com.mohamed.backend.dto.StaffView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.enums.Grade;
@@ -17,6 +18,8 @@ import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,12 @@ public class SemesterService {
 
     @Autowired
     private ClassService classService;
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
+    public Page<Semester> getSemesters(Pageable pageable){
+        return semesterRepository.findAll(pageable);
+    }
+
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
