@@ -132,12 +132,13 @@ public class StudentService {
 
         log.info("New student saved with ID:\n{}", newStudent.getId());
 
+        StudentDetails studentDetails = new StudentDetails(newStudent);
+
         Map<String, Boolean> permissionBooleanMap = new HashMap<>();
         permissionBooleanMap.put("STUDENT", true);
         newStudent.setPermissionBooleanMap(permissionBooleanMap);
 
-        StudentDetails studentDetails = new StudentDetails(newStudent);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, Collections.emptyList());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(studentDetails, null, studentDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
