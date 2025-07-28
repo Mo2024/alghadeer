@@ -100,25 +100,24 @@
                                         </div>
 
                                         <label class="mb-2 fw-semibold">موعد الحصة</label>
-                                        <div *ngFor="let schedule of class.classSchedules; let j = index;"
-                                            class="row align-items-end mb-3">
+                                        <div class="row align-items-end mb-3">
 
                                             <div class="col-3">
                                                 <label class="form-label">من</label>
-                                                <input [(ngModel)]="class.classSchedules[j].startTime" type="time"
-                                                    name="startTime{{j}}" class="form-control" />
+                                                <input [(ngModel)]="startTimeInput[i]" type="time" name="startTime{{i}}"
+                                                    class="form-control" />
                                             </div>
 
                                             <div class="col-3">
                                                 <label class="form-label">إلى</label>
-                                                <input [(ngModel)]="class.classSchedules[j].endTime" type="time"
-                                                    name="endTime{{j}}" class="form-control" />
+                                                <input [(ngModel)]="endTimeInput[i]" type="time" name="endTime{{i}}"
+                                                    class="form-control" />
                                             </div>
 
                                             <div class="col-4">
                                                 <label class="form-label">اليوم</label>
-                                                <select [(ngModel)]="class.classSchedules[j].dayOfWeek"
-                                                    name="dayOfWeek{{j}}" class="form-select">
+                                                <select [(ngModel)]="dayOfWeekInput[i]" name="dayOfWeek{{i}}"
+                                                    class="form-select">
                                                     <option [value]="">اختر اليوم</option>
                                                     <option value="SUNDAY">الأحد</option>
                                                     <option value="MONDAY">الإثنين</option>
@@ -131,14 +130,31 @@
                                             </div>
 
                                             <div class="col-auto d-flex align-items-end pb-2">
-                                                <i *ngIf="j === 0" class="bx bx-plus text-success me-3"
+                                                <i class="bx bx-plus text-success me-3"
                                                     style="font-size: 1.5rem; cursor: pointer;"
                                                     (click)="addClassSchedule(i)"></i>
-
-                                                <i *ngIf="j > 0" class="bx bx-minus text-danger me-3"
-                                                    style="font-size: 1.5rem; cursor: pointer;"
-                                                    (click)="deleteClassSchedule(i, j)"></i>
                                             </div>
+
+                                            <label class="form-label fw-semibold mt-3">المواعيد المضافة</label>
+                                            <ul class="list-group" style="padding-right: 0; margin-right: 0;" dir="rtl">
+                                                <ng-container
+                                                    *ngIf="!(class.classSchedules.length === 1 && class.classSchedules[0].dayOfWeek === '' && class.classSchedules[0].startTime === '' && class.classSchedules[0].endTime === '')">
+                                                    <li *ngFor="let schedule of class.classSchedules; let j = index"
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <strong>{{ getDayLabel(schedule.dayOfWeek) }}</strong>
+                                                            <span class="text-muted me-2">
+                                                                ({{ convertToArabicTime(schedule.startTime) }} -
+                                                                {{ convertToArabicTime(schedule.endTime) }})
+                                                            </span>
+                                                        </div>
+                                                        <i (click)="deleteClassSchedule(i, j)"
+                                                            class="bx bx-minus text-danger"
+                                                            style="font-size: 1.5rem; cursor: pointer;"></i>
+                                                    </li>
+                                                </ng-container>
+                                            </ul>
+
 
                                         </div>
 

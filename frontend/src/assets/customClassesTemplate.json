@@ -5,13 +5,7 @@
             "staff": {
                 "id": ""
             },
-            "classSchedules": [
-                {
-                    "dayOfWeek": "",
-                    "startTime": "",
-                    "endTime": ""
-                }
-            ],
+            "classSchedules": [],
             "gradeClassAssignments": []
         }
     ]

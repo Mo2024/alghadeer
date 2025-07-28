@@ -25,6 +25,9 @@ export class CreateComponent {
   isDefaultClasses: boolean = false;
   staffList: any;
   selectedGrade: string = ''
+  startTimeInput: any = ['']
+  endTimeInput: any = ['']
+  dayOfWeekInput: any = ['']
 
   name: string = '';
   semester: string = '';
@@ -126,37 +129,58 @@ export class CreateComponent {
 
 
   addClassSchedule(classIndex: number) {
+    if (this.dayOfWeekInput[classIndex] == '' && this.startTimeInput[classIndex] == '' && this.endTimeInput[classIndex] == '') return
     this.renderedClasses[classIndex].classSchedules.push({
-      dayOfWeek: '',
-      startTime: '',
-      endTime: ''
+      dayOfWeek: this.dayOfWeekInput[classIndex],
+      startTime: this.startTimeInput[classIndex],
+      endTime: this.endTimeInput[classIndex]
     });
+    this.dayOfWeekInput[classIndex] = '';
+    this.startTimeInput[classIndex] = '';
+    this.endTimeInput[classIndex] = '';
+
+    console.log(this.renderedClasses)
+    console.log(this.startTimeInput)
+    console.log(this.endTimeInput)
+    console.log(this.dayOfWeekInput)
   }
 
 
   deleteClassSchedule(classIndex: number, scheduleIndex: number) {
     this.renderedClasses[classIndex].classSchedules.splice(scheduleIndex, 1);
+    console.log(this.renderedClasses)
+    console.log(this.startTimeInput)
+    console.log(this.endTimeInput)
+    console.log(this.dayOfWeekInput)
   }
 
   addExtraClass() {
+    this.dayOfWeekInput.push('');
+    this.startTimeInput.push('');
+    this.endTimeInput.push('');
     this.renderedClasses.push({
       name: "اسم الصف",
       staff: {
         id: ""
       },
-      classSchedules: [
-        {
-          dayOfWeek: "",
-          startTime: "",
-          endTime: ""
-        }
-      ],
+      classSchedules: [],
       gradeClassAssignments: []
     })
+    console.log(this.renderedClasses)
+    console.log(this.startTimeInput)
+    console.log(this.endTimeInput)
+    console.log(this.dayOfWeekInput)
   }
 
   deleteClass(classIndex: number) {
+    this.endTimeInput.splice(classIndex, 1);
+    this.dayOfWeekInput.splice(classIndex, 1);
+    this.startTimeInput.splice(classIndex, 1);
     this.renderedClasses.splice(classIndex, 1);
+    console.log(this.renderedClasses)
+    console.log(this.startTimeInput)
+    console.log(this.endTimeInput)
+    console.log(this.dayOfWeekInput)
   }
 
   addGradeToClass(classIndex: number, grade: string) {
@@ -194,9 +218,36 @@ export class CreateComponent {
       case 'TWELFTH': return 'الصف الثالث الثانوي';
       default: return 'صف غير معروف';
     }
+
   }
 
+  getDayLabel(day: string): string {
+    switch (day) {
+      case 'SUNDAY': return 'الأحد';
+      case 'MONDAY': return 'الاثنين';
+      case 'TUESDAY': return 'الثلاثاء';
+      case 'WEDNESDAY': return 'الأربعاء';
+      case 'THURSDAY': return 'الخميس';
+      case 'FRIDAY': return 'الجمعة';
+      case 'SATURDAY': return 'السبت';
+      default: return 'يوم غير معروف';
+    }
+  }
 
+  convertToArabicTime(time: string): string {
+    if (!time) return '';
+    const [hourStr, minute] = time.split(':');
+    let hour = parseInt(hourStr, 10);
+    const isPM = hour >= 12;
+    const period = isPM ? 'م' : 'ص';
+    hour = hour % 12 || 12;
+    const formattedTime = `${hour}:${minute} ${period}`;
+    return this.toArabicNumerals(formattedTime);
+  }
+
+  toArabicNumerals(str: string): string {
+    return str.replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]);
+  }
 
 
 
