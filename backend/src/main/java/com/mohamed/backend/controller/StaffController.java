@@ -1,9 +1,6 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.ArchiveDto;
-import com.mohamed.backend.dto.Login;
-import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.StaffView;
+import com.mohamed.backend.dto.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.Staff;
@@ -25,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -143,11 +141,16 @@ public class StaffController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getStaff(@RequestParam int page, @RequestParam int size){
+    public ResponseEntity<?> getStaff(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size){
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<StaffView> response = staffService.getStaff(pageable);
-            return ResponseEntity.ok().body(response);
+            if (page != null && size != null) {
+                Pageable pageable = PageRequest.of(page, size);
+                Page<StaffView> pagedResponse = staffService.getStaff(pageable);
+                return ResponseEntity.ok().body(pagedResponse);
+            } else {
+                List<StaffListView> allStaff = staffService.getStaff();
+                return ResponseEntity.ok().body(allStaff);
+            }
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()

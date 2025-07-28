@@ -56,6 +56,11 @@ public class StaffService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
+    public List<StaffListView> getStaff(){
+        return staffRepository.findAllByArchivedFalse();
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
     public Response register(Staff staffRequest){
         log.info("executing method [StaffService].[register]");

@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public interface StaffView {
-    Long getId();
+    int getId();
     String getName();
     List<StaffPermission> getPermissions();
 }
