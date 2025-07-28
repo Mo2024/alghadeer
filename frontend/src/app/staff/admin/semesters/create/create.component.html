@@ -104,19 +104,19 @@
 
                                             <div class="col-3">
                                                 <label class="form-label">من</label>
-                                                <input [(ngModel)]="startTimeInput[i]" type="time" name="startTime{{i}}"
-                                                    class="form-control" />
+                                                <input [(ngModel)]="renderedStartTimeInput[i]" type="time"
+                                                    name="startTime{{i}}" class="form-control" />
                                             </div>
 
                                             <div class="col-3">
                                                 <label class="form-label">إلى</label>
-                                                <input [(ngModel)]="endTimeInput[i]" type="time" name="endTime{{i}}"
-                                                    class="form-control" />
+                                                <input [(ngModel)]="renderedEndTimeInput[i]" type="time"
+                                                    name="endTime{{i}}" class="form-control" />
                                             </div>
 
                                             <div class="col-4">
                                                 <label class="form-label">اليوم</label>
-                                                <select [(ngModel)]="dayOfWeekInput[i]" name="dayOfWeek{{i}}"
+                                                <select [(ngModel)]="renderedDayOfWeekInput[i]" name="dayOfWeek{{i}}"
                                                     class="form-select">
                                                     <option [value]="">اختر اليوم</option>
                                                     <option value="SUNDAY">الأحد</option>

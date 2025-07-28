@@ -20,14 +20,24 @@ export class CreateComponent {
 
   defaultClasses: any = defaultClassesTemplate.classes;
   customClasses: any = customClassesTemplate.classes;
+
+  defaultStartTimeInput: any = ['', '', '', '', '', '', '', '', '']
+  defaultEndTimeInput: any = ['', '', '', '', '', '', '', '', '']
+  defaultDayOfWeekInput: any = ['', '', '', '', '', '', '', '', '']
+
+  customStartTimeInput: any = ['']
+  customEndTimeInput: any = ['']
+  customDayOfWeekInput: any = ['']
+
   grades: any = gradesTemplate.grades;
   renderedClasses: any;
+  renderedStartTimeInput: any;
+  renderedEndTimeInput: any;
+  renderedDayOfWeekInput: any;
   isDefaultClasses: boolean = false;
   staffList: any;
   selectedGrade: string = ''
-  startTimeInput: any = ['']
-  endTimeInput: any = ['']
-  dayOfWeekInput: any = ['']
+
 
   name: string = '';
   semester: string = '';
@@ -40,6 +50,9 @@ export class CreateComponent {
 
   ngOnInit() {
     this.renderedClasses = this.isDefaultClasses ? this.defaultClasses : this.customClasses;
+    this.renderedDayOfWeekInput = this.isDefaultClasses ? this.defaultDayOfWeekInput : this.customDayOfWeekInput
+    this.renderedStartTimeInput = this.isDefaultClasses ? this.defaultStartTimeInput : this.customStartTimeInput
+    this.renderedEndTimeInput = this.isDefaultClasses ? this.defaultEndTimeInput : this.customEndTimeInput
 
     this.staffService.getStaffList().subscribe({
       next: async (res) => {
@@ -123,20 +136,24 @@ export class CreateComponent {
 
     this.renderedClasses = checked ? this.defaultClasses : this.customClasses; //In JavaScript/TypeScript, assigning an object or array doesn't copy the data — it copies the reference.
 
+    this.renderedDayOfWeekInput = checked ? this.defaultDayOfWeekInput : this.customDayOfWeekInput
+    this.renderedStartTimeInput = checked ? this.defaultStartTimeInput : this.customStartTimeInput
+    this.renderedEndTimeInput = checked ? this.defaultEndTimeInput : this.customEndTimeInput
+
   }
 
 
 
   addClassSchedule(classIndex: number) {
-    if (this.dayOfWeekInput[classIndex] == '' && this.startTimeInput[classIndex] == '' && this.endTimeInput[classIndex] == '') return
+    if (this.renderedDayOfWeekInput[classIndex] == '' && this.renderedStartTimeInput[classIndex] == '' && this.renderedEndTimeInput[classIndex] == '') return
     this.renderedClasses[classIndex].classSchedules.push({
-      dayOfWeek: this.dayOfWeekInput[classIndex],
-      startTime: this.startTimeInput[classIndex],
-      endTime: this.endTimeInput[classIndex]
+      dayOfWeek: this.renderedDayOfWeekInput[classIndex],
+      startTime: this.renderedStartTimeInput[classIndex],
+      endTime: this.renderedEndTimeInput[classIndex]
     });
-    this.dayOfWeekInput[classIndex] = '';
-    this.startTimeInput[classIndex] = '';
-    this.endTimeInput[classIndex] = '';
+    this.renderedDayOfWeekInput[classIndex] = '';
+    this.renderedStartTimeInput[classIndex] = '';
+    this.renderedEndTimeInput[classIndex] = '';
 
   }
 
@@ -147,9 +164,9 @@ export class CreateComponent {
   }
 
   addExtraClass() {
-    this.dayOfWeekInput.push('');
-    this.startTimeInput.push('');
-    this.endTimeInput.push('');
+    this.renderedDayOfWeekInput.push('');
+    this.renderedStartTimeInput.push('');
+    this.renderedEndTimeInput.push('');
     this.renderedClasses.push({
       name: "اسم الصف",
       staff: {
@@ -162,9 +179,9 @@ export class CreateComponent {
   }
 
   deleteClass(classIndex: number) {
-    this.endTimeInput.splice(classIndex, 1);
-    this.dayOfWeekInput.splice(classIndex, 1);
-    this.startTimeInput.splice(classIndex, 1);
+    this.renderedEndTimeInput.splice(classIndex, 1);
+    this.renderedDayOfWeekInput.splice(classIndex, 1);
+    this.renderedStartTimeInput.splice(classIndex, 1);
     this.renderedClasses.splice(classIndex, 1);
 
   }
