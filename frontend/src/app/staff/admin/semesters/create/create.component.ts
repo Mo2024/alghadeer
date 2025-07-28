@@ -142,10 +142,26 @@ export class CreateComponent {
 
   }
 
+  isStartBeforeOrEqualEnd(startTime: string, endTime: string): boolean {
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+
+    if (startHour < endHour) return true;
+    if (startHour === endHour && startMinute <= endMinute) return true;
+    return false;
+  }
 
 
   addClassSchedule(classIndex: number) {
-    if (this.renderedDayOfWeekInput[classIndex] == '' && this.renderedStartTimeInput[classIndex] == '' && this.renderedEndTimeInput[classIndex] == '') return
+    if (this.renderedDayOfWeekInput[classIndex] == '' && this.renderedStartTimeInput[classIndex] == '' && this.renderedEndTimeInput[classIndex] == '') {
+      this.toastService.show("يرجى التأكد من تعبئة جميع الحقول قبل محاولة الإضافة", 'error');
+      return
+    }
+    if (!this.isStartBeforeOrEqualEnd(this.renderedStartTimeInput[classIndex], this.renderedEndTimeInput[classIndex])) {
+      this.toastService.show("لا يمكن أن يكون وقت البدء بعد وقت الانتهاء", 'error');
+
+      return
+    }
     this.renderedClasses[classIndex].classSchedules.push({
       dayOfWeek: this.renderedDayOfWeekInput[classIndex],
       startTime: this.renderedStartTimeInput[classIndex],
@@ -187,7 +203,10 @@ export class CreateComponent {
   }
 
   addGradeToClass(classIndex: number, grade: string) {
-    if (grade == '') return
+    if (grade == '') {
+      this.toastService.show("يرجى التأكد من تعبئة جميع الحقول قبل محاولة الإضافة", 'error');
+      return
+    }
     this.renderedClasses[classIndex].gradeClassAssignments.push({ grade })
     const index = this.grades.indexOf(grade);
     if (index !== -1) {
@@ -197,7 +216,10 @@ export class CreateComponent {
   }
 
   removeGradeFromClass(classIndex: number, grade: string) {
-    if (grade == '') return
+    if (grade == '') {
+      this.toastService.show("يرجى التأكد من تعبئة جميع الحقول قبل محاولة الإضافة", 'error');
+      return
+    }
     const index = this.renderedClasses[classIndex].gradeClassAssignments.findIndex((g: any) => g.grade === grade);
     if (index !== -1) {
       this.renderedClasses[classIndex].gradeClassAssignments.splice(index, 1);
