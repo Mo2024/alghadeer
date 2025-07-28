@@ -116,7 +116,6 @@ export class CreateComponent {
       }
     })
 
-
   }
 
   onDefaultClassesToggle(event: Event): void {
@@ -139,19 +138,12 @@ export class CreateComponent {
     this.startTimeInput[classIndex] = '';
     this.endTimeInput[classIndex] = '';
 
-    console.log(this.renderedClasses)
-    console.log(this.startTimeInput)
-    console.log(this.endTimeInput)
-    console.log(this.dayOfWeekInput)
   }
 
 
   deleteClassSchedule(classIndex: number, scheduleIndex: number) {
     this.renderedClasses[classIndex].classSchedules.splice(scheduleIndex, 1);
-    console.log(this.renderedClasses)
-    console.log(this.startTimeInput)
-    console.log(this.endTimeInput)
-    console.log(this.dayOfWeekInput)
+
   }
 
   addExtraClass() {
@@ -166,10 +158,7 @@ export class CreateComponent {
       classSchedules: [],
       gradeClassAssignments: []
     })
-    console.log(this.renderedClasses)
-    console.log(this.startTimeInput)
-    console.log(this.endTimeInput)
-    console.log(this.dayOfWeekInput)
+
   }
 
   deleteClass(classIndex: number) {
@@ -177,10 +166,7 @@ export class CreateComponent {
     this.dayOfWeekInput.splice(classIndex, 1);
     this.startTimeInput.splice(classIndex, 1);
     this.renderedClasses.splice(classIndex, 1);
-    console.log(this.renderedClasses)
-    console.log(this.startTimeInput)
-    console.log(this.endTimeInput)
-    console.log(this.dayOfWeekInput)
+
   }
 
   addGradeToClass(classIndex: number, grade: string) {
