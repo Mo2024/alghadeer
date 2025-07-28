@@ -1,0 +1,18 @@
+{
+    "classes": [
+        {
+            "name": "اسم الصف",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        }
+    ]
+}

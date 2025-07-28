@@ -1,1 +1,197 @@
-<p>create works!</p>
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    إنشاء الفصل
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="createSemester()">
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="defaultClassesSwitch"
+                                [(ngModel)]="isDefaultClasses" name="useDefaultClasses"
+                                (change)="onDefaultClassesToggle($event)">
+                            <label class="form-check-label" for="defaultClassesSwitch">
+                                هل تريد استخدام الصفوف الجاهزة؟
+                            </label>
+                        </div>
+
+
+
+                        <div class="form-group mb-1">
+                            <label for="name" class="mb-1">اسم الفصل</label>
+                            <input type="name" [(ngModel)]="name" name="name" class="form-control" id="name"
+                                placeholder="يرجى إدخال اسم الفصل">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="semester" class="form-label">الفصل</label>
+                            <select class="form-select" [(ngModel)]="semester" name="semester">
+                                <option [value]="''">اختر الفصل</option>
+                                <option value="FIRST">الأول</option>
+                                <option value="SECOND">الثاني</option>
+                                <option value="SUMMER">الصيفي</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-1" dir="rtl" style="text-align: right;">
+                            <label for="startDate" class="mb-1">تاريخ البداية</label>
+                            <input type="date" [(ngModel)]="startDate" name="startDate" class="form-control"
+                                id="startDate" dir="rtl" style="text-align: right;"
+                                placeholder="يرجى إدخال تاريخ البداية">
+                        </div>
+
+                        <div class="form-group mb-1" dir="rtl" style="text-align: right;">
+                            <label for="endDate" class="mb-1">تاريخ النهاية</label>
+                            <input type="date" dir="rtl" style="text-align: right;" [(ngModel)]="endDate" name="endDate"
+                                class="form-control" id="endDate" placeholder="يرجى إدخال تاريخ النهاية">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="semester" class="form-label">الصفوف</label>
+
+                            <div *ngFor="let class of renderedClasses; let i = index">
+                                <div class="form-group mb-2" dir="rtl">
+                                    <div class="d-flex align-items-center justify-content-between">
+
+                                        <button
+                                            class="btn btn-light flex-grow-1 d-flex justify-content-between align-items-center border rounded"
+                                            type="button" data-bs-toggle="collapse"
+                                            [attr.data-bs-target]="'#classDetails' + i" aria-expanded="false"
+                                            [attr.aria-controls]="'classDetails' + i"
+                                            style="font-weight: 600; font-size: 1.05rem; color: #333;">
+                                            {{ class.name }}
+                                            <span class="dropdown-toggle"></span>
+                                        </button>
+
+                                        <i *ngIf="i == 0 && !isDefaultClasses" class="bx bx-plus text-success me-2"
+                                            style="font-size: 1.5rem; cursor: pointer;" (click)="addExtraClass()"></i>
+
+                                        <i *ngIf="i > 0 && !isDefaultClasses" class="bx bx-minus text-danger me-2"
+                                            style="font-size: 1.5rem; cursor: pointer;" (click)="deleteClass(i)"></i>
+
+                                    </div>
+                                </div>
+
+
+
+                                <div class="collapse mb-2" [id]="'classDetails' + i" dir="rtl">
+                                    <div class="card card-body border border-secondary rounded shadow-sm"
+                                        style="background-color: #fff;">
+                                        <div class="form-group mb-3">
+                                            <label for="className" class="form-label fw-semibold">اسم الصف</label>
+                                            <input type="text" class="form-control" id="className"
+                                                placeholder="أدخل اسم الصف" [(ngModel)]="renderedClasses[i].name"
+                                                name="className{{i}}">
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="staffSelect" class="form-label fw-semibold">المعلم
+                                                المسؤول</label>
+                                            <select class="form-select" [(ngModel)]="renderedClasses[i].staff.id"
+                                                name="staffSelect{{i}}" id="staffSelect">
+                                                <option [value]="''">اختر معلماً</option>
+                                                <option *ngFor="let staff of staffList" [value]="staff.id">
+                                                    {{ staff.name }}
+                                                </option>
+                                            </select>
+
+                                        </div>
+
+                                        <label class="mb-2 fw-semibold">موعد الحصة</label>
+                                        <div *ngFor="let schedule of class.classSchedules; let j = index;"
+                                            class="row align-items-end mb-3">
+
+                                            <div class="col-3">
+                                                <label class="form-label">من</label>
+                                                <input [(ngModel)]="class.classSchedules[j].startTime" type="time"
+                                                    name="startTime{{j}}" class="form-control" />
+                                            </div>
+
+                                            <div class="col-3">
+                                                <label class="form-label">إلى</label>
+                                                <input [(ngModel)]="class.classSchedules[j].endTime" type="time"
+                                                    name="endTime{{j}}" class="form-control" />
+                                            </div>
+
+                                            <div class="col-4">
+                                                <label class="form-label">اليوم</label>
+                                                <select [(ngModel)]="class.classSchedules[j].dayOfWeek"
+                                                    name="dayOfWeek{{j}}" class="form-select">
+                                                    <option [value]="">اختر اليوم</option>
+                                                    <option value="SUNDAY">الأحد</option>
+                                                    <option value="MONDAY">الإثنين</option>
+                                                    <option value="TUESDAY">الثلاثاء</option>
+                                                    <option value="WEDNESDAY">الأربعاء</option>
+                                                    <option value="THURSDAY">الخميس</option>
+                                                    <option value="FRIDAY">الجمعة</option>
+                                                    <option value="SATURDAY">السبت</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-auto d-flex align-items-end pb-2">
+                                                <i *ngIf="j === 0" class="bx bx-plus text-success me-3"
+                                                    style="font-size: 1.5rem; cursor: pointer;"
+                                                    (click)="addClassSchedule(i)"></i>
+
+                                                <i *ngIf="j > 0" class="bx bx-minus text-danger me-3"
+                                                    style="font-size: 1.5rem; cursor: pointer;"
+                                                    (click)="deleteClassSchedule(i, j)"></i>
+                                            </div>
+
+                                        </div>
+
+                                        <div *ngIf="!isDefaultClasses" class="form-group mb-3" dir="rtl">
+                                            <label class="form-label fw-semibold">الصفوف</label>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <select [(ngModel)]="selectedGrade" name="selectedGrade"
+                                                    class="form-select me-2">
+                                                    <option value="">اختر الصف</option>
+                                                    <option *ngFor="let grade of grades" [value]="grade">
+                                                        {{ getGradeLabel(grade) }}
+                                                    </option>
+                                                </select>
+                                                <i (click)="addGradeToClass(i, selectedGrade)"
+                                                    class="bx bx-plus text-success me-2"
+                                                    style="font-size: 1.5rem; cursor: pointer;"></i>
+                                            </div>
+
+                                            <label class="form-label fw-semibold mt-3">الصفوف المضافة</label>
+                                            <ul class="list-group" style="padding-right: 0; margin-right: 0;">
+                                                <ng-container
+                                                    *ngIf="!(class.gradeClassAssignments.length === 1 && class.gradeClassAssignments[0].grade === '')">
+                                                    <li *ngFor="let gradeClassAssignment of class.gradeClassAssignments"
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                        {{ getGradeLabel(gradeClassAssignment.grade) }}
+                                                        <i (click)="removeGradeFromClass(i, gradeClassAssignment.grade)"
+                                                            class="bx bx-minus text-danger"
+                                                            style="font-size: 1.5rem; cursor: pointer;"></i>
+                                                    </li>
+                                                </ng-container>
+                                            </ul>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">إنشاء الحساب</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

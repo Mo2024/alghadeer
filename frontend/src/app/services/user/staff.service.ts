@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +33,10 @@ export class StaffService {
 
   getStaff(page: number): Observable<any> {
     return this.http.get(`${this.url}/admin/get-staff?page=${page}&size=${this.pageSize}`, { withCredentials: true });
+  }
+
+  getStaffList(): Observable<any> {
+    return this.http.get(`${this.url}/admin/get-staff`, { withCredentials: true });
   }
 
   register(body: any): Observable<any> {

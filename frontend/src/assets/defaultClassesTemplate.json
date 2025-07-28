@@ -1,0 +1,130 @@
+{
+    "classes": [
+        {
+            "name": "الصف الأول/الثاني",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الصف الثالث",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الصف الرابع",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الصف الخامس",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الصف السادس",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الأول إعدادي",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الثاني إعدادي",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الثالث إعدادي",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        },
+        {
+            "name": "الثانوي",
+            "staff": {
+                "id": ""
+            },
+            "classSchedules": [
+                {
+                    "dayOfWeek": "",
+                    "startTime": "",
+                    "endTime": ""
+                }
+            ],
+            "gradeClassAssignments": []
+        }
+    ]
+}
