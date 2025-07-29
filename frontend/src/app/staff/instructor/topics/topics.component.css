@@ -1,0 +1,19 @@
+.accordion-button.collapsed {
+    background-color: #f8f9fa;
+    /* soft greyish-white */
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.accordion-button.collapsed:hover {
+    background-color: #e9ecef;
+    /* slightly darker on hover */
+    cursor: pointer;
+}
+
+.subtopic-bg {
+    background-color: #f8f9fa;
+    /* light grey, similar to Bootstrap’s accordion-button background */
+    border-color: #dee2e6;
+    /* match border color */
+}

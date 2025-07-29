@@ -14,11 +14,10 @@ export class MainTopicService {
 
   constructor(private http: HttpClient) { }
 
-  // getMainTopics(currentPage: number): Observable<any> {
-  //   let params = selectedSite == '' ? `0?page=${currentPage}&size=10&isSiteQuery=false` : `${selectedSite}?page=${currentPage}&size=10&isSiteQuery=true`
-  //   return this.http.get(`${this.url}/${params}`, { withCredentials: true });
-  // }
+  getTopics(): Observable<any> {
 
+    return this.http.get(`${this.url}/all/get-topics`, { withCredentials: true });
+  }
   createMainTopic(body: any): Observable<any> {
 
     return this.http.post(`${this.url}/all/create-main-topic`, body, { withCredentials: true });

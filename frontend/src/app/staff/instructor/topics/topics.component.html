@@ -1,0 +1,56 @@
+<div class="container py-4" dir="rtl">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">المواضيع الرئيسية</h4>
+        <button class="btn btn-success" (click)="openAddTopicModal()">
+            <i class="bx bx-plus"></i> إضافة موضوع رئيسي
+        </button>
+    </div>
+
+    <div class="accordion" id="topicsAccordion">
+        <div *ngFor="let topic of topics; let i = index" class="accordion-item mb-3 shadow-sm rounded-4 border-0">
+            <h2 class="accordion-header" id="heading{{ i }}">
+                <button class="accordion-button collapsed fw-bold rounded-top-4" type="button" data-bs-toggle="collapse"
+                    [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
+                    {{ topic.name }}
+                </button>
+            </h2>
+
+
+            <div [id]="'collapse' + i" class="accordion-collapse collapse rounded-bottom-4"
+                [attr.aria-labelledby]="'heading' + i">
+                <!-- ❌ NO data-bs-parent -->
+                <div class="accordion-body">
+                    <!-- Subtopics -->
+                    <ul class="list-group list-group-flush pe-0 me-0">
+                        <li *ngFor="let sub of topic.subTopics; let j = index"
+                            class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 border border-light shadow-sm subtopic-bg">
+                            <span>{{ sub.name }}</span>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-warning text-white" (click)="editSubTopic(sub)">
+                                    <i class="bx bx-edit-alt"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" (click)="deleteSubTopic(sub.id, i,j)">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div dir="ltr" class="d-flex justify-content-start gap-2 mt-3">
+                        <button class="btn btn-danger btn-sm" (click)="deleteMainTopic(topic.id, i)"
+                            style="transition: none;">
+                            حذف الموضوع الرئيسي
+                        </button>
+
+                        <button class="btn btn-success btn-sm" (click)="openAddSubTopicModal(topic.id)"
+                            style="transition: none;">
+                            <i class="bx bx-plus"></i> إضافة موضوع فرعي
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

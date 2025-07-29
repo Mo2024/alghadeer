@@ -11,12 +11,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class MainTopicService {
 
     @Autowired
     private MainTopicRepository mainTopicRepository;
+
+
+    @Transactional
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<MainTopic> getTopics() {
+        log.info("executing method [TopicService].[getTopics]");
+
+        List<MainTopic> topics =  mainTopicRepository.findAll();
+
+        log.info("[TopicService].[getTopics] executed successfully");
+        return topics;
+    }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")

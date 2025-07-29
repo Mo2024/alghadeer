@@ -34,5 +34,6 @@ public class SubTopic {
     private MainTopic mainTopic;
 
     @OneToMany(mappedBy = "subTopic")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Session> sessions = new ArrayList<>();
 }

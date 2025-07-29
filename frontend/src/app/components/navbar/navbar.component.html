@@ -13,20 +13,14 @@
                         *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
                         <a class="nav-link nav-font" href="/staff/instructor/classes">الصفوف</a>
                     </li>
-                    <li class="nav-item dropdown"
+                    <li class="nav-item"
                         *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
-                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            المواضيع
-                        </a>
-                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
-                            <li><a class="dropdown-item" routerLink="/staff/instructor/main-topic">المواضيع الرئيسية</a>
-                            </li>
-                            <li><a class="dropdown-item" routerLink="/staff/instructor/sub-topic">المواضيع الفرعية</a>
-                            </li>
-                        </ul>
+                        <a class="nav-link nav-font" href="/staff/instructor/attendance">تسجيل الحضور</a>
                     </li>
-
+                    <li class="nav-item"
+                        *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
+                        <a class="nav-link nav-font" href="/staff/instructor/topics">المواضيع</a>
+                    </li>
                     <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -38,10 +32,6 @@
                             <li><a class="dropdown-item" routerLink="/staff/admin/semesters">الفصول</a>
                             </li>
                         </ul>
-                    </li>
-                    <li class="nav-item"
-                        *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
-                        <a class="nav-link nav-font" href="/staff/instructor/attendance">تسجيل الحضور</a>
                     </li>
                 </ul>
 

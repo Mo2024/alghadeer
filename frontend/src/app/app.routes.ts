@@ -9,6 +9,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { StaffComponent } from './staff/admin/staff/staff.component';
 import { SemestersComponent } from './staff/admin/semesters/semesters.component';
 import { CreateComponent } from './staff/admin/semesters/create/create.component';
+import { TopicsComponent } from './staff/instructor/topics/topics.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
@@ -37,6 +38,13 @@ export const routes: Routes = [
         component: CreateComponent,
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
+    },
+
+    {
+        path: 'staff/instructor/topics',
+        component: TopicsComponent,
+        canActivate: [authGuard],
+        data: { role: 'INSTRUCTOR', accessControlled: true }
     },
 
     { path: 'login', component: StudentLoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
