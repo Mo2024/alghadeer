@@ -21,3 +21,8 @@
     background-color: #87CEFA;
     color: #333333 !important;
 }
+
+::ng-deep app-toast .toast-wrapper {
+    padding-top: 0 !important;
+    padding-bottom: 1rem !important;
+}

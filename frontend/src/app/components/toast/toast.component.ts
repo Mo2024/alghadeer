@@ -6,7 +6,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './toast.component.html',
-  styleUrl: './toast.component.css'
+  styleUrl: './toast.component.css',
+  host: { 'class': 'my-toast' }
+
 })
 export class ToastComponent {
   @Input() message = '';

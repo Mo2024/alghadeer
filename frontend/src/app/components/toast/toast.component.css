@@ -42,3 +42,14 @@
 .toast.fade-out {
     opacity: 0;
 }
+
+app-toast {
+    padding-top: 0 !important;
+    /* remove padding top */
+    padding-bottom: 1.5rem;
+    /* add bottom padding */
+}
+
+.toast-wrapper {
+    padding-top: 1.5rem;
+}

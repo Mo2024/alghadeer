@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NavbarComponent, ToastComponent, CommonModule],
+  providers: [ToastService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
