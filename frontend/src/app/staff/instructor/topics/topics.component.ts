@@ -18,6 +18,7 @@ export class TopicsComponent {
 
   @Input() isSubTopic: boolean = false
   @Input() showAddTopic: boolean = false
+  @Input() mainTopicId: any;
 
   constructor(private mainTopicsService: MainTopicService, private toastService: ToastService, private subTopicService: SubTopicService) { }
 
@@ -54,7 +55,8 @@ export class TopicsComponent {
     })
   }
 
-  toggleAddTopic(isSubTopic: boolean) {
+  toggleAddTopic(isSubTopic: boolean, mainTopicId?: number) {
+    this.mainTopicId = mainTopicId ? mainTopicId : null;
     this.showAddTopic = !this.showAddTopic
     this.isSubTopic = isSubTopic;
 
@@ -136,14 +138,16 @@ export class TopicsComponent {
 
   }
 
-  handleTopicAdded(object: { topicObject: any, isSubTopic: boolean }) {
+  handleTopicAdded(object: { topicObject: any, isSubTopic: boolean, mainTopicId: number }) {
     const { isSubTopic, topicObject } = object;
     if (isSubTopic) {
-      const { mainTopic } = topicObject;
+      const { mainTopicId } = object;
 
       for (let i = 0; i < this.topics.length; i++) {
-        if (this.topics[i].id == mainTopic.id) {
-          this.topics[i].push(topicObject)
+        console.log(this.topics[i])
+        console.log(topicObject)
+        if (this.topics[i].id == mainTopicId) {
+          this.topics[i].subTopics.push(topicObject)
         }
       }
 

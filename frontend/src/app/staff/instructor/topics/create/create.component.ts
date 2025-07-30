@@ -15,18 +15,20 @@ import { FormsModule } from '@angular/forms';
 })
 export class CreateComponent {
   @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();
-  @Output() pushTopic = new EventEmitter<{ topicObject: any, isSubTopic: boolean }>();
-  @Input() mainTopics: any;
+  @Output() pushTopic = new EventEmitter<{ topicObject: any, isSubTopic: boolean, mainTopicId: any }>();
   @Input() isSubTopic: any;
+  @Input() mainTopicId: any;
 
   name: string = '';
-  mainTopicId: string = '';
   isDisabled: boolean = false;
 
   constructor(private mainTopicService: MainTopicService, private subTopicService: SubTopicService, private toastService: ToastService) { }
 
+  ngOnInit() {
+  }
+
   createTopic(name: string) {
-    if (!name.trim() && (!this.mainTopicId.trim() && this.isSubTopic)) {
+    if (!name.trim()) {
       // alert('Name and description cannot be empty');
       return; // Exit the function if empty
     }
@@ -40,7 +42,7 @@ export class CreateComponent {
           }
 
           if (res) {
-            this.pushTopic.emit({ topicObject: res, isSubTopic: true });
+            this.pushTopic.emit({ topicObject: res, isSubTopic: true, mainTopicId: this.mainTopicId });
           } else {
             // this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
           }
@@ -70,7 +72,7 @@ export class CreateComponent {
           }
 
           if (res) {
-            this.pushTopic.emit({ topicObject: res, isSubTopic: false });
+            this.pushTopic.emit({ topicObject: res, isSubTopic: false, mainTopicId: this.mainTopicId });
           } else {
             // this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
           }

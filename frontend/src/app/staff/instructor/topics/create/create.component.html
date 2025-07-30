@@ -17,15 +17,6 @@
                                     [(ngModel)]="name" name="topicName">
                             </div>
 
-
-                            <div *ngIf="isSubTopic" class="mb-3">
-                                <label for="semester" class="form-label"></label>
-                                <select class="form-select" [(ngModel)]="mainTopicId" name="semester">
-                                    <option [value]="''">اختر الفصل</option>
-                                    <option *ngFor="let mainTopic of mainTopics" value="mainTopic.id">
-                                        ا{{mainTopic.name}}</option>
-                                </select>
-                            </div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-light" (click)="createTopic(name)">Submit</button>
                             </div>

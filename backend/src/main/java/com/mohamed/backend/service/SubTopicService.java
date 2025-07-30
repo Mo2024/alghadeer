@@ -26,7 +26,7 @@ public class SubTopicService {
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response createSubTopic(SubTopic subTopic) {
+    public SubTopic createSubTopic(SubTopic subTopic) {
         log.info("executing method [TopicService].[createSubTopic]");
 
         log.info("Request parameter details:\n{}",subTopic);
@@ -42,10 +42,10 @@ public class SubTopicService {
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
 
-        subTopicRepository.save(subTopic);
+        SubTopic  subTopic1 = subTopicRepository.save(subTopic);
 
         log.info("[TopicService].[createSubTopic] executed successfully");
-        return new Response("تم إنشاء الموضوع الفرعي بنجاح");
+        return subTopic1;
     }
 
     @Transactional

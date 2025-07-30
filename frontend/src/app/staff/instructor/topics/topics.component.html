@@ -42,7 +42,8 @@
                             حذف الموضوع الرئيسي
                         </button>
 
-                        <button class="btn btn-success btn-sm" (click)="toggleAddTopic(true)" style="transition: none;">
+                        <button class="btn btn-success btn-sm" (click)="toggleAddTopic(true, topic.id)"
+                            style="transition: none;">
                             <i class="bx bx-plus"></i> إضافة موضوع فرعي
                         </button>
                     </div>
@@ -54,5 +55,5 @@
     </div>
 </div>
 
-<app-create [mainTopics]="topics" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic(isSubTopic)"
+<app-create [mainTopicId]="mainTopicId" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic(isSubTopic)"
     (pushTopic)="handleTopicAdded($event)" *ngIf="showAddTopic"></app-create>

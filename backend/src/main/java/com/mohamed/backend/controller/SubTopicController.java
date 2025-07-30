@@ -39,7 +39,7 @@ public class SubTopicController {
     })
     public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic){
         try {
-            Response response = subTopicService.createSubTopic(subTopic);
+            SubTopic response = subTopicService.createSubTopic(subTopic);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
