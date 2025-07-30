@@ -1,19 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MainTopicService } from '../../../services/topics/main-topic.service';
 import { environment } from '../../../../environments/environment';
 import { ToastService } from '../../../services/toast.service';
 import { SubTopicService } from '../../../services/topics/sub-topic.service';
+import { CreateComponent } from './create/create.component';
 
 @Component({
   selector: 'app-topics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CreateComponent],
   templateUrl: './topics.component.html',
   styleUrl: './topics.component.css'
 })
 export class TopicsComponent {
   topics: any;
+
+  @Input() isSubTopic: boolean = false
+  @Input() showAddTopic: boolean = false
 
   constructor(private mainTopicsService: MainTopicService, private toastService: ToastService, private subTopicService: SubTopicService) { }
 
@@ -50,8 +54,10 @@ export class TopicsComponent {
     })
   }
 
-  openAddTopicModal() {
-    alert('فتح نافذة إضافة موضوع رئيسي (غير متصلة بعد)');
+  toggleAddTopic(isSubTopic: boolean) {
+    this.showAddTopic = !this.showAddTopic
+    this.isSubTopic = isSubTopic;
+
   }
 
   openAddSubTopicModal(topicId: number) {
@@ -129,4 +135,22 @@ export class TopicsComponent {
     })
 
   }
+
+  handleTopicAdded(object: { topicObject: any, isSubTopic: boolean }) {
+    const { isSubTopic, topicObject } = object;
+    if (isSubTopic) {
+      const { mainTopic } = topicObject;
+
+      for (let i = 0; i < this.topics.length; i++) {
+        if (this.topics[i].id == mainTopic.id) {
+          this.topics[i].push(topicObject)
+        }
+      }
+
+    } else {
+      this.topics.push(topicObject)
+    }
+    this.showAddTopic = false;
+  }
+
 }

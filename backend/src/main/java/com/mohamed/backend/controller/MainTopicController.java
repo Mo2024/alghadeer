@@ -71,7 +71,7 @@ public class MainTopicController {
     })
     public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic){
         try {
-            Response response = mainTopicService.createMainTopic(mainTopic);
+            MainTopic response = mainTopicService.createMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

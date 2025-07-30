@@ -34,7 +34,7 @@ public class MainTopicService {
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response createMainTopic(MainTopic mainTopic) {
+    public MainTopic createMainTopic(MainTopic mainTopic) {
         log.info("executing method [TopicService].[createMainTopic]");
 
         log.info("Request parameter details:\n{}",mainTopic);
@@ -44,10 +44,10 @@ public class MainTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
-        mainTopicRepository.save(mainTopic);
+        MainTopic mainTopic1 =  mainTopicRepository.save(mainTopic);
 
         log.info("[TopicService].[createMainTopic] executed successfully");
-        return new Response("تم إنشاء الموضوع الرئيسي بنجاح");
+        return mainTopic1;
     }
 
     @Transactional

@@ -1,0 +1,39 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card border-secondary shadow rounded-3 border-0">
+                    <div
+                        class="card-header d-flex justify-content-between align-items-center bg-dark text-white rounded-top">
+                        Add Site
+                        <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+                    <div class="card-body bg-light rounded-bottom">
+                        <form>
+                            <div class="mb-3">
+                                <label for="siteName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="siteName" placeholder="Enter site name"
+                                    [(ngModel)]="name" name="topicName">
+                            </div>
+
+
+                            <div *ngIf="isSubTopic" class="mb-3">
+                                <label for="semester" class="form-label"></label>
+                                <select class="form-select" [(ngModel)]="mainTopicId" name="semester">
+                                    <option [value]="''">اختر الفصل</option>
+                                    <option *ngFor="let mainTopic of mainTopics" value="mainTopic.id">
+                                        ا{{mainTopic.name}}</option>
+                                </select>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-light" (click)="createTopic(name)">Submit</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

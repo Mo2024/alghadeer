@@ -1,7 +1,7 @@
 <div class="container py-4" dir="rtl">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0">المواضيع الرئيسية</h4>
-        <button class="btn btn-success" (click)="openAddTopicModal()">
+        <button class="btn btn-success" (click)="toggleAddTopic(false)">
             <i class="bx bx-plus"></i> إضافة موضوع رئيسي
         </button>
     </div>
@@ -42,8 +42,7 @@
                             حذف الموضوع الرئيسي
                         </button>
 
-                        <button class="btn btn-success btn-sm" (click)="openAddSubTopicModal(topic.id)"
-                            style="transition: none;">
+                        <button class="btn btn-success btn-sm" (click)="toggleAddTopic(true)" style="transition: none;">
                             <i class="bx bx-plus"></i> إضافة موضوع فرعي
                         </button>
                     </div>
@@ -54,3 +53,6 @@
         </div>
     </div>
 </div>
+
+<app-create [mainTopics]="topics" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic(isSubTopic)"
+    (pushTopic)="handleTopicAdded($event)" *ngIf="showAddTopic"></app-create>
