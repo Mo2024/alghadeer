@@ -26,7 +26,7 @@ public class MainTopicService {
     public List<MainTopic> getTopics() {
         log.info("executing method [TopicService].[getTopics]");
 
-        List<MainTopic> topics =  mainTopicRepository.findAll();
+        List<MainTopic> topics =  mainTopicRepository.findAllByOrderByIdAsc();
 
         log.info("[TopicService].[getTopics] executed successfully");
         return topics;
@@ -34,7 +34,7 @@ public class MainTopicService {
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public MainTopic createMainTopic(MainTopic mainTopic) {
+    public List<MainTopic> createMainTopic(MainTopic mainTopic) {
         log.info("executing method [TopicService].[createMainTopic]");
 
         log.info("Request parameter details:\n{}",mainTopic);
@@ -44,15 +44,15 @@ public class MainTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
-        MainTopic mainTopic1 =  mainTopicRepository.save(mainTopic);
+        mainTopicRepository.save(mainTopic);
 
         log.info("[TopicService].[createMainTopic] executed successfully");
-        return mainTopic1;
+        return getTopics();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response editMainTopic(MainTopic mainTopic) {
+    public List<MainTopic> editMainTopic(MainTopic mainTopic) {
         log.info("executing method [TopicService].[editMainTopic]");
 
         log.info("Request parameter details:\n{}",mainTopic);
@@ -71,7 +71,7 @@ public class MainTopicService {
         mainTopicRepository.save(mainTopic);
 
         log.info("[TopicService].[editMainTopic] executed successfully");
-        return new Response("تم تعديل الموضوع الرئيسي بنجاح");
+        return getTopics();
     }
 
     @Transactional

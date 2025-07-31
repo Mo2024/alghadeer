@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -71,7 +73,7 @@ public class MainTopicController {
     })
     public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic){
         try {
-            MainTopic response = mainTopicService.createMainTopic(mainTopic);
+            List<MainTopic> response = mainTopicService.createMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -103,7 +105,7 @@ public class MainTopicController {
     })
     public ResponseEntity<?> editMainTopic(@RequestBody MainTopic mainTopic){
         try {
-            Response response = mainTopicService.editMainTopic(mainTopic);
+            List<MainTopic> response = mainTopicService.editMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -133,7 +135,7 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> deleteMainTopic(@RequestBody MainTopic mainTopic){
+    public ResponseEntity<?> deleteMainTopic(@RequestBody MainTopic mainTopic) throws Exception {
         try {
             Response response = mainTopicService.deleteMainTopic(mainTopic);
             return ResponseEntity.ok().body(response);
@@ -146,6 +148,19 @@ public class MainTopicController {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (DataIntegrityViolationException ex) {
+            Throwable cause = ex.getCause();
+            while (cause != null) {
+                if (cause instanceof PSQLException pgException) {
+                    if (pgException.getSQLState().equals("23503")) {
+                        return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(new Response("لا يمكن حذف الموضوع لأنه مرتبط حصة", "ALGD-409"));
+                    }
+                }
+                cause = cause.getCause();
+            }
+            throw new Exception();
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity

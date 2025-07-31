@@ -27,6 +27,7 @@ public class MainTopic {
     private String name;
 
     @OneToMany(mappedBy = "mainTopic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     private List<SubTopic> subTopics = new ArrayList<>();
 
 }

@@ -2,6 +2,7 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
+import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.repository.topic.MainTopicRepository;
 import com.mohamed.backend.repository.topic.SubTopicRepository;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -23,10 +26,13 @@ public class SubTopicService {
     @Autowired
     private SubTopicRepository subTopicRepository;
 
+    @Autowired
+    private MainTopicService mainTopicService;
+
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public SubTopic createSubTopic(SubTopic subTopic) {
+    public List<MainTopic> createSubTopic(SubTopic subTopic) {
         log.info("executing method [TopicService].[createSubTopic]");
 
         log.info("Request parameter details:\n{}",subTopic);
@@ -42,15 +48,15 @@ public class SubTopicService {
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
 
-        SubTopic  subTopic1 = subTopicRepository.save(subTopic);
+        subTopicRepository.save(subTopic);
 
         log.info("[TopicService].[createSubTopic] executed successfully");
-        return subTopic1;
+        return mainTopicService.getTopics();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response editSubTopic(SubTopic subTopic) {
+    public List<MainTopic> editSubTopic(SubTopic subTopic) {
         log.info("executing method [TopicService].[editSubTopic]");
 
         log.info("Request parameter details:\n{}",subTopic);
@@ -74,7 +80,7 @@ public class SubTopicService {
         subTopicRepository.save(subTopic);
 
         log.info("[TopicService].[editSubTopic] executed successfully");
-        return new Response("تم تعديل الموضوع الفرعي بنجاح");
+        return mainTopicService.getTopics();
     }
 
     @Transactional

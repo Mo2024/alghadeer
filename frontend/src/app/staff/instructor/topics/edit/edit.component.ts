@@ -8,18 +8,20 @@ import { FormsModule } from '@angular/forms';
 import { ToastComponent } from '../../../../components/toast/toast.component';
 
 @Component({
-  selector: 'app-create',
+  selector: 'app-edit',
   standalone: true,
   imports: [CommonModule, FormsModule, ToastComponent],
   providers: [ToastService],
-  templateUrl: './create.component.html',
-  styleUrl: './create.component.css'
+  templateUrl: './edit.component.html',
+  styleUrl: './edit.component.css'
 })
-export class CreateComponent {
+export class EditComponent {
   @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();
-  @Output() pushTopic = new EventEmitter<object>();
+  @Output() editTopicEmit = new EventEmitter<object>();
   @Input() isSubTopic: any;
   @Input() mainTopicId: any;
+  @Input() subTopicId: any
+  @Input() topicIndex: any;
 
   name: string = '';
   isDisabled: boolean = false;
@@ -42,7 +44,7 @@ export class CreateComponent {
     });
   }
 
-  createTopic(name: string) {
+  editTopic(name: string) {
     if (!name.trim()) {
       this.toastService.show('يرجى التأكد من تعبئة جميع الحقول', 'error');
       return;
@@ -50,14 +52,15 @@ export class CreateComponent {
     this.isDisabled = true;
 
     if (this.isSubTopic) {
-      this.subTopicService.createSubTopic({ name, mainTopic: { id: Number(this.mainTopicId) } }).subscribe({
+      this.subTopicService.editSubTopic({ id: this.subTopicId, name, mainTopic: { id: Number(this.mainTopicId) } }).subscribe({
         next: async (res) => {
           if (!environment.production) {
             console.log(res)
           }
 
           if (res) {
-            this.pushTopic.emit(res);
+            this.editTopicEmit.emit(res);
+            this.emitCloseClicked()
           } else {
             this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
           }
@@ -80,14 +83,15 @@ export class CreateComponent {
         }
       })
     } else {
-      this.mainTopicService.createMainTopic({ name }).subscribe({
+      this.mainTopicService.editMainTopic({ id: this.mainTopicId, name }).subscribe({
         next: async (res) => {
           if (!environment.production) {
             console.log(res)
           }
 
           if (res) {
-            this.pushTopic.emit(res);
+            this.editTopicEmit.emit(res);
+            this.emitCloseClicked()
           } else {
             this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
           }

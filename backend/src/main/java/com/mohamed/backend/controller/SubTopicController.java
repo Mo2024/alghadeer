@@ -3,6 +3,7 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
+import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.service.SubTopicService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,10 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
+import org.postgresql.util.PSQLException;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -39,7 +44,7 @@ public class SubTopicController {
     })
     public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic){
         try {
-            SubTopic response = subTopicService.createSubTopic(subTopic);
+            List<MainTopic> response = subTopicService.createSubTopic(subTopic);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -71,7 +76,7 @@ public class SubTopicController {
     })
     public ResponseEntity<?> editSubTopic(@RequestBody SubTopic subTopic){
         try {
-            Response response = subTopicService.editSubTopic(subTopic);
+            List<MainTopic> response = subTopicService.editSubTopic(subTopic);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -101,7 +106,7 @@ public class SubTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> deleteSubTopic(@RequestBody SubTopic subTopic){
+    public ResponseEntity<?> deleteSubTopic(@RequestBody SubTopic subTopic) throws Exception {
         try {
             Response response = subTopicService.deleteSubTopic(subTopic);
             return ResponseEntity.ok().body(response);
@@ -114,6 +119,19 @@ public class SubTopicController {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (DataIntegrityViolationException ex) {
+            Throwable cause = ex.getCause();
+            while (cause != null) {
+                if (cause instanceof PSQLException pgException) {
+                    if (pgException.getSQLState().equals("23503")) {
+                        return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(new Response("لا يمكن حذف الموضوع لأنه مرتبط حصة", "ALGD-409"));
+                    }
+                }
+                cause = cause.getCause();
+            }
+            throw new Exception();
         } catch (Exception e) {
             log.error("Unexpected error:", e);
             return ResponseEntity
@@ -121,4 +139,5 @@ public class SubTopicController {
                     .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
         }
     }
+
 }

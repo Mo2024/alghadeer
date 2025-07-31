@@ -1,13 +1,14 @@
 <div class="container py-4" dir="rtl">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0">المواضيع الرئيسية</h4>
-        <button class="btn btn-success" (click)="toggleAddTopic(false)">
+        <button class="btn btn-success" (click)="toggleAddTopicOpen(false)">
             <i class="bx bx-plus"></i> إضافة موضوع رئيسي
         </button>
     </div>
 
     <div class="accordion" id="topicsAccordion">
-        <div *ngFor="let topic of topics; let i = index" class="accordion-item mb-3 shadow-sm rounded-4 border-0">
+        <div *ngFor="let topic of topics; trackBy: trackByTopicId; let i = index"
+            class="accordion-item mb-3 shadow-sm rounded-4 border-0">
             <h2 class="accordion-header" id="heading{{ i }}">
                 <button class="accordion-button collapsed fw-bold rounded-top-4" type="button" data-bs-toggle="collapse"
                     [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
@@ -22,11 +23,12 @@
                 <div class="accordion-body">
                     <!-- Subtopics -->
                     <ul class="list-group list-group-flush pe-0 me-0">
-                        <li *ngFor="let sub of topic.subTopics; let j = index"
+                        <li *ngFor="let sub of topic.subTopics; trackBy: trackBySubTopicId; let j = index"
                             class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 border border-light shadow-sm subtopic-bg">
                             <span>{{ sub.name }}</span>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-warning text-white" (click)="editSubTopic(sub)">
+                                <button class="btn btn-sm btn-warning text-white"
+                                    (click)="toggleEditTopicOpen(true, topic.id, sub?.id)">
                                     <i class="bx bx-edit-alt"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" (click)="deleteSubTopic(sub.id, i,j)">
@@ -39,14 +41,20 @@
                     <div dir="ltr" class="d-flex justify-content-start gap-2 mt-3">
                         <button class="btn btn-danger btn-sm" (click)="deleteMainTopic(topic.id, i)"
                             style="transition: none;">
-                            حذف الموضوع الرئيسي
+                            حذف الموضوع
                         </button>
 
-                        <button class="btn btn-success btn-sm" (click)="toggleAddTopic(true, topic.id)"
+                        <button class="btn btn-warning btn-sm" (click)="toggleEditTopicOpen(false, topic.id)"
                             style="transition: none;">
-                            <i class="bx bx-plus"></i> إضافة موضوع فرعي
+                            <i class="bx bx-edit"></i> تعديل الموضوع
+                        </button>
+
+                        <button class="btn btn-success btn-sm" (click)="toggleAddTopicOpen(true, topic.id)"
+                            style="transition: none;">
+                            <i class="bx bx-plus"></i> إضافة فرعي
                         </button>
                     </div>
+
 
 
                 </div>
@@ -55,5 +63,8 @@
     </div>
 </div>
 
-<app-create [mainTopicId]="mainTopicId" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic(isSubTopic)"
+<app-create [mainTopicId]="mainTopicId" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic()"
     (pushTopic)="handleTopicAdded($event)" *ngIf="showAddTopic"></app-create>
+
+<app-edit [mainTopicId]="mainTopicId" [subTopicId]="subTopicId" [isSubTopic]="isSubTopic"
+    (closeClicked)="toggleEditTopic()" (editTopicEmit)="handleTopicEdited($event)" *ngIf="showEditTopic"> </app-edit>
