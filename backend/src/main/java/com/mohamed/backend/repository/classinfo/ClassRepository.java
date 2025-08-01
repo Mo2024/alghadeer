@@ -1,5 +1,6 @@
 package com.mohamed.backend.repository.classinfo;
 
+import com.mohamed.backend.dto.ClassView;
 import com.mohamed.backend.model.classinfo.Class;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -57,5 +58,5 @@ public interface ClassRepository  extends JpaRepository<Class, Integer> {
     int countStudentsAlreadyInClass(@Param("classId") int classId, @Param("studentsId") List<Integer> studentsId);
 
 
-
+    List<ClassView> findAllBySemesterId(int id);
 }

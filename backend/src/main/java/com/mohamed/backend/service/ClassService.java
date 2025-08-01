@@ -1,6 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.ChangeStudentClassDto;
+import com.mohamed.backend.dto.ClassView;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
@@ -11,6 +12,7 @@ import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.ClassScheduleRepository;
 import com.mohamed.backend.repository.classinfo.GradeClassAssignmentRepository;
+import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.utils.Defaults;
@@ -46,6 +48,24 @@ public class ClassService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private SemesterRepository semesterRepository;
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public List<ClassView> getClassesFromActiveSemester(){
+        log.info("executing method [ClassService].[getClassesFromActiveSemester]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("Semester Details:\n{}", semester);
+
+        List<ClassView> classes = classRepository.findAllBySemesterId(semester.getId());
+        log.info("[ClassService].[getClassesFromActiveSemester] executed successfully");
+        return  classes;
+    }
 
     @Transactional
     public void createDefaultClasses(Semester semester, List<Class> classesReq){ //pls put validatioin for classses length

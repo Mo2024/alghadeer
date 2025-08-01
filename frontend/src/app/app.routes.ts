@@ -10,6 +10,7 @@ import { StaffComponent } from './staff/admin/staff/staff.component';
 import { SemestersComponent } from './staff/admin/semesters/semesters.component';
 import { CreateComponent } from './staff/admin/semesters/create/create.component';
 import { TopicsComponent } from './staff/instructor/topics/topics.component';
+import { TransferStudentComponent } from './staff/supervisor/transfer-student/transfer-student.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
@@ -45,6 +46,13 @@ export const routes: Routes = [
         component: TopicsComponent,
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
+    },
+
+    {
+        path: 'staff/supervisor/transfer-student',
+        component: TransferStudentComponent,
+        canActivate: [authGuard],
+        data: { role: 'SUPERVISOR', accessControlled: true }
     },
 
     { path: 'login', component: StudentLoginComponent, canActivate: [authGuard], data: { accessControlled: false } },

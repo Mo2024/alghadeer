@@ -2,7 +2,10 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.SemesterEnrollmentView;
+import com.mohamed.backend.dto.StudentView;
 import com.mohamed.backend.exceptions.HandledRejection;
+import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -78,6 +82,38 @@ public class StudentController {
     public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
         try {
             Response response = studentService.login(login, session);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/supervisor/get-enrolled-students")
+    @Operation(
+            summary = "Fetches enrolled students for the current active semester",
+            description = "This request is only authorized for admins and supervisors."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getEnrolledStudents(){
+        try {
+            List<SemesterEnrollmentView> response = studentService.getEnrolledStudents();
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

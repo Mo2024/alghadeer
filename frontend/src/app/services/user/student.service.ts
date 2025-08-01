@@ -24,6 +24,11 @@ export class StudentService {
       withCredentials: true
     });
   }
+
+  getEnrolledStudents(): Observable<any> {
+    return this.http.get(`${this.url}/supervisor/get-enrolled-students`, { withCredentials: true });
+  }
+
   login(body: any): Observable<any> {
     return this.http.post(`${this.url}/login`, body, { withCredentials: true });
   }

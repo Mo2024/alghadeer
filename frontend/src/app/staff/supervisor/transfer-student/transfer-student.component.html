@@ -1,0 +1,70 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">تحويل الطلبة</div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+
+                        <!-- <div class="form-group mb-1">
+                            <label for="email" class="mb-1">البريد الإلكتروني</label>
+                            <input type="text" [(ngModel)]="email" name="email" class="form-control" id="email"
+                                placeholder="يرجى إدخال بريدك الإلكتروني">
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="password" class="mb-1">كلمة المرور</label>
+                            <input type="password" [(ngModel)]="password" name="password" class="form-control"
+                                id="password" placeholder="يرجى إدخال كلمة المرور">
+                        </div> -->
+
+                        <div class="form-group mb-1" dir="rtl">
+                            <label class="form-label fw-semibold">الصف</label>
+
+                            <select [(ngModel)]="classId" name="classId" class="form-select">
+                                <option [value]="''">اختر الصف</option>
+                                <option *ngFor="let class of classes" [value]="class.id">
+                                    {{ class.name }}
+                                </option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="row form-group mb-1" dir="rtl">
+                            <label class="form-label fw-semibold">الطلبة</label>
+                            <div class="col-10">
+                                <select [(ngModel)]="selectedStudendIndex" name="selectedStudendIndex"
+                                    class="form-select">
+                                    <option [value]="''">اختر الطالب</option>
+                                    <option *ngFor="let student of enrolledStudents; let j = index;" [value]="j">
+                                        {{ student.student.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-auto d-flex align-items-end pb-1">
+                                <i (click)="addstudent(selectedStudendIndex)" class="bx bx-plus text-success"
+                                    style="font-size: 1.5rem; cursor: pointer;"></i>
+                            </div>
+                        </div>
+
+                        <label class="form-label mt-3 fw-semibold">الطلاب المحوّلون</label>
+                        <ul class="list-group" style="padding-right: 0; margin-right: 0;">
+                            <li *ngFor="let id of addedStudents; let i = index;"
+                                class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ removedStudentsName.get(id) }}
+                                <i (click)="removeStudent(i)" class="bx bx-minus text-danger"
+                                    style="font-size: 1.5rem; cursor: pointer;"></i>
+                            </li>
+                        </ul>
+                        <div class="text-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">تحويل الطلبة</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

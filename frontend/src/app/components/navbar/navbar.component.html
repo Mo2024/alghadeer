@@ -21,6 +21,20 @@
                         *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
                         <a class="nav-link nav-font" href="/staff/instructor/topics">المواضيع</a>
                     </li>
+
+
+                    <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR')">
+                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            المشرف
+                        </a>
+                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
+                            <li><a class="dropdown-item" routerLink="/staff/supervisor/transfer-student">تحويل
+                                    الطالب</a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -33,6 +47,7 @@
                             </li>
                         </ul>
                     </li>
+
                 </ul>
 
                 <ul class="navbar-nav">

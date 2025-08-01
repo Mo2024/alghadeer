@@ -1,6 +1,12 @@
 package com.mohamed.backend.service;
 
+import com.mohamed.backend.dto.SemesterEnrollmentView;
+import com.mohamed.backend.dto.StudentView;
 import com.mohamed.backend.model.enums.Permission;
+import com.mohamed.backend.model.semester.Semester;
+import com.mohamed.backend.model.semester.SemesterEnrollment;
+import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
+import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
@@ -19,6 +25,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -32,10 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -47,6 +51,12 @@ public class StudentService {
     @Autowired
     private ImageUtils imageUtils;
 
+    @Autowired
+    private SemesterRepository semesterRepository;
+
+    @Autowired
+    private SemesterEnrollmentRepository semesterEnrollmentRepository;
+
     public Page<Student> getStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
     }
@@ -55,8 +65,6 @@ public class StudentService {
         StudentDetails studentDetails = (StudentDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return studentDetails.getId();
     }
-
-
 
     @Transactional
     public Response register(Student student, MultipartFile image, HttpSession session) throws IOException {
@@ -185,6 +193,24 @@ public class StudentService {
         }
         log.info("[StudentService].[login] executed successfully");
         return new Response("تم تسجيل الدخول بنجاح", studentDetails.getPermissions());
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public List<SemesterEnrollmentView> getEnrolledStudents(){
+        log.info("executing method [StudentService].[getEnrolledStudents]");
+
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+
+        log.info("Semester Details:\n{}", semester);
+
+        List<SemesterEnrollmentView> enrolledStudents = semesterEnrollmentRepository.findAllBySemesterId(semester.getId());
+
+        log.info("[StudentService].[getEnrolledStudents] executed successfully");
+        return enrolledStudents;
     }
 
 }
