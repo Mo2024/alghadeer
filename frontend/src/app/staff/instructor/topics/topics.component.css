@@ -17,3 +17,13 @@
     border-color: #dee2e6;
     /* match border color */
 }
+
+.btn-success {
+    background-color: #4CC9F0;
+    color: #003243;
+    border: none;
+}
+
+.bg-ahlulbayt-green {
+    background-color: #B0DB9C;
+}

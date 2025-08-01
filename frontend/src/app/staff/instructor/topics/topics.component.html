@@ -1,9 +1,19 @@
 <div class="container py-4" dir="rtl">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">المواضيع الرئيسية</h4>
-        <button class="btn btn-success" (click)="toggleAddTopicOpen(false)">
-            <i class="bx bx-plus"></i> إضافة موضوع رئيسي
-        </button>
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="
+        color: #2c3e50;
+    ">
+            المواضيع الرئيسية
+            <span style="
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 3px;
+        "></span>
+        </h4>
     </div>
 
     <div class="accordion" id="topicsAccordion">
@@ -27,40 +37,28 @@
                             class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 border border-light shadow-sm subtopic-bg">
                             <span>{{ sub.name }}</span>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-warning text-white"
-                                    (click)="toggleEditTopicOpen(true, sub?.name, topic.id, sub?.id)">
-                                    <i class="bx bx-edit-alt"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" (click)="deleteSubTopic(sub.id, i,j)">
-                                    <i class="bx bx-trash"></i>
-                                </button>
+                                <i (click)="toggleEditTopicOpen(true, sub?.name, topic.id, sub?.id)"
+                                    class="bx bx-edit-alt text-warning fs-5"></i>
+                                <i class="bx bx-trash text-danger fs-5"></i>
                             </div>
                         </li>
                     </ul>
 
                     <div dir="ltr" class="d-flex justify-content-start gap-2 mt-3">
-                        <button class="btn btn-danger btn-sm" (click)="deleteMainTopic(topic.id, i)"
-                            style="transition: none;">
-                            حذف الموضوع
-                        </button>
+                        <i class="bx bx-trash text-danger fs-5" (click)="deleteMainTopic(topic.id, i)"></i>
 
-                        <button class="btn btn-warning btn-sm"
-                            (click)="toggleEditTopicOpen(false, topic.name, topic.id)" style="transition: none;">
-                            <i class="bx bx-edit"></i> تعديل الموضوع
-                        </button>
+                        <i class="bx bx-edit text-warning fs-5"
+                            (click)="toggleEditTopicOpen(false, topic.name, topic.id)"></i>
 
-                        <button class="btn btn-success btn-sm" (click)="toggleAddTopicOpen(true, topic.id)"
-                            style="transition: none;">
-                            <i class="bx bx-plus"></i> إضافة فرعي
-                        </button>
+                        <i class="bx bx-plus text-success fs-5" (click)="toggleAddTopicOpen(true, topic.id)"></i>
                     </div>
-
-
 
                 </div>
             </div>
         </div>
     </div>
+    <button class="btn bg-ahlulbayt-green text-dark btn-lg rounded-circle position-fixed bottom-0 end-0 m-4"
+        (click)="toggleAddTopicOpen(false)">+</button>
 </div>
 
 <app-create [mainTopicId]="mainTopicId" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic()"
