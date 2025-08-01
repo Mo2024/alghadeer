@@ -28,7 +28,7 @@
                             <span>{{ sub.name }}</span>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-sm btn-warning text-white"
-                                    (click)="toggleEditTopicOpen(true, topic.id, sub?.id)">
+                                    (click)="toggleEditTopicOpen(true, sub?.name, topic.id, sub?.id)">
                                     <i class="bx bx-edit-alt"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" (click)="deleteSubTopic(sub.id, i,j)">
@@ -44,8 +44,8 @@
                             حذف الموضوع
                         </button>
 
-                        <button class="btn btn-warning btn-sm" (click)="toggleEditTopicOpen(false, topic.id)"
-                            style="transition: none;">
+                        <button class="btn btn-warning btn-sm"
+                            (click)="toggleEditTopicOpen(false, topic.name, topic.id)" style="transition: none;">
                             <i class="bx bx-edit"></i> تعديل الموضوع
                         </button>
 
@@ -66,5 +66,5 @@
 <app-create [mainTopicId]="mainTopicId" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic()"
     (pushTopic)="handleTopicAdded($event)" *ngIf="showAddTopic"></app-create>
 
-<app-edit [mainTopicId]="mainTopicId" [subTopicId]="subTopicId" [isSubTopic]="isSubTopic"
+<app-edit [topicName]="topicName" [mainTopicId]="mainTopicId" [subTopicId]="subTopicId" [isSubTopic]="isSubTopic"
     (closeClicked)="toggleEditTopic()" (editTopicEmit)="handleTopicEdited($event)" *ngIf="showEditTopic"> </app-edit>

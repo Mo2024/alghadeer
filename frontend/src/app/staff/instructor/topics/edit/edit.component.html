@@ -19,11 +19,12 @@
                             <div class="mb-3">
                                 <label for="siteName" class="form-label">اسم الموضوع</label>
                                 <input type="text" class="form-control" id="siteName" placeholder="أدخل اسم الموضوع"
-                                    [(ngModel)]="name" name="topicName">
+                                    [(ngModel)]="topicName" name="topicName">
                             </div>
 
                             <div class="text-start">
-                                <button type="submit" class="btn btn-success" (click)="editTopic(name)">تعديل</button>
+                                <button type="submit" class="btn btn-success"
+                                    (click)="editTopic(topicName)">تعديل</button>
                             </div>
 
                         </form>

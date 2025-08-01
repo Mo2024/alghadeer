@@ -22,6 +22,7 @@ export class TopicsComponent {
   @Input() showEditTopic: boolean = false
   @Input() mainTopicId: any;
   @Input() subTopicId: any;
+  @Input() topicName: any;
 
   constructor(private mainTopicsService: MainTopicService, private toastService: ToastService, private subTopicService: SubTopicService) { }
 
@@ -153,8 +154,9 @@ export class TopicsComponent {
     this.showAddTopic = false;
   }
 
-  toggleEditTopicOpen(isSubTopic: boolean, mainTopicId?: number, subTopicId?: number) {
+  toggleEditTopicOpen(isSubTopic: boolean, topicName: string, mainTopicId?: number, subTopicId?: number,) {
     console.log(mainTopicId)
+    this.topicName = topicName;
     this.mainTopicId = mainTopicId ? mainTopicId : null;
     this.subTopicId = subTopicId ? subTopicId : null;
     this.isSubTopic = isSubTopic;

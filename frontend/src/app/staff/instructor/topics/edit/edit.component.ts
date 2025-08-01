@@ -21,9 +21,9 @@ export class EditComponent {
   @Input() isSubTopic: any;
   @Input() mainTopicId: any;
   @Input() subTopicId: any
+  @Input() topicName: any;
   @Input() topicIndex: any;
 
-  name: string = '';
   isDisabled: boolean = false;
 
   toastMessage = '';
