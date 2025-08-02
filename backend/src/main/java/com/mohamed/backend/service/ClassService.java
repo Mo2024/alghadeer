@@ -52,6 +52,9 @@ public class ClassService {
     @Autowired
     private SemesterRepository semesterRepository;
 
+    @Autowired
+    private StaffService staffService;
+
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public List<ClassView> getClassesFromActiveSemester(){
         log.info("executing method [ClassService].[getClassesFromActiveSemester]");
@@ -233,6 +236,23 @@ public class ClassService {
 
         log.info("[ClassService].[changeStudentClass] executed successfully");
         return new Response("تم تغيير الصف بنجاح");
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<ClassView> getAssignedClasses(){
+        log.info("Executing method [ClassService].[getAssignedClasses]");
+
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("Semester Details:\n{}", semester);
+
+        List<ClassView> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
+
+        log.info("[ClassService].[getAssignedClasses] executed successfully");
+        return assignedClasses;
     }
 
 }

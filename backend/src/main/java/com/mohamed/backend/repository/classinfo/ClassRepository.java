@@ -58,5 +58,18 @@ public interface ClassRepository  extends JpaRepository<Class, Integer> {
     int countStudentsAlreadyInClass(@Param("classId") int classId, @Param("studentsId") List<Integer> studentsId);
 
 
-    List<ClassView> findAllBySemesterId(int id);
+    @Query("""
+    SELECT c.id AS id, c.name AS name
+    FROM Class c
+    WHERE c.semester.id = :id
+""")
+    List<ClassView> findAllBySemesterId(@Param("id") int id);
+
+    @Query("""
+    SELECT c
+    FROM Class c
+    WHERE c.staff.id = :staffId
+      AND c.semester.active = true
+""")
+    List<ClassView> findAllByStaffIdByActiveSemester(Integer staffId);
 }

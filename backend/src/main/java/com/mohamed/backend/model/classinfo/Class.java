@@ -40,6 +40,10 @@ public class Class {
     @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassSchedule> classSchedules = new ArrayList<>();
 
+    @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<Session> sessions = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "semester_id")
     private Semester semester;
