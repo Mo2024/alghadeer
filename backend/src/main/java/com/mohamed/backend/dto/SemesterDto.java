@@ -1,9 +1,7 @@
 package com.mohamed.backend.dto;
 
 import com.mohamed.backend.model.classinfo.Class;
-import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.enums.SemesterList;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;

@@ -251,6 +251,7 @@ public class ClassService {
 
         List<ClassView> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
 
+        log.info("Assigned classes: \n {}", assignedClasses);
         log.info("[ClassService].[getAssignedClasses] executed successfully");
         return assignedClasses;
     }

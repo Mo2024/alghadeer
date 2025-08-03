@@ -52,7 +52,7 @@ public class AttendanceService {
                     log.error("Session not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
-        Class class_ = classRepository.findById(session.getClass_().getId())
+        Class class_ = classRepository.findById(session.getSemesterClass().getId())
                 .orElseThrow(() -> {
                     log.error("class not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
@@ -82,7 +82,7 @@ public class AttendanceService {
         }
 
         boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
-        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
+        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
 // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
         if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
@@ -92,7 +92,7 @@ public class AttendanceService {
 
         Set<Integer> seenStudents = new HashSet<>();
         for (Attendance attendance : attendanceRequest.getAttendances()){
-            if(!classRepository.isStudentInClass(attendance.getStudent().getId(), session.getClass_().getId())){
+            if(!classRepository.isStudentInClass(attendance.getStudent().getId(), session.getSemesterClass().getId())){
                 log.error("Student below is not assigned to the class:\n {}", attendance.getStudent());
                 throw new HandledRejection("بعض الطلاب غير مسجلين في هذا الفصل");
             }

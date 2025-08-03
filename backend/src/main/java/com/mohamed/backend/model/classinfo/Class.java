@@ -1,6 +1,5 @@
 package com.mohamed.backend.model.classinfo;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
@@ -40,7 +39,7 @@ public class Class {
     @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassSchedule> classSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "semesterClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Session> sessions = new ArrayList<>();
 

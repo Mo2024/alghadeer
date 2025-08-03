@@ -2,13 +2,16 @@ package com.mohamed.backend.service;
 
 import com.mohamed.backend.dto.AddSubTopicDto;
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.SessionView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.classinfo.Session;
+import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.SessionRepository;
+import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.topic.SubTopicRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import jakarta.transaction.Transactional;
@@ -39,6 +42,9 @@ public class SessionService {
     @Autowired
     private SubTopicRepository subTopicRepository;
 
+    @Autowired
+    private SemesterRepository semesterRepository;
+
     @Transactional
     public void createSessions(Class class_) {
         log.info("executing method [SessionService].[createSessions]");
@@ -56,7 +62,7 @@ public class SessionService {
                             .subTopic(null)
                             .staff(class_.getStaff())
                             .semester(class_.getSemester())
-                            .class_(class_)
+                            .semesterClass(class_)
                             .cancelled(false)
                             .build();
 
@@ -79,7 +85,7 @@ public class SessionService {
 
         for (Session session : sessions){
             boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
-            boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
+            boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
             boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
             // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
             if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
@@ -125,7 +131,7 @@ public class SessionService {
                 });
 
         boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
-        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getClass_().getId());
+        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
         // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
         if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
@@ -149,6 +155,27 @@ public class SessionService {
 
         log.info("[SessionService].[changeSubTopic] executed successfully");
         return new Response("تم تعيين الموضوع الفرعي للحصة بنجاح");
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<SessionView> getUpcomingSessions(){
+        log.info("executing method [SessionService].[getUpcomingSessions]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+
+        log.info("Semester Details:\n{}", semester);
+
+        List<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqual(
+                staffService.getStaffId(),
+                LocalDate.now()
+        );
+
+        log.info("Upcoming classes:\n {}", upcomingSessions);
+        log.info("[SessionService].[getUpcomingSessions] executed successfully");
+        return upcomingSessions;
     }
 
 }

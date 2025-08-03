@@ -1,6 +1,5 @@
 package com.mohamed.backend.model.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.model.enums.Permission;

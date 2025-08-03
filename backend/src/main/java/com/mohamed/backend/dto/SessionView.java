@@ -8,4 +8,5 @@ public interface SessionView {
     LocalDate getDate();
     SubTopic getSubTopic();
     boolean getCancelled();
+    ClassView getSemesterClass();
 }

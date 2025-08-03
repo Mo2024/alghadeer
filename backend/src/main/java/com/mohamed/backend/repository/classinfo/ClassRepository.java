@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ClassRepository  extends JpaRepository<Class, Integer> {
+public interface ClassRepository extends JpaRepository<Class, Integer> {
     @Query(value = """
     SELECT COUNT(*) = 1
     FROM student_class

@@ -1,7 +1,6 @@
 package com.mohamed.backend.model.semester;
 
 import com.mohamed.backend.model.classinfo.Class;
-import com.mohamed.backend.model.classinfo.ClassSchedule;
 import com.mohamed.backend.model.enums.SemesterList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

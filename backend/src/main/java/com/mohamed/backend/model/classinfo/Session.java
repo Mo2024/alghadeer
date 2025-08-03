@@ -1,7 +1,7 @@
 package com.mohamed.backend.model.classinfo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.semester.Semester;
-import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.model.user.Staff;
 import jakarta.persistence.*;
@@ -40,7 +40,8 @@ public class Session {
 
     @ManyToOne
     @JoinColumn(name = "class_id")
-    private Class class_;
+    @JsonProperty("class")
+    private Class semesterClass;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendances = new ArrayList<>();
@@ -59,7 +60,7 @@ public class Session {
                 ", date=" + date +
                 ", subTopic=" + (subTopic != null ? subTopic.getId() : null) +
                 ", semester=" + (semester != null ? semester.getId() : null) +
-                ", class_=" + (class_ != null ? class_.getId() : null) +
+                ", class_=" + (semesterClass != null ? semesterClass.getId() : null) +
                 ", cancelled=" + cancelled +
                 '}';
     }
