@@ -1,13 +1,11 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.SemesterDto;
-import com.mohamed.backend.dto.SemesterView;
-import com.mohamed.backend.dto.StaffView;
+import com.mohamed.backend.dto.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.service.SemesterService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/semester")
@@ -30,6 +30,9 @@ public class SemesterController {
 
     @Autowired
     private SemesterService semesterService;
+
+    @Autowired
+    private Logger logger;
 
     @PostMapping("/admin/create")
     @Operation(
@@ -52,9 +55,12 @@ public class SemesterController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> createSemester(@RequestBody SemesterDto semester){
+    public ResponseEntity<?> createSemester(@RequestBody SemesterDto semester) {
         try {
+            log.info("executing method [semesterService].[createSemester]");
             Response response = semesterService.createSemester(semester);
+            log.info("[semesterService].[createSemester] executed successfully");
+            logger.logJsonObject("Response for [createSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -87,7 +93,10 @@ public class SemesterController {
     public ResponseEntity<?> closeActiveSemester(@RequestParam int page, @RequestParam int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
+            log.info("executing method [semesterService].[closeActiveSemester]");
             Page<SemesterView> response = semesterService.closeActiveSemester(pageable);
+            log.info("[semesterService].[closeActiveSemester] executed successfully");
+            logger.logJsonObject("Response for [closeActiveSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -117,9 +126,12 @@ public class SemesterController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> enrollSemester(@RequestBody String grade){
+    public ResponseEntity<?> enrollSemester(@RequestBody String grade) {
         try {
+            log.info("executing method [semesterService].[enrollSemester]");
             Response response = semesterService.enrollSemester(Grade.valueOf(grade));
+            log.info("[semesterService].[enrollSemester] executed successfully");
+            logger.logJsonObject("Response for [enrollSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -149,9 +161,12 @@ public class SemesterController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> isEnrolled(){
+    public ResponseEntity<?> isEnrolled() {
         try {
+            log.info("executing method [semesterService].[isEnrolled]");
             boolean response = semesterService.isEnrolled();
+            log.info("[semesterService].[isEnrolled] executed successfully");
+            logger.logJsonObject("Response for [isEnrolled]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -181,10 +196,13 @@ public class SemesterController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getSemesters(@RequestParam int page, @RequestParam int size){
+    public ResponseEntity<?> getSemesters(@RequestParam int page, @RequestParam int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
+            log.info("executing method [semesterService].[getSemesters]");
             Page<SemesterView> response = semesterService.getSemesters(pageable);
+            log.info("[semesterService].[getSemesters] executed successfully");
+            logger.logJsonObject("Response for [getSemesters]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

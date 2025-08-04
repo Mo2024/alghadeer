@@ -5,11 +5,13 @@ import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.service.StaffService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,9 @@ public class StaffController {
     @Autowired
     private StaffService staffService;
 
+    @Autowired
+    private Logger logger;
+
     @PostMapping("/admin/register")
     @Operation(
             summary = "Creates a new staff",
@@ -46,9 +51,12 @@ public class StaffController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> register(@RequestBody Staff staff){
+    public ResponseEntity<?> register(@RequestBody Staff staff) {
         try {
+            log.info("executing method [staffService].[register]");
             Response response = staffService.register(staff);
+            log.info("[staffService].[register] executed successfully");
+            logger.logJsonObject("Response for [register]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -78,9 +86,12 @@ public class StaffController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
+    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session) {
         try {
+            log.info("executing method [staffService].[login]");
             Response response = staffService.login(login, session);
+            log.info("[staffService].[login] executed successfully");
+            logger.logJsonObject("Response for [login]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -110,9 +121,12 @@ public class StaffController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> archiveStaff(@RequestBody ArchiveDto archiveDto){
+    public ResponseEntity<?> archiveStaff(@RequestBody ArchiveDto archiveDto) {
         try {
+            log.info("executing method [staffService].[archiveStaff]");
             Page<StaffView> response = staffService.archiveStaff(archiveDto);
+            log.info("[staffService].[archiveStaff] executed successfully");
+            logger.logJsonObject("Response for [archiveStaff]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -141,12 +155,15 @@ public class StaffController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getStaff(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size){
+    public ResponseEntity<?> getStaff(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
         try {
             if (page != null && size != null) {
                 Pageable pageable = PageRequest.of(page, size);
-                Page<StaffView> pagedResponse = staffService.getStaff(pageable);
-                return ResponseEntity.ok().body(pagedResponse);
+                log.info("executing method [staffService].[getStaff]");
+                Page<StaffView> response = staffService.getStaff(pageable);
+                log.info("[staffService].[getStaff] executed successfully");
+                logger.logJsonObject("Response for [getStaff]:\n{}", response);
+                return ResponseEntity.ok().body(response);
             } else {
                 List<StaffListView> allStaff = staffService.getStaff();
                 return ResponseEntity.ok().body(allStaff);

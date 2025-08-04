@@ -4,8 +4,8 @@ import com.mohamed.backend.dto.ChangeStudentClassDto;
 import com.mohamed.backend.dto.ClassView;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
-import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.service.ClassService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,6 +28,9 @@ public class ClassController {
     @Autowired
     private ClassService classService;
 
+    @Autowired
+    private Logger logger;
+
     @PostMapping("/supervisor/change-student-class")
     @Operation(
             summary = "Transfers students to a specific class",
@@ -39,9 +42,12 @@ public class ClassController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> createMainTopic(@RequestBody ChangeStudentClassDto changeStudentClassDto){
+    public ResponseEntity<?> changeStudentClass(@RequestBody ChangeStudentClassDto changeStudentClassDto) {
         try {
+            log.info("executing method [classService].[changeStudentClass]");
             Response response = classService.changeStudentClass(changeStudentClassDto);
+            log.info("[classService].[changeStudentClass] executed successfully");
+            logger.logJsonObject("Response for [changeStudentClass]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -71,9 +77,12 @@ public class ClassController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getClassesFromActiveSemester(){
+    public ResponseEntity<?> getClassesFromActiveSemester() {
         try {
+            log.info("executing method [classService].[getClassesFromActiveSemester]");
             List<ClassView> response = classService.getClassesFromActiveSemester();
+            log.info("[classService].[getClassesFromActiveSemester] executed successfully");
+            logger.logJsonObject("Response for [getClassesFromActiveSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -103,9 +112,12 @@ public class ClassController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getAssignedClasses(){
+    public ResponseEntity<?> getAssignedClasses() {
         try {
+            log.info("executing method [classService].[getAssignedClasses]");
             List<ClassView> response = classService.getAssignedClasses();
+            log.info("[classService].[getAssignedClasses] executed successfully");
+            logger.logJsonObject("Response for [getAssignedClasses]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

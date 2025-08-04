@@ -8,6 +8,7 @@ import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.service.StudentService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -36,6 +37,9 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private Logger logger;
+
     @PostMapping("/register")
     @Operation(
             summary = "Students register a new account",
@@ -47,9 +51,12 @@ public class StudentController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> register(@ModelAttribute Student student, @RequestParam(value = "image", required = false) MultipartFile image, HttpSession session){
+    public ResponseEntity<?> register(@ModelAttribute Student student, @RequestParam(value = "image", required = false) MultipartFile image, HttpSession session) {
         try {
+            log.info("executing method [studentService].[register]");
             Response response = studentService.register(student, image, session);
+            log.info("[studentService].[register] executed successfully");
+            logger.logJsonObject("Response for [register]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -79,9 +86,12 @@ public class StudentController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session){
+    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session) {
         try {
+            log.info("executing method [studentService].[login]");
             Response response = studentService.login(login, session);
+            log.info("[studentService].[login] executed successfully");
+            logger.logJsonObject("Response for [login]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -111,9 +121,12 @@ public class StudentController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getEnrolledStudents(){
+    public ResponseEntity<?> getEnrolledStudents() {
         try {
+            log.info("executing method [studentService].[getEnrolledStudents]");
             List<SemesterEnrollmentView> response = studentService.getEnrolledStudents();
+            log.info("[studentService].[getEnrolledStudents] executed successfully");
+            logger.logJsonObject("Response for [getEnrolledStudents]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

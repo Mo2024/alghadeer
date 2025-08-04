@@ -4,6 +4,7 @@ import com.mohamed.backend.dto.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.service.AttendanceService;
 import com.mohamed.backend.service.SessionService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,6 +30,9 @@ public class SessionController {
     @Autowired
     private SessionService sessionService;
 
+    @Autowired
+    private Logger logger;
+
     @PostMapping("/instructor/take-attendance")
     @Operation(
             summary = "Takes attendance of student for a given session",
@@ -40,9 +44,12 @@ public class SessionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> takeAttendance(@RequestBody AttendanceRequestDTO attendanceRequest){
+    public ResponseEntity<?> takeAttendance(@RequestBody AttendanceRequestDTO attendanceRequest) {
         try {
+            log.info("executing method [attendanceService].[takeAttendance]");
             Response response = attendanceService.takeAttendance(attendanceRequest);
+            log.info("[attendanceService].[takeAttendance] executed successfully");
+            logger.logJsonObject("Response for [takeAttendance]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -72,9 +79,12 @@ public class SessionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> cancelSessions(@RequestBody List<Integer> sessionIds){
+    public ResponseEntity<?> cancelSessions(@RequestBody List<Integer> sessionIds) {
         try {
+            log.info("executing method [sessionService].[cancelSessions]");
             Response response = sessionService.cancelSessions(sessionIds);
+            log.info("[sessionService].[cancelSessions] executed successfully");
+            logger.logJsonObject("Response for [cancelSessions]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -104,9 +114,12 @@ public class SessionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> changeSubTopic(@RequestBody AddSubTopicDto addSubTopicDto){
+    public ResponseEntity<?> changeSubTopic(@RequestBody AddSubTopicDto addSubTopicDto) {
         try {
+            log.info("executing method [sessionService].[changeSubTopic]");
             Response response = sessionService.changeSubTopic(addSubTopicDto);
+            log.info("[sessionService].[changeSubTopic] executed successfully");
+            logger.logJsonObject("Response for [changeSubTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -136,9 +149,12 @@ public class SessionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getAssignedClasses(){
+    public ResponseEntity<?> getAssignedClasses() {
         try {
+            log.info("executing method [sessionService].[getUpcomingSessions]");
             List<SessionView> response = sessionService.getUpcomingSessions();
+            log.info("[sessionService].[getUpcomingSessions] executed successfully");
+            logger.logJsonObject("Response for [getUpcomingSessions]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

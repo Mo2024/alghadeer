@@ -1,9 +1,11 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.SemesterView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.service.MainTopicService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -28,6 +31,9 @@ public class MainTopicController {
     @Autowired
     MainTopicService mainTopicService;
 
+    @Autowired
+    private Logger logger;
+
     @GetMapping("/all/get-topics")
     @Operation(
             summary = "Gets topics",
@@ -39,9 +45,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getTopics(){
+    public ResponseEntity<?> getTopics() {
         try {
+            log.info("executing method [mainTopicService].[getTopics]");
             List<MainTopic> response = mainTopicService.getTopics();
+            log.info("[mainTopicService].[getTopics] executed successfully");
+            logger.logJsonObject("Response for [getTopics]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -71,9 +80,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic){
+    public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic) {
         try {
+            log.info("executing method [mainTopicService].[createMainTopic]");
             List<MainTopic> response = mainTopicService.createMainTopic(mainTopic);
+            log.info("[mainTopicService].[createMainTopic] executed successfully");
+            logger.logJsonObject("Response for [createMainTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -103,9 +115,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> editMainTopic(@RequestBody MainTopic mainTopic){
+    public ResponseEntity<?> editMainTopic(@RequestBody MainTopic mainTopic) {
         try {
+            log.info("executing method [mainTopicService].[editMainTopic]");
             List<MainTopic> response = mainTopicService.editMainTopic(mainTopic);
+            log.info("[mainTopicService].[editMainTopic] executed successfully");
+            logger.logJsonObject("Response for [editMainTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -137,7 +152,10 @@ public class MainTopicController {
     })
     public ResponseEntity<?> deleteMainTopic(@RequestBody MainTopic mainTopic) throws Exception {
         try {
+            log.info("executing method [mainTopicService].[deleteMainTopic]");
             Response response = mainTopicService.deleteMainTopic(mainTopic);
+            log.info("[mainTopicService].[deleteMainTopic] executed successfully");
+            logger.logJsonObject("Response for [deleteMainTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
