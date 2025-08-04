@@ -11,11 +11,17 @@ import { SemestersComponent } from './staff/admin/semesters/semesters.component'
 import { CreateComponent } from './staff/admin/semesters/create/create.component';
 import { TopicsComponent } from './staff/instructor/topics/topics.component';
 import { TransferStudentComponent } from './staff/supervisor/transfer-student/transfer-student.component';
+import { UpcomingSessionsComponent } from './staff/instructor/upcoming-sessions/upcoming-sessions.component';
+import { AssignedClassesComponent } from './staff/instructor/assigned-classes/assigned-classes.component';
+import { AttendanceComponent } from './staff/instructor/upcoming-sessions/attendance/attendance.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
 
+    // Staff Components
     { path: 'staff/login', component: LoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
+
+    // Admin Components
     {
         path: 'staff/admin/register',
         component: StaffRegisterComponent,
@@ -41,13 +47,33 @@ export const routes: Routes = [
         data: { role: 'ADMIN', accessControlled: true }
     },
 
+    // Instructor Components
     {
         path: 'staff/instructor/topics',
         component: TopicsComponent,
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
+    {
+        path: 'staff/instructor/upcoming-sessions',
+        component: UpcomingSessionsComponent,
+        canActivate: [authGuard],
+        data: { role: 'INSTRUCTOR', accessControlled: true }
+    },
+    {
+        path: 'staff/instructor/assigned-classes',
+        component: AssignedClassesComponent,
+        canActivate: [authGuard],
+        data: { role: 'INSTRUCTOR', accessControlled: true }
+    },
+    {
+        path: 'staff/instructor/assigned-classes/attendance',
+        component: AttendanceComponent,
+        canActivate: [authGuard],
+        data: { role: 'INSTRUCTOR', accessControlled: true }
+    },
 
+    // Supervisor Components
     {
         path: 'staff/supervisor/transfer-student',
         component: TransferStudentComponent,
@@ -55,6 +81,7 @@ export const routes: Routes = [
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
 
+    // Student Components
     { path: 'login', component: StudentLoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
     { path: 'register', component: StudentRegisterComponent, canActivate: [authGuard], data: { accessControlled: false } },
     {
