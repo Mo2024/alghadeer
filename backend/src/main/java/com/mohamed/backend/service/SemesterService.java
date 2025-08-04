@@ -1,5 +1,6 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.SemesterDto;
 import com.mohamed.backend.dto.SemesterView;
@@ -14,6 +15,7 @@ import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.security.StudentDetails;
+import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -48,18 +50,20 @@ public class SemesterService {
     @Autowired
     private ClassService classService;
 
+    @Autowired
+    private Logger logger;
+
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public Page<SemesterView> getSemesters(Pageable pageable){
+    public Page<SemesterView> getSemesters(Pageable pageable) {
         return semesterRepository.findAllByOrderByIdDesc(pageable);
     }
 
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Response createSemester(SemesterDto semesterReq) {
-        log.info("executing method [createSemester]");
+    public Response createSemester(SemesterDto semesterReq) throws JsonProcessingException {
 
-        log.info("Semester Request info:\n{}", semesterReq);
+        logger.logJsonObject("Request parameter:\n{}", semesterReq);
 
         if (semesterReq.getName() == null || semesterReq.getName().trim().isEmpty() || !ValidationUtils.isArabic(semesterReq.getName())) {
             log.error("Invalid name:\n{}", semesterReq.getName());
@@ -124,25 +128,23 @@ public class SemesterService {
             throw new HandledRejection("عدد تعيينات الصف الدراسي لا يساوي 12 (إجمالي الصفوف)");
         }
 
-        if(semesterReq.isDefaultClasses()){
+        if (semesterReq.isDefaultClasses()) {
             log.info("calling class service...");
             classService.createDefaultClasses(semester, semesterReq.getClasses());
-        }  else {
+        } else {
             log.info("calling class service...");
             classService.createCustomClasses(semesterReq.getClasses(), semester);
         }
 
-        log.info("Semester saved to DB successfully:\n{}", semester);
+        logger.logJsonObject("Semester saved to DB successfully:\n{}", semesterReq);
 
-        log.info("[createSemester] executed successfully");
         return new Response("تم إنشاء الفصل بنجاح");
     }
 
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
     @Transactional
-    public Response enrollSemester(Grade grade) {
-        log.info("executing method [SemesterService].[enrollSemester]");
+    public Response enrollSemester(Grade grade) throws JsonProcessingException {
 
         StudentDetails studentDetails = (StudentDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -153,7 +155,7 @@ public class SemesterService {
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
 
-        log.info("Current active semester\n{}", semester);
+        logger.logJsonObject("Current active semester:\n{}", semester);
 
         Student student = studentRepository.findById(studentDetails.getId())
                 .orElseThrow(() -> {
@@ -163,14 +165,14 @@ public class SemesterService {
 
         // I do not need to validate here if the semester is active because above the semester is already fetched by activeness
         Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
-        log.info("Fetched Class:\n {}", class_);
+        logger.logJsonObject("Fetched Class:\n{}", class_);
+
         student.getClasses().add(class_);
         studentRepository.save(student);
 
+        logger.logJsonObject("Student enrolling:\n{}", student);
 
-        log.info("Student enrolling\n{}", student);
-
-        if(semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentDetails.getId(), semester.getId())){
+        if (semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentDetails.getId(), semester.getId())) {
             log.error("Student already registered in semester");
             throw new HandledRejection("لا يمكن تسجيل الطالب لأنه مسجل في هذا الفصل الدراسي");
         }
@@ -183,16 +185,14 @@ public class SemesterService {
 
         semesterEnrollmentRepository.save(semesterEnrollment);
 
-        log.info("Semester Enrollment saved successfully:\n{} ", semesterEnrollment);
+        logger.logJsonObject("Semester Enrollment saved successfully:\n{}", semesterEnrollment);
 
-        log.info("[SemesterService].[enrollSemester] executed successfully");
         return new Response("تم تسجيل الطالب في الفصل الدراسي بنجاح");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Page<SemesterView> closeActiveSemester(Pageable pageable) {
-        log.info("executing method [SemesterService].[closeActiveSemester]");
+    public Page<SemesterView> closeActiveSemester(Pageable pageable) throws JsonProcessingException {
 
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
@@ -200,14 +200,13 @@ public class SemesterService {
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
 
-        log.info("Semester Details:\n{}", semester);
-
+        logger.logJsonObject("Semester Details:\n{}", semester);
+        
         semester.setActive(false);
         semesterRepository.save(semester);
 
         log.info("Semester ID={} closed successfully", semester.getId());
 
-        log.info("[SemesterService].[closeActiveSemester] executed successfully");
         return semesterRepository.findAllByOrderByIdDesc(pageable);
     }
 

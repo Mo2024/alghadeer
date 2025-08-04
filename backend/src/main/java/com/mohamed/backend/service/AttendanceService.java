@@ -1,5 +1,6 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.AttendanceRequestDTO;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
@@ -11,6 +12,7 @@ import com.mohamed.backend.repository.classinfo.AttendanceRepository;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.SessionRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
+import com.mohamed.backend.utils.Logger;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +43,13 @@ public class AttendanceService {
     @Autowired
     private SessionRepository sessionRepository;
 
+    @Autowired
+    private Logger logger;
+
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response takeAttendance(AttendanceRequestDTO attendanceRequest){
-        log.info("executing method [AttendanceService].[takeAttendance]");
+    public Response takeAttendance(AttendanceRequestDTO attendanceRequest) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter:\n{}", attendanceRequest);
 
         Integer sessionId = attendanceRequest.getSession().getId();
         Session session = sessionRepository.findById(sessionId)
@@ -58,7 +63,7 @@ public class AttendanceService {
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
-        if(LocalDate.now().isBefore(session.getDate())){
+        if (LocalDate.now().isBefore(session.getDate())) {
             log.error("Staff tried to take attendance before date of session {}", session.getDate());
             throw new HandledRejection("لا يمكنك تسجيل الحضور قبل تاريخ الحصة");
         } else if (LocalDate.now().isEqual(session.getDate()) || LocalDate.now().isAfter(session.getDate())) {
@@ -67,17 +72,21 @@ public class AttendanceService {
                     .map(ClassSchedule::getStartTime)
                     .findFirst()
                     .orElseThrow(() -> {
-                        log.error("No schedule for this class:\n{}", class_);
+                        try {
+                            logger.logJsonObjectError("No schedule for this class:\n{}", class_);
+                        } catch (JsonProcessingException e) {
+                            log.error("Failed to log attendanceRequest", e);
+                        }
                         return new HandledRejection("لا يوجد جدول زمني لهذا الفصل");
                     });
-            if(LocalTime.now().isBefore(startTime) && LocalDate.now().isBefore(session.getDate())){ // check this
-                log.error("Staff tried to take attendance before class start time {}", class_);
+            if (LocalTime.now().isBefore(startTime) && LocalDate.now().isBefore(session.getDate())) { // check this
+                logger.logJsonObjectError("Staff tried to take attendance before class start time:\n{}", class_);
                 throw new HandledRejection("لا يمكنك تسجيل الحضور قبل وقت بدء الحصة");
             }
         }
 
-        if(session.getCancelled()){
-            log.error("Staff tried to take attendance to a cancelled session {}", session);
+        if (session.getCancelled()) {
+            logger.logJsonObjectError("Staff tried to take attendance to a cancelled session:\n{}", session);
             throw new HandledRejection("لا يمكنك تسجيل الحضور لحصة ملغاة");
         }
 
@@ -85,14 +94,14 @@ public class AttendanceService {
         boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
 // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
-        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
+        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
             log.error("Staff instructor is not assigned to this class/session");
             throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لأخذ الحضور");
         }
 
         Set<Integer> seenStudents = new HashSet<>();
-        for (Attendance attendance : attendanceRequest.getAttendances()){
-            if(!classRepository.isStudentInClass(attendance.getStudent().getId(), session.getSemesterClass().getId())){
+        for (Attendance attendance : attendanceRequest.getAttendances()) {
+            if (!classRepository.isStudentInClass(attendance.getStudent().getId(), session.getSemesterClass().getId())) {
                 log.error("Student below is not assigned to the class:\n {}", attendance.getStudent());
                 throw new HandledRejection("بعض الطلاب غير مسجلين في هذا الفصل");
             }
@@ -106,7 +115,6 @@ public class AttendanceService {
 
         attendanceRepository.saveAll(attendanceRequest.getAttendances());
 
-        log.info("[AttendanceService].[takeAttendance] executed successfully");
         return new Response("تم تسجيل الحضور بنجاح");
     }
 }

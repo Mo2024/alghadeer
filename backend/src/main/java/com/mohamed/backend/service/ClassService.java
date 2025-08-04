@@ -19,6 +19,7 @@ import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.utils.Defaults;
+import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -59,26 +60,22 @@ public class ClassService {
     private StaffService staffService;
 
     @Autowired
-    private ObjectMapper mapper;
+    private Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public List<ClassView> getClassesFromActiveSemester(){
-        log.info("executing method [ClassService].[getClassesFromActiveSemester]");
+    public List<ClassView> getClassesFromActiveSemester() throws JsonProcessingException {
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
-        log.info("Semester Details:\n{}", semester);
+        logger.logJsonObject("Semester Details:\n{}", semester);
 
-        List<ClassView> classes = classRepository.findAllBySemesterId(semester.getId());
-        log.info("[ClassService].[getClassesFromActiveSemester] executed successfully");
-        return  classes;
+        return classRepository.findAllBySemesterId(semester.getId());
     }
 
     @Transactional
-    public void createDefaultClasses(Semester semester, List<Class> classesReq){ //pls put validatioin for classses length
-        log.info("executing method [ClassService].[createDefaultClasses]");
+    public void createDefaultClasses(Semester semester, List<Class> classesReq) throws JsonProcessingException { //pls put validatioin for classses length
 
         List<Class> classes = Defaults.getDefaultClasses(semester);
         classes = classRepository.saveAll(classes);
@@ -97,7 +94,8 @@ public class ClassService {
                     .orElseThrow(() -> {
                         log.error("Invalid staff provided:\n{}", class_.getStaff());
                         throw new HandledRejection(" الطاقم غير صالح أو غير موجود");
-                    });;
+                    });
+            ;
 
 
             if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
@@ -111,7 +109,7 @@ public class ClassService {
             class_.setSemester(semester);
 
             class_.setStaff(staff);
-            classRepository.save(class_);
+            Class savedClass = classRepository.save(class_);
             classScheduleRepository.saveAll(class_.getClassSchedules());
 
             Map<Integer, List<Grade>> gradeAssignmentsMap = Map.of(
@@ -136,18 +134,16 @@ public class ClassService {
             }
 
 
-            log.info("Creating sessions for class: \n{}", class_);
+            log.info("Creating sessions for class ID: {}", savedClass.getId());
             sessionService.createSessions(class_);
-            log.info("Sessions created successfully for class: \n{}", class_);
-            log.info("Class Created Successfully:\n {}", class_);
+            log.info("Sessions created successfully for class ID: {}", savedClass.getId());
+
+            logger.logJsonObject("Class Created Successfully:\n{}", savedClass);
         }
-        log.info("[ClassService].[createDefaultClasses] executed successfully");
     }
 
     @Transactional
-    public void createCustomClasses(List<Class> classes, Semester semester) {
-        log.info("Executing method [ClassService].[createCustomClasses]");
-        log.info("Request Parameter:\nClasses:\n{}\nSemester\n{}", classes, semester);
+    public void createCustomClasses(List<Class> classes, Semester semester) throws JsonProcessingException {
 
         for (Class class_ : classes) {
             if (class_.getName() == null || class_.getName().trim().isEmpty() || !ValidationUtils.isArabic(class_.getName())) {
@@ -166,7 +162,8 @@ public class ClassService {
                     .orElseThrow(() -> {
                         log.error("Invalid staff provided:\n{}", class_.getStaff());
                         throw new HandledRejection(" الطاقم غير صالح أو غير موجود");
-                    });;
+                    });
+            ;
 
 
             if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
@@ -180,11 +177,11 @@ public class ClassService {
             class_.setSemester(semester);
 
             class_.setStaff(staff);
-            classRepository.save(class_);
+            Class savedClass = classRepository.save(class_);
             classScheduleRepository.saveAll(class_.getClassSchedules());
 
             class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
-                if(gradeClassAssignment.getGrade() == null) {
+                if (gradeClassAssignment.getGrade() == null) {
                     log.error("Invalid Grade class Assignment:\n{}", class_.getGradeClassAssignments());
                     throw new HandledRejection("تعيين الصف الدراسي إلى الصف غير صحيح");
                 }
@@ -193,21 +190,19 @@ public class ClassService {
             });
             gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
 
-            log.info("Creating sessions for class: \n{}", class_);
+            log.info("Creating sessions for class ID: {}", savedClass.getId());
             sessionService.createSessions(class_);
-            log.info("Sessions created successfully for class: \n{}", class_);
+            log.info("Sessions created successfully for class ID: {}", savedClass.getId());
 
-            log.info("Class Created Successfully:\n {}", class_);
+            logger.logJsonObject("Class Created Successfully:\n{}", savedClass);
         }
 
-        log.info("[ClassService].[createCustomClasses] executed successfully");
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public Response changeStudentClass(ChangeStudentClassDto changeStudentClassDto){
-        log.info("Executing method [ClassService].[changeStudentClass]");
-        log.info("Request Parameter: {}", changeStudentClassDto);
+    public Response changeStudentClass(ChangeStudentClassDto changeStudentClassDto) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter:\n{}", changeStudentClassDto);
 
         if (changeStudentClassDto.getStudentsId().isEmpty()) {
             log.warn("No students provided to transfer");
@@ -240,30 +235,26 @@ public class ClassService {
                 changeStudentClassDto.getClassId(),
                 class_.getSemester().getId());
 
-        log.info("[ClassService].[changeStudentClass] executed successfully");
         return new Response("تم تغيير الصف بنجاح");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public List<ClassView> getAssignedClasses() throws JsonProcessingException {
-        log.info("Executing method [ClassService].[getAssignedClasses]");
 
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
-        log.info("Semester Details:\n{}", semester);
+
+        logger.logJsonObject("Semester Details:\n{}", semester);
 
         log.info("Calling [classRepository].[findAllByStaffIdByActiveSemester]");
         List<ClassView> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
         log.info("[classRepository].[findAllByStaffIdByActiveSemester] called successfully");
+        
+        logger.logJsonObject("Assigned classes:\n{}", assignedClasses);
 
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        String json = mapper.writeValueAsString(assignedClasses);
-
-        log.info("Assigned classes: \n {}", json);
-        log.info("[ClassService].[getAssignedClasses] executed successfully");
         return assignedClasses;
     }
 

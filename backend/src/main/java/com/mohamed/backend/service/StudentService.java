@@ -1,5 +1,6 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.SemesterEnrollmentView;
 import com.mohamed.backend.dto.StudentView;
 import com.mohamed.backend.model.enums.Permission;
@@ -11,6 +12,7 @@ import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
+import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import com.mohamed.backend.dto.Login;
 import com.mohamed.backend.dto.Response;
@@ -37,6 +39,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.util.*;
@@ -57,6 +60,9 @@ public class StudentService {
     @Autowired
     private SemesterEnrollmentRepository semesterEnrollmentRepository;
 
+    @Autowired
+    private Logger logger;
+
     public Page<Student> getStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
     }
@@ -68,8 +74,7 @@ public class StudentService {
 
     @Transactional
     public Response register(Student student, MultipartFile image, HttpSession session) throws IOException {
-        log.info("executing method [StudentService].[register]");
-        log.info("Registering student:\n{}", student);
+        logger.logJsonObject("Request parameter:\n{}", student);
 
 
         if (student.getName() == null || student.getName().trim().isEmpty() || !ValidationUtils.isArabic(student.getName())) {
@@ -153,14 +158,13 @@ public class StudentService {
 
         log.info("Session created for student ID:\n{}", newStudent.getId());
 
-        log.info("Registration completed successfully for CPR:\n{}", newStudent.getCpr());
-        log.info("[StudentService].[register] executed successfully");
+        logger.logJsonObject("Registration completed successfully:\n{}", newStudent);
 
         return new Response("تم التسجيل بنجاح", studentDetails.getPermissions());
     }
 
-    public Response login(Login login, HttpSession session) {
-        log.info("executing method [StudentService].[login]");
+    public Response login(Login login, HttpSession session) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter:\n{}", login);
 
         Student student = studentRepository.findByCpr(login.getUsername())
                 .orElseThrow(() -> {
@@ -169,18 +173,16 @@ public class StudentService {
                 });
         StudentDetails studentDetails = new StudentDetails(student);
 
-
-        log.info("Login info:\n{}", login);
-        log.info("Student info:\n{}", student);
+        logger.logJsonObject("Student info:\n{}", student);
 
         if (login.getUsername() == null || login.getPassword() == null ||
                 login.getUsername().isBlank() || login.getPassword().isBlank()) {
             log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
-        } else if(!student.getHash().equals(HashUtils.sha256(login.getPassword()))){
+        } else if (!student.getHash().equals(HashUtils.sha256(login.getPassword()))) {
             log.error("Invalid login attempt");
             throw new HandledRejection("اسم المستخدم أو كلمة المرور غير صحيحة");
-        } else if(student.getHash().equals(HashUtils.sha256(login.getPassword()))){
+        } else if (student.getHash().equals(HashUtils.sha256(login.getPassword()))) {
             Map<String, Boolean> permissionBooleanMap = new HashMap<>();
             permissionBooleanMap.put("STUDENT", true);
             student.setPermissionBooleanMap(permissionBooleanMap);
@@ -191,13 +193,11 @@ public class StudentService {
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
             log.info("Student ID:\n{} logged in", student.getId());
         }
-        log.info("[StudentService].[login] executed successfully");
         return new Response("تم تسجيل الدخول بنجاح", studentDetails.getPermissions());
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public List<SemesterEnrollmentView> getEnrolledStudents(){
-        log.info("executing method [StudentService].[getEnrolledStudents]");
+    public List<SemesterEnrollmentView> getEnrolledStudents() throws JsonProcessingException {
 
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
@@ -205,12 +205,9 @@ public class StudentService {
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
 
-        log.info("Semester Details:\n{}", semester);
+        logger.logJsonObject("Semester Details:\n{}", semester);
 
-        List<SemesterEnrollmentView> enrolledStudents = semesterEnrollmentRepository.findAllBySemesterId(semester.getId());
-
-        log.info("[StudentService].[getEnrolledStudents] executed successfully");
-        return enrolledStudents;
+        return semesterEnrollmentRepository.findAllBySemesterId(semester.getId());
     }
 
 }

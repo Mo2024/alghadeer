@@ -1,9 +1,11 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.repository.topic.MainTopicRepository;
+import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -20,24 +22,20 @@ public class MainTopicService {
     @Autowired
     private MainTopicRepository mainTopicRepository;
 
+    @Autowired
+    private Logger logger;
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public List<MainTopic> getTopics() {
-        log.info("executing method [TopicService].[getTopics]");
-
-        List<MainTopic> topics =  mainTopicRepository.findAllByOrderByIdAsc();
-
-        log.info("[TopicService].[getTopics] executed successfully");
-        return topics;
+        return mainTopicRepository.findAllByOrderByIdAsc();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<MainTopic> createMainTopic(MainTopic mainTopic) {
-        log.info("executing method [TopicService].[createMainTopic]");
+    public List<MainTopic> createMainTopic(MainTopic mainTopic) throws JsonProcessingException {
 
-        log.info("Request parameter details:\n{}",mainTopic);
+        logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
         if (mainTopic.getName() == null || mainTopic.getName().trim().isEmpty() || !ValidationUtils.isArabic(mainTopic.getName())) {
             log.error("Invalid name:\n{}", mainTopic.getName());
@@ -46,16 +44,14 @@ public class MainTopicService {
 
         mainTopicRepository.save(mainTopic);
 
-        log.info("[TopicService].[createMainTopic] executed successfully");
         return getTopics();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<MainTopic> editMainTopic(MainTopic mainTopic) {
-        log.info("executing method [TopicService].[editMainTopic]");
+    public List<MainTopic> editMainTopic(MainTopic mainTopic) throws JsonProcessingException {
 
-        log.info("Request parameter details:\n{}",mainTopic);
+        logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
         if (mainTopic.getName() == null || mainTopic.getName().trim().isEmpty() || !ValidationUtils.isArabic(mainTopic.getName())) {
             log.error("Invalid name:\n{}", mainTopic.getName());
@@ -70,16 +66,14 @@ public class MainTopicService {
 
         mainTopicRepository.save(mainTopic);
 
-        log.info("[TopicService].[editMainTopic] executed successfully");
         return getTopics();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response deleteMainTopic(MainTopic mainTopic) {
-        log.info("executing method [TopicService].[deleteMainTopic]");
+    public Response deleteMainTopic(MainTopic mainTopic) throws JsonProcessingException {
 
-        log.info("Request parameter details:\n{}",mainTopic);
+        logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
         mainTopicRepository.findById(mainTopic.getId())
                 .orElseThrow(() -> {
@@ -89,7 +83,6 @@ public class MainTopicService {
 
         mainTopicRepository.delete(mainTopic);
 
-        log.info("[TopicService].[deleteMainTopic] executed successfully");
         return new Response("تم حذف الموضوع الرئيسي بنجاح");
     }
 }

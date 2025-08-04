@@ -18,6 +18,7 @@ import com.mohamed.backend.repository.classinfo.SessionRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.topic.SubTopicRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
+import com.mohamed.backend.utils.Logger;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,15 +53,16 @@ public class SessionService {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private Logger logger;
+
     @Transactional
     public void createSessions(Class class_) {
-        log.info("executing method [SessionService].[createSessions]");
         for (LocalDate startDate = class_.getSemester().getStartDate();
              !startDate.isAfter(class_.getSemester().getEndDate());
-             startDate = startDate.plusDays(1))
-        {
+             startDate = startDate.plusDays(1)) {
 
-            for (ClassSchedule classSchedule : class_.getClassSchedules()){
+            for (ClassSchedule classSchedule : class_.getClassSchedules()) {
 
                 // Below check if the dayOfWeek from the outer loop is equal to dayOfWeek of class schedule
                 if (startDate.getDayOfWeek().name().equals(classSchedule.getDayOfWeek().toString())) {
@@ -80,33 +82,31 @@ public class SessionService {
             }
 
         }
-        log.info("[SessionService].[createSessions] executed successfully");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
-    public Response cancelSessions(List<Integer> sessionIds) {
-        log.info("executing method [SessionService].[cancelSessions]");
+    public Response cancelSessions(List<Integer> sessionIds) throws JsonProcessingException {
 
         List<Session> sessions = sessionRepository.findByIdIn(sessionIds);
 
-        for (Session session : sessions){
+        for (Session session : sessions) {
             boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
             boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
             boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
             // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
-            if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
+            if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
                 log.error("Staff instructor is not assigned to this class/session");
                 throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لإلغاء الحصة");
             }
 
-            if (session.getCancelled()){
-                log.error("Staff tried to cancel a cancelled session {}", session);
+            if (session.getCancelled()) {
+                logger.logJsonObjectError("Staff tried to cancel a cancelled session:\n{}", session);
                 throw new HandledRejection("لا يمكن إلغاء حصة تم إلغاؤها مسبقًا");
             }
 
-            if(!session.getSemester().getActive()){
-                log.error("Staff tried to cancel a session from a closed semester {}", session);
+            if (!session.getSemester().getActive()) {
+                logger.logJsonObjectError("Staff tried to cancel a session from a closed semester:\n{}", session);
                 throw new HandledRejection("لا يمكن إلغاء حصة من فصل منتهٍ");
             }
 
@@ -115,14 +115,12 @@ public class SessionService {
 
         sessionRepository.saveAll(sessions);
 
-        log.info("[SessionService].[cancelSessions] executed successfully");
         return new Response("تم إلغاء الحصص بنجاح");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
-    public Response changeSubTopic(AddSubTopicDto addSubTopicDto) {
-        log.info("executing method [SessionService].[changeSubTopic]");
+    public Response changeSubTopic(AddSubTopicDto addSubTopicDto) throws JsonProcessingException {
 
 
         Session session = sessionRepository.findById(addSubTopicDto.getSessionId())
@@ -141,18 +139,19 @@ public class SessionService {
         boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
         // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
-        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly){
+        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
             log.error("Staff instructor is not assigned to this class/session");
             throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لإلغاء الحصة");
         }
 
-        if (session.getCancelled()){
-            log.error("Staff tried to change a sub-topic of a cancelled session {}", session);
+        if (session.getCancelled()) {
+            logger.logJsonObjectError("Staff tried to change a sub-topic of a cancelled session:\n{}", session);
+
             throw new HandledRejection("لا يمكن تغيير الموضوع الفرعي لحصة تم إلغاؤها مسبقًا");
         }
 
-        if(!session.getSemester().getActive()){
-            log.error("Staff tried to change a sub-topic of a closed semester {}", session);
+        if (!session.getSemester().getActive()) {
+            logger.logJsonObjectError("Staff tried to change a sub-topic of a closed semester:\n{}", session);
             throw new HandledRejection("لا يمكن تغيير الموضوع الفرعي لحصة في فصل دراسي مغلق");
         }
 
@@ -160,31 +159,26 @@ public class SessionService {
 
         sessionRepository.save(session);
 
-        log.info("[SessionService].[changeSubTopic] executed successfully");
         return new Response("تم تعيين الموضوع الفرعي للحصة بنجاح");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public List<SessionView> getUpcomingSessions() throws JsonProcessingException {
-        log.info("executing method [SessionService].[getUpcomingSessions]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
 
-        log.info("Semester Details:\n{}", semester);
+        logger.logJsonObject("Semester Details:\n{}", semester);
 
         List<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqual(
                 staffService.getStaffId(),
                 LocalDate.now()
         );
 
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        String json = mapper.writeValueAsString(upcomingSessions);
-        log.info("Upcoming sessions:\n{}", json);
+        logger.logJsonObject("Upcoming sessions:\n{}", upcomingSessions);
 
-        log.info("[SessionService].[getUpcomingSessions] executed successfully");
         return upcomingSessions;
     }
 

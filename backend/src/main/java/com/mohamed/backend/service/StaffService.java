@@ -1,13 +1,11 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.*;
 import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.StaffPermission;
 import com.mohamed.backend.security.StaffDetails;
-import com.mohamed.backend.utils.HashUtils;
-import com.mohamed.backend.utils.RandomNumberGenerator;
-import com.mohamed.backend.utils.SimpleEmail;
-import com.mohamed.backend.utils.ValidationUtils;
+import com.mohamed.backend.utils.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
@@ -41,27 +39,29 @@ public class StaffService {
     @Autowired
     private SimpleEmail simpleEmail;
 
+    @Autowired
+    private Logger logger;
+
     public Integer getStaffId() {
         StaffDetails staffDetails = (StaffDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return staffDetails.getId();
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public Page<StaffView> getStaff(Pageable pageable){
+    public Page<StaffView> getStaff(Pageable pageable) {
         return staffRepository.findAllByArchivedFalse(pageable);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public List<StaffListView> getStaff(){
+    public List<StaffListView> getStaff() {
         return staffRepository.findAllByArchivedFalse();
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Response register(Staff staffRequest){
-        log.info("executing method [StaffService].[register]");
+    public Response register(Staff staffRequest) throws JsonProcessingException {
 
-        log.info("Staff info:\n{}", staffRequest);
+        logger.logJsonObject("Request parameter:\n{}", staffRequest);
 
         if (staffRequest.getName() == null || staffRequest.getName().trim().isEmpty() || !ValidationUtils.isArabic(staffRequest.getName())) {
             log.error("Invalid name:\n{}", staffRequest.getName());
@@ -82,14 +82,14 @@ public class StaffService {
 
         List<StaffPermission> staffPermissionList = new ArrayList<>();
 
-        for (StaffPermission perm : staffRequest.getPermissions()){
+        for (StaffPermission perm : staffRequest.getPermissions()) {
             if (perm == null || perm.getPermission() == null) {
                 throw new HandledRejection("يرجى التأكد من أن جميع الصفوف المحددة صحيحة");
             }
             staffPermissionList.add(perm);
         }
 
-        log.info("Permissions list\n{}", staffPermissionList);
+        logger.logJsonObject("Permissions list:\n{}", staffPermissionList);
 
         Staff staff = Staff.builder()
                 .name(staffRequest.getName())
@@ -103,8 +103,7 @@ public class StaffService {
         staff.setPermissions(staffPermissionList);
         staffRepository.save(staff);
 
-        log.info("Staff saved to DB successfully:\n{}", staff);
-
+        logger.logJsonObject("Staff saved to DB successfully:\n{}", staff);
 
         String to = staff.getEmail();
         String subject = "كلمة المرور لحسابك الجديد";  // "Password for your new account" in Arabic
@@ -123,17 +122,15 @@ public class StaffService {
         }
 
         log.info("Registration successful");
-        log.info("[StaffService].[register] executed successfully");
 
         return new Response("تم التسجيل بنجاح");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
-    public Response changeEmail(ChangeEmail newEmailReq) {
-        log.info("executing method [StaffService].[changeEmail]");
+    public Response changeEmail(ChangeEmail newEmailReq) throws JsonProcessingException {
 
-        log.info("new email body:\n{}", newEmailReq);
+        logger.logJsonObject("Request parameter:\n{}", newEmailReq);
 
         if (newEmailReq.getEmail() == null || newEmailReq.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(newEmailReq.getEmail())) {
             log.error("Invalid email:\n{}", newEmailReq.getEmail());
@@ -150,45 +147,43 @@ public class StaffService {
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
-        String cleanEmail = newEmailReq.getEmail().trim().toLowerCase();;
+        String cleanEmail = newEmailReq.getEmail().trim().toLowerCase();
+        ;
 
-        log.info("old staff object:\n{}", staff);
+        logger.logJsonObject("old staff object:\n{}", staff);
         staff.setEmail(cleanEmail);
-        log.info("new staff object:\n{}", staff);
+        logger.logJsonObject("new staff object:\n{}", staff);
         staffRepository.save(staff);
         log.info("Email changed successfully");
-        log.info("[StaffService].[changeEmail] executed successfully");
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
 
-    public Response login(Login login, HttpSession session) {
+    public Response login(Login login, HttpSession session) throws JsonProcessingException {
 
-        log.info("executing method [StaffService].[login]");
+        logger.logJsonObject("Request parameter:\n{}", login);
 
-        log.info("Email used for attempt: {}", login.getUsername());
 
         login.setUsername(login.getUsername().trim().toLowerCase());
 
-        Staff staff = staffRepository.findByEmailAndArchived(login.getUsername(),false)
+        Staff staff = staffRepository.findByEmailAndArchived(login.getUsername(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
         StaffDetails staffDetails = new StaffDetails(staff);
 
-        log.info("Login info\n{}", login);
-        log.info("Staff info\n{}", staff);
+        logger.logJsonObject("Staff info:\n{}", staff);
 
         if (login.getUsername() == null || login.getPassword() == null ||
                 login.getUsername().isBlank() || login.getPassword().isBlank()) {
             log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
-        } else if (!staff.getHash().equals(HashUtils.sha256(login.getPassword()))){
+        } else if (!staff.getHash().equals(HashUtils.sha256(login.getPassword()))) {
             log.error("Invalid login attempt");
             throw new HandledRejection("البريد الإلكتروني أو كلمة المرور غير صحيحة");
-        } else if (staff.getHash().equals(HashUtils.sha256(login.getPassword()))){
+        } else if (staff.getHash().equals(HashUtils.sha256(login.getPassword()))) {
             Map<Permission, Boolean> permissionBooleanMap = new HashMap<>();
-            staff.getPermissions().forEach(staffPermission -> permissionBooleanMap.put(staffPermission.getPermission(),true));
+            staff.getPermissions().forEach(staffPermission -> permissionBooleanMap.put(staffPermission.getPermission(), true));
             staff.setPermissionBooleanMap(permissionBooleanMap);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(staffDetails, null, staffDetails.getAuthorities());
@@ -197,23 +192,22 @@ public class StaffService {
 
             log.info("Staff ID: {} logged in", staff.getId());
         }
-        log.info("[StaffService].[login] executed successfully");
         return new Response("تم تسجيل الدخول بنجاح", staffDetails.getPermissions());
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Page<StaffView> archiveStaff(ArchiveDto archiveDto){
-        log.info("executing method [StaffService].[archiveStaff]");
+    public Page<StaffView> archiveStaff(ArchiveDto archiveDto) throws JsonProcessingException {
 
-        log.info("Request parameter:\n{}", archiveDto);
-        Staff staffObj = staffRepository.findByIdAndArchived(archiveDto.getStaff().getId(),false)
+        logger.logJsonObject("Request parameter:\n{}", archiveDto);
+
+        Staff staffObj = staffRepository.findByIdAndArchived(archiveDto.getStaff().getId(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
 
-        if (staffObj.getId().equals(getStaffId())){
+        if (staffObj.getId().equals(getStaffId())) {
             log.error("Staff tried to archive himself");
             throw new HandledRejection("لا يمكنك أرشفة نفسك");
         }
@@ -221,7 +215,6 @@ public class StaffService {
         staffObj.setArchived(true);
         staffRepository.save(staffObj);
 
-        log.info("[StaffService].[archiveStaff] executed successfully");
         Pageable pageable = PageRequest.of(archiveDto.getPage(), archiveDto.getSize());
         return getStaff(pageable);
     }

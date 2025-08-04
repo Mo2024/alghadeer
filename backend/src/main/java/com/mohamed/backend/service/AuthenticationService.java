@@ -1,8 +1,10 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
+import com.mohamed.backend.utils.Logger;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -27,25 +29,27 @@ public class AuthenticationService {
     @Autowired
     private StaffService staffService;
 
-    public Map<?, Boolean> getAuthentication(){
-        log.info("executing method [AuthenticationService].[getAuthentication]");
+    @Autowired
+    private Logger logger;
+
+    public Map<?, Boolean> getAuthentication() throws JsonProcessingException {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        log.info("Fetching authentication details: \n {}", auth);
+        logger.logJsonObject("Fetching authentication details:\n{}", auth);
 
-        if(auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
+
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
             Object principal = auth.getPrincipal();
             Map<?, Boolean> permissions;
 
-            if(principal instanceof StudentDetails userDetails){
+            if (principal instanceof StudentDetails userDetails) {
                 permissions = userDetails.getPermissions();
             } else {
                 permissions = ((StaffDetails) principal).getPermissions();
             }
 
             log.info("User is authenticated successfully");
-            log.info("[AuthenticationService].[getAuthentication] executed successfully");
             return permissions;
         } else {
             log.error("Unauthorized access");
@@ -54,7 +58,6 @@ public class AuthenticationService {
     }
 
     public Response logout(HttpSession session) {
-        log.info("executing method [StudentService].[logout]");
 
         SecurityContextHolder.clearContext();
 
@@ -62,7 +65,6 @@ public class AuthenticationService {
             session.invalidate();
         }
 
-        log.info("[StudentService].[logout] executed successfully");
         return new Response("تم تسجيل الخروج بنجاح");
     }
 

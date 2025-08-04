@@ -16,9 +16,23 @@ public class Logger {
     private ObjectMapper mapper;
 
     public void logJsonObject(String logMessage, Object object) throws JsonProcessingException {
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        String json = mapper.writeValueAsString(object);
-        log.info(logMessage, json);
+        try {
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            String json = mapper.writeValueAsString(object);
+            log.info(logMessage, json);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize object for logging: {}", logMessage, e);
+        }
+    }
+
+    public void logJsonObjectError(String logMessage, Object object) throws JsonProcessingException {
+        try {
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            String json = mapper.writeValueAsString(object);
+            log.error(logMessage, json);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize object for logging: {}", logMessage, e);
+        }
     }
 
 }
