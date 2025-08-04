@@ -34,6 +34,7 @@ public class Class {
     private Staff staff;
 
     @ManyToMany(mappedBy = "classes")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Student> students;
 
     @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)

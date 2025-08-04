@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.semester;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.enums.SemesterList;
 import jakarta.persistence.*;
@@ -45,8 +46,8 @@ public class Semester {
     private Boolean defaultClasses;
 
     @OneToMany(mappedBy = "semester", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Class> classes = new ArrayList<>();
-
 
 
 }

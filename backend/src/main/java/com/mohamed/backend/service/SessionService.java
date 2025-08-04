@@ -20,6 +20,8 @@ import com.mohamed.backend.utils.Logger;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -190,7 +192,7 @@ public class SessionService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<SessionView> getUpcomingSessions() throws JsonProcessingException {
+    public Page<SessionView> getUpcomingSessions(Pageable pageable) throws JsonProcessingException {
         log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
@@ -202,9 +204,10 @@ public class SessionService {
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual]");
-        List<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqual(
+        Page<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqual(
                 staffService.getStaffId(),
-                LocalDate.now()
+                LocalDate.now(),
+                pageable
         );
         log.info("[sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual] called successfully");
 
