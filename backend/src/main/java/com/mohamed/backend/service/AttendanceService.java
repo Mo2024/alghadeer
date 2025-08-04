@@ -52,16 +52,21 @@ public class AttendanceService {
         logger.logJsonObject("Request parameter:\n{}", attendanceRequest);
 
         Integer sessionId = attendanceRequest.getSession().getId();
+        log.info("Calling [sessionRepository].[findById]");
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> {
                     log.error("Session not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[sessionRepository].[findById] called successfully");
+
+        log.info("Calling [classRepository].[findById]");
         Class class_ = classRepository.findById(session.getSemesterClass().getId())
                 .orElseThrow(() -> {
                     log.error("class not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[classRepository].[findById] called successfully");
 
         if (LocalDate.now().isBefore(session.getDate())) {
             log.error("Staff tried to take attendance before date of session {}", session.getDate());
@@ -89,11 +94,19 @@ public class AttendanceService {
             logger.logJsonObjectError("Staff tried to take attendance to a cancelled session:\n{}", session);
             throw new HandledRejection("لا يمكنك تسجيل الحضور لحصة ملغاة");
         }
-
+        log.info("Calling [sessionRepository].[isAuthorizedToTakeAttendanceForSession]");
         boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+        log.info("[sessionRepository].[isAuthorizedToTakeAttendanceForSession] called successfully");
+
+        log.info("Calling [classRepository].[isAuthorizedToTakeAttendanceForClass]");
         boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
+        log.info("[classRepository].[isAuthorizedToTakeAttendanceForClass] called successfully");
+
+        log.info("Calling [staffRepository].[isInstructorOnly]");
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
-// idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
+        log.info("[staffRepository].[isInstructorOnly] called successfully");
+
+        // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
         if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
             log.error("Staff instructor is not assigned to this class/session");
             throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لأخذ الحضور");
@@ -101,19 +114,27 @@ public class AttendanceService {
 
         Set<Integer> seenStudents = new HashSet<>();
         for (Attendance attendance : attendanceRequest.getAttendances()) {
+            log.info("Calling [classRepository].[isStudentInClass]");
             if (!classRepository.isStudentInClass(attendance.getStudent().getId(), session.getSemesterClass().getId())) {
                 log.error("Student below is not assigned to the class:\n {}", attendance.getStudent());
                 throw new HandledRejection("بعض الطلاب غير مسجلين في هذا الفصل");
             }
+            log.info("[classRepository].[isStudentInClass] called successfully");
+
             int studentId = attendance.getStudent().getId();
+            log.info("Calling [classRepository].[isDuplicateAttendance]");
             if (!seenStudents.add(studentId) || classRepository.isDuplicateAttendance(studentId, sessionId)) {
                 log.error("Duplicate attendance found for student id {}", studentId);
                 throw new HandledRejection("توجد تكرارات في تسجيل الحضور لنفس الطالب");
             }
+            log.info("[classRepository].[isDuplicateAttendance] called successfully");
+
             attendance.setSession(session);
         }
 
+        log.info("Calling [attendanceRepository].[saveAll]");
         attendanceRepository.saveAll(attendanceRequest.getAttendances());
+        log.info("[attendanceRepository].[saveAll] called successfully");
 
         return new Response("تم تسجيل الحضور بنجاح");
     }

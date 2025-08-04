@@ -42,7 +42,9 @@ public class MainTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
+        log.info("Calling [mainTopicRepository].[save]");
         mainTopicRepository.save(mainTopic);
+        log.info("[mainTopicRepository].[save] called successfully");
 
         return getTopics();
     }
@@ -58,13 +60,17 @@ public class MainTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
+        log.info("Calling [mainTopicRepository].[findById]");
         mainTopicRepository.findById(mainTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
+        log.info("[mainTopicRepository].[findById] called successfully");
 
+        log.info("Calling [mainTopicRepository].[save]");
         mainTopicRepository.save(mainTopic);
+        log.info("[mainTopicRepository].[save] called successfully");
 
         return getTopics();
     }
@@ -75,13 +81,17 @@ public class MainTopicService {
 
         logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
+        log.info("Calling [mainTopicRepository].[findById]");
         mainTopicRepository.findById(mainTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
+        log.info("[mainTopicRepository].[findById] called successfully");
 
+        log.info("Calling [mainTopicRepository].[delete]");
         mainTopicRepository.delete(mainTopic);
+        log.info("[mainTopicRepository].[delete] called successfully");
 
         return new Response("تم حذف الموضوع الرئيسي بنجاح");
     }

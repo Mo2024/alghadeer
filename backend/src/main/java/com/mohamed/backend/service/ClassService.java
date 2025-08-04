@@ -64,11 +64,14 @@ public class ClassService {
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public List<ClassView> getClassesFromActiveSemester() throws JsonProcessingException {
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         return classRepository.findAllBySemesterId(semester.getId());
@@ -78,7 +81,9 @@ public class ClassService {
     public void createDefaultClasses(Semester semester, List<Class> classesReq) throws JsonProcessingException { //pls put validatioin for classses length
 
         List<Class> classes = Defaults.getDefaultClasses(semester);
+        log.info("Calling [classRepository].[saveAll]");
         classes = classRepository.saveAll(classes);
+        log.info("[classRepository].[saveAll] called successfully");
 
         for (int i = 0; i < classes.size(); i++) {
             Class classReq = classesReq.get(i);
@@ -90,12 +95,13 @@ public class ClassService {
             Integer staffId = class_.getStaff().getId();
 
 
+            log.info("Calling [staffRepository].[findByIdAndArchived]");
             Staff staff = staffRepository.findByIdAndArchived(staffId, false)
                     .orElseThrow(() -> {
                         log.error("Invalid staff provided:\n{}", class_.getStaff());
                         throw new HandledRejection(" الطاقم غير صالح أو غير موجود");
                     });
-            ;
+            log.info("[staffRepository].[findByIdAndArchived] called successfully");
 
 
             if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
@@ -109,8 +115,13 @@ public class ClassService {
             class_.setSemester(semester);
 
             class_.setStaff(staff);
+            log.info("Calling [classRepository].[save]");
             Class savedClass = classRepository.save(class_);
+            log.info("[classRepository].[save] called successfully");
+
+            log.info("Calling [classScheduleRepository].[saveAll]");
             classScheduleRepository.saveAll(class_.getClassSchedules());
+            log.info("[classScheduleRepository].[saveAll] called successfully");
 
             Map<Integer, List<Grade>> gradeAssignmentsMap = Map.of(
                     0, List.of(Grade.FIRST, Grade.SECOND),
@@ -130,7 +141,10 @@ public class ClassService {
                         .map(grade -> new GradeClassAssignment(null, grade, class_.getSemester(), class_))
                         .collect(Collectors.toList());
                 class_.setGradeClassAssignments(assignments);
+                log.info("Calling [gradeClassAssignmentRepository].[saveAll]");
                 gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
+                log.info("[gradeClassAssignmentRepository].[saveAll] called successfully");
+
             }
 
 
@@ -158,12 +172,13 @@ public class ClassService {
             Integer staffId = class_.getStaff().getId();
 
 
+            log.info("Calling [staffRepository].[findByIdAndArchived]");
             Staff staff = staffRepository.findByIdAndArchived(staffId, false)
                     .orElseThrow(() -> {
                         log.error("Invalid staff provided:\n{}", class_.getStaff());
                         throw new HandledRejection(" الطاقم غير صالح أو غير موجود");
                     });
-            ;
+            log.info("[staffRepository].[findByIdAndArchived] called successfully");
 
 
             if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
@@ -177,8 +192,13 @@ public class ClassService {
             class_.setSemester(semester);
 
             class_.setStaff(staff);
+            log.info("Calling [classRepository].[save]");
             Class savedClass = classRepository.save(class_);
+            log.info("[classRepository].[save] called successfully");
+
+            log.info("Calling [classScheduleRepository].[saveAll]");
             classScheduleRepository.saveAll(class_.getClassSchedules());
+            log.info("[classScheduleRepository].[saveAll] called successfully");
 
             class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
                 if (gradeClassAssignment.getGrade() == null) {
@@ -188,7 +208,9 @@ public class ClassService {
                 gradeClassAssignment.setSemester(class_.getSemester());
                 gradeClassAssignment.setClass_(class_);
             });
+            log.info("Calling [gradeClassAssignmentRepository].[saveAll]");
             gradeClassAssignmentRepository.saveAll(class_.getGradeClassAssignments());
+            log.info("[gradeClassAssignmentRepository].[saveAll] called successfully");
 
             log.info("Creating sessions for class ID: {}", savedClass.getId());
             sessionService.createSessions(class_);
@@ -209,26 +231,36 @@ public class ClassService {
             throw new HandledRejection("لم يتم تقديم طلاب للتحويل");
         }
 
+        log.info("Calling [classRepository].[findById]");
         Class class_ = classRepository.findById(changeStudentClassDto.getClassId())
                 .orElseThrow(() -> {
                     log.error("class not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[classRepository].[findById] called successfully");
 
+        log.info("Calling [classRepository].[countStudentsAlreadyInClass]");
         int alreadyInClassCount = classRepository.countStudentsAlreadyInClass(changeStudentClassDto.getClassId(), changeStudentClassDto.getStudentsId());
+        log.info("[classRepository].[countStudentsAlreadyInClass] called successfully");
+
         if (alreadyInClassCount > 0) {
             log.error("Some students are already in this class");
             throw new HandledRejection("بعض الطلاب موجودين مسبقاً في الصف المحدد");
         }
 
+        log.info("Calling [studentRepository].[countByIdIn]");
         int foundStudents = studentRepository.countByIdIn(changeStudentClassDto.getStudentsId());
+        log.info("[studentRepository].[countByIdIn] called successfully");
+
         if (foundStudents != changeStudentClassDto.getStudentsId().size()) {
             log.error("Some students do not exist");
             throw new HandledRejection("بعض الطلاب غير مسجلين");
         }
 
 
+        log.info("Calling [classRepository].[transferStudentsToClassInSemester]");
         classRepository.transferStudentsToClassInSemester(changeStudentClassDto.getStudentsId(), changeStudentClassDto.getClassId(), class_.getSemester().getId());
+        log.info("[classRepository].[transferStudentsToClassInSemester] called successfully");
 
         log.info("Transferred {} students to class {} for semester {}",
                 changeStudentClassDto.getStudentsId().size(),
@@ -241,18 +273,20 @@ public class ClassService {
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public List<ClassView> getAssignedClasses() throws JsonProcessingException {
 
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         log.info("Calling [classRepository].[findAllByStaffIdByActiveSemester]");
         List<ClassView> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
         log.info("[classRepository].[findAllByStaffIdByActiveSemester] called successfully");
-        
+
         logger.logJsonObject("Assigned classes:\n{}", assignedClasses);
 
         return assignedClasses;

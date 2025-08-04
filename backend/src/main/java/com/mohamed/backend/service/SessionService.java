@@ -2,10 +2,8 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mohamed.backend.dto.AddSubTopicDto;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.SessionDto;
 import com.mohamed.backend.dto.SessionView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
@@ -74,8 +72,10 @@ public class SessionService {
                             .semesterClass(class_)
                             .cancelled(false)
                             .build();
-
+                    log.info("Calling [sessionRepository].[save]");
                     sessionRepository.save(session);
+                    log.info("[sessionRepository].[save] called successfully");
+
                     log.info("Session created successfully on {}", startDate);
                 }
 
@@ -88,12 +88,23 @@ public class SessionService {
     @Transactional
     public Response cancelSessions(List<Integer> sessionIds) throws JsonProcessingException {
 
+        log.info("Calling [sessionRepository].[findByIdIn]");
         List<Session> sessions = sessionRepository.findByIdIn(sessionIds);
+        log.info("[sessionRepository].[findByIdIn] called successfully");
 
         for (Session session : sessions) {
+            log.info("Calling [sessionRepository].[isAuthorizedToTakeAttendanceForSession]");
             boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+            log.info("[sessionRepository].[isAuthorizedToTakeAttendanceForSession] called successfully");
+
+            log.info("Calling [classRepository].[isAuthorizedToTakeAttendanceForClass]");
             boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
+            log.info("[classRepository].[isAuthorizedToTakeAttendanceForClass] called successfully");
+
+            log.info("Calling [staffRepository].[isInstructorOnly]");
             boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
+            log.info("[staffRepository].[isInstructorOnly] called successfully");
+
             // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
             if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
                 log.error("Staff instructor is not assigned to this class/session");
@@ -113,7 +124,9 @@ public class SessionService {
             session.setCancelled(true);
         }
 
+        log.info("Calling [sessionRepository].[saveAll]");
         sessionRepository.saveAll(sessions);
+        log.info("[sessionRepository].[saveAll] called successfully");
 
         return new Response("تم إلغاء الحصص بنجاح");
     }
@@ -122,22 +135,34 @@ public class SessionService {
     @Transactional
     public Response changeSubTopic(AddSubTopicDto addSubTopicDto) throws JsonProcessingException {
 
-
+        log.info("Calling [sessionRepository].[findById]");
         Session session = sessionRepository.findById(addSubTopicDto.getSessionId())
                 .orElseThrow(() -> {
                     log.error("Session not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[sessionRepository].[findById] called successfully");
 
+        log.info("Calling [subTopicRepository].[findById]");
         SubTopic subTopic = subTopicRepository.findById(addSubTopicDto.getSubTopicId())
                 .orElseThrow(() -> {
                     log.error("Sub topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
                 });
+        log.info("[subTopicRepository].[findById] called successfully");
 
+        log.info("Calling [sessionRepository].[isAuthorizedToTakeAttendanceForSession]");
         boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+        log.info("[sessionRepository].[isAuthorizedToTakeAttendanceForSession] called successfully");
+
+        log.info("Calling [classRepository].[isAuthorizedToTakeAttendanceForClass]");
         boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
+        log.info("[classRepository].[isAuthorizedToTakeAttendanceForClass] called successfully");
+
+        log.info("Calling [staffRepository].[isInstructorOnly]");
         boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
+        log.info("[staffRepository].[isInstructorOnly] called successfully");
+
         // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
         if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
             log.error("Staff instructor is not assigned to this class/session");
@@ -157,25 +182,31 @@ public class SessionService {
 
         session.setSubTopic(subTopic);
 
+        log.info("Calling [subTopicRepository].[save]");
         sessionRepository.save(session);
+        log.info("[subTopicRepository].[save] called successfully");
 
         return new Response("تم تعيين الموضوع الفرعي للحصة بنجاح");
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public List<SessionView> getUpcomingSessions() throws JsonProcessingException {
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 
+        log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual]");
         List<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqual(
                 staffService.getStaffId(),
                 LocalDate.now()
         );
+        log.info("[sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual] called successfully");
 
         logger.logJsonObject("Upcoming sessions:\n{}", upcomingSessions);
 

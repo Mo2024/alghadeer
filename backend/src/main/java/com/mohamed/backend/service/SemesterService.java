@@ -91,21 +91,26 @@ public class SemesterService {
         }
 
 
+        log.info("Calling [semesterRepository].[existsByYearAndSemester]");
         if (semesterRepository.existsByYearAndSemester(semesterReq.getStartDate().getYear(), semesterReq.getSemester())) {
             log.error("Duplicate semester entry:\n{} - {}", semesterReq.getStartDate().getYear(), semesterReq.getSemester());
             throw new HandledRejection("الفصل الدراسي مسجل مسبقًا");
         }
+        log.info("[semesterRepository].[existsByYearAndSemester] called successfully");
 
+        log.info("Calling [semesterRepository].[existsOverlappingSemester]");
         if (semesterRepository.existsOverlappingSemester(semesterReq.getStartDate(), semesterReq.getEndDate())) {
             log.error("Overlapping semester detected:\nStartDate: {}, EndDate: {}", semesterReq.getStartDate(), semesterReq.getEndDate());
             throw new HandledRejection("يوجد فصل دراسي يتداخل مع هذا التاريخ");
         }
+        log.info("[semesterRepository].[existsOverlappingSemester] called successfully");
 
-
+        log.info("Calling [semesterRepository].[existsByActive]");
         if (semesterRepository.existsByActive(true)) {
             log.error("Cannot create semester while another is active");
             throw new HandledRejection("يجب إغلاق جميع الفصول الدراسية قبل إنشاء فصل جديد");
         }
+        log.info("[semesterRepository].[existsByActive] called successfully");
 
         Semester semester = Semester.builder()
                 .name(semesterReq.getName())
@@ -116,7 +121,9 @@ public class SemesterService {
                 .defaultClasses(semesterReq.isDefaultClasses())
                 .build();
 
+        log.info("Calling [semesterRepository].[save]");
         semesterRepository.save(semester);
+        log.info("[semesterRepository].[save] called successfully");
 
         int count = 0;
         for (Class class_ : semesterReq.getClasses()) {
@@ -149,33 +156,44 @@ public class SemesterService {
         StudentDetails studentDetails = (StudentDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
 
         logger.logJsonObject("Current active semester:\n{}", semester);
 
+        log.info("Calling [studentRepository].[findById]");
         Student student = studentRepository.findById(studentDetails.getId())
                 .orElseThrow(() -> {
                     log.error("Student does not exist:\n{}", studentDetails.getId());
                     return new HandledRejection("الطالب غير موجود");
                 });
+        log.info("[studentRepository].[findById] called successfully");
 
         // I do not need to validate here if the semester is active because above the semester is already fetched by activeness
+        log.info("Calling [gradeClassAssignmentRepository].[findBySemesterIdAndGrade]");
         Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
+        log.info("[gradeClassAssignmentRepository].[findBySemesterIdAndGrade] called successfully");
+
         logger.logJsonObject("Fetched Class:\n{}", class_);
 
         student.getClasses().add(class_);
+        log.info("Calling [studentRepository].[save]");
         studentRepository.save(student);
+        log.info("[studentRepository].[save] called successfully");
 
         logger.logJsonObject("Student enrolling:\n{}", student);
 
+        log.info("Calling [semesterEnrollmentRepository].[existsByStudentIdAndSemesterId]");
         if (semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentDetails.getId(), semester.getId())) {
             log.error("Student already registered in semester");
             throw new HandledRejection("لا يمكن تسجيل الطالب لأنه مسجل في هذا الفصل الدراسي");
         }
+        log.info("[semesterEnrollmentRepository].[existsByStudentIdAndSemesterId] called successfully");
 
         SemesterEnrollment semesterEnrollment = SemesterEnrollment.builder()
                 .student(student)
@@ -183,7 +201,9 @@ public class SemesterService {
                 .enrollmentDate(LocalDate.now())
                 .build();
 
+        log.info("Calling [semesterEnrollmentRepository].[save]");
         semesterEnrollmentRepository.save(semesterEnrollment);
+        log.info("[semesterEnrollmentRepository].[save] called successfully");
 
         logger.logJsonObject("Semester Enrollment saved successfully:\n{}", semesterEnrollment);
 
@@ -194,16 +214,20 @@ public class SemesterService {
     @Transactional
     public Page<SemesterView> closeActiveSemester(Pageable pageable) throws JsonProcessingException {
 
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
 
         logger.logJsonObject("Semester Details:\n{}", semester);
-        
+
         semester.setActive(false);
+        log.info("Calling [semesterRepository].[save]");
         semesterRepository.save(semester);
+        log.info("[semesterRepository].[save] called successfully");
 
         log.info("Semester ID={} closed successfully", semester.getId());
 
@@ -214,11 +238,13 @@ public class SemesterService {
     @Transactional
     public boolean isEnrolled() {
 
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
 
         return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentService.getStudentId(), semester.getId());
     }

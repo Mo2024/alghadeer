@@ -2,13 +2,10 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.SemesterEnrollmentView;
-import com.mohamed.backend.dto.StudentView;
-import com.mohamed.backend.model.enums.Permission;
+
 import com.mohamed.backend.model.semester.Semester;
-import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
-import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
@@ -19,20 +16,14 @@ import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.repository.user.StudentRepository;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -107,10 +98,12 @@ public class StudentService {
             throw new HandledRejection("يرجى التأكد من إدخال تاريخ ميلاد بشكل صحيح");
         }
 
+        log.info("Calling [studentRepository].[existsByCpr]");
         if (studentRepository.existsByCpr(student.getCpr())) {
             log.error("Duplicate CPR registration attempt:\n{}", student.getCpr());
             throw new HandledRejection("رقم الهوية مسجل من قبل");
         }
+        log.info("[studentRepository].[existsByCpr] called successfully");
 
         if (image != null && !image.isEmpty()) {
             String contentType = image.getContentType();
@@ -141,7 +134,9 @@ public class StudentService {
                 .telephone(student.getTelephone())
                 .build();
 
+        log.info("Calling [studentRepository].[save]");
         newStudent = studentRepository.save(newStudent);
+        log.info("[studentRepository].[save] called successfully");
 
         log.info("New student saved with ID:\n{}", newStudent.getId());
 
@@ -166,11 +161,14 @@ public class StudentService {
     public Response login(Login login, HttpSession session) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", login);
 
+        log.info("Calling [studentRepository].[findByCpr]");
         Student student = studentRepository.findByCpr(login.getUsername())
                 .orElseThrow(() -> {
                     log.error("Student not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[studentRepository].[findByCpr] called successfully");
+
         StudentDetails studentDetails = new StudentDetails(student);
 
         logger.logJsonObject("Student info:\n{}", student);
@@ -199,11 +197,13 @@ public class StudentService {
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public List<SemesterEnrollmentView> getEnrolledStudents() throws JsonProcessingException {
 
+        log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
+        log.info("[semesterRepository].[findByActive] called successfully");
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 

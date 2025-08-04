@@ -73,9 +73,11 @@ public class StaffService {
             throw new HandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
+        log.info("Calling [staffRepository].[existsByEmail]");
         if (staffRepository.existsByEmail(staffRequest.getEmail())) {
             throw new HandledRejection("هذا البريد الإلكتروني مستخدم مسبقاً");
         }
+        log.info("[staffRepository].[existsByEmail] called successfully");
 
         String password = String.valueOf(RandomNumberGenerator.generate8DigitNumber());
         String cleanEmail = staffRequest.getEmail().trim().toLowerCase();
@@ -101,7 +103,9 @@ public class StaffService {
 
         staffPermissionList.forEach(perm -> perm.setStaff(staff));
         staff.setPermissions(staffPermissionList);
+        log.info("Calling [staffRepository].[save]");
         staffRepository.save(staff);
+        log.info("[staffRepository].[save] called successfully");
 
         logger.logJsonObject("Staff saved to DB successfully:\n{}", staff);
 
@@ -137,24 +141,28 @@ public class StaffService {
             throw new HandledRejection("يرجى التأكد من إدخال البريد الإلكتروني بشكل صحيح");
         }
 
+        log.info("Calling [staffRepository].[existsByEmail]");
         if (staffRepository.existsByEmail(newEmailReq.getEmail())) {
             throw new HandledRejection("البريد الإلكتروني مستخدم بالفعل");
         }
+        log.info("[staffRepository].[existsByEmail] called successfully");
 
+        log.info("Calling [staffRepository].[findByIdAndArchived]");
         Staff staff = staffRepository.findByIdAndArchived(getStaffId(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[staffRepository].[findByIdAndArchived] called successfully");
 
         String cleanEmail = newEmailReq.getEmail().trim().toLowerCase();
-        ;
 
         logger.logJsonObject("old staff object:\n{}", staff);
         staff.setEmail(cleanEmail);
         logger.logJsonObject("new staff object:\n{}", staff);
+        log.info("Calling [staffRepository].[save]");
         staffRepository.save(staff);
-        log.info("Email changed successfully");
+        log.info("[staffRepository].[save] called successfully");
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
 
@@ -165,11 +173,14 @@ public class StaffService {
 
         login.setUsername(login.getUsername().trim().toLowerCase());
 
+        log.info("Calling [staffRepository].[findByEmailAndArchived]");
         Staff staff = staffRepository.findByEmailAndArchived(login.getUsername(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[staffRepository].[findByEmailAndArchived] called successfully");
+
         StaffDetails staffDetails = new StaffDetails(staff);
 
         logger.logJsonObject("Staff info:\n{}", staff);
@@ -201,11 +212,13 @@ public class StaffService {
 
         logger.logJsonObject("Request parameter:\n{}", archiveDto);
 
+        log.info("Calling [staffRepository].[findByIdAndArchived]");
         Staff staffObj = staffRepository.findByIdAndArchived(archiveDto.getStaff().getId(), false)
                 .orElseThrow(() -> {
                     log.error("Staff not found");
                     return new HandledRejection("يرجى التأكد من البيانات");
                 });
+        log.info("[staffRepository].[findByIdAndArchived] called successfully");
 
         if (staffObj.getId().equals(getStaffId())) {
             log.error("Staff tried to archive himself");
@@ -213,7 +226,9 @@ public class StaffService {
         }
 
         staffObj.setArchived(true);
+        log.info("Calling [staffRepository].[save]");
         staffRepository.save(staffObj);
+        log.info("[staffRepository].[save] called successfully");
 
         Pageable pageable = PageRequest.of(archiveDto.getPage(), archiveDto.getSize());
         return getStaff(pageable);
