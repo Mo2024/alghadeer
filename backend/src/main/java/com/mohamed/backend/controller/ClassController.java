@@ -101,7 +101,7 @@ public class ClassController {
         }
     }
 
-    @GetMapping("/all/get-assigned-classes")
+    @GetMapping("/all/ßassigned-classes")
     @Operation(
             summary = "Fetches assigned classes to staff",
             description = "Only staff are unauthorized to perform this request."

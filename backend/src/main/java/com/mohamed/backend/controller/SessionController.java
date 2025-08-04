@@ -138,7 +138,7 @@ public class SessionController {
         }
     }
 
-    @GetMapping("/all/get-upcoming-sessions")
+    @GetMapping("/all/upcoming-sessions")
     @Operation(
             summary = "Fetches upcoming sessions for staff",
             description = "Only staff are unauthorized to perform this request."

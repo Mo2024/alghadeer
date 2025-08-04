@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.model.enums.Permission;
@@ -36,9 +37,11 @@ public class Staff {
     private List<StaffPermission> permissions = new ArrayList<>();
 
     @OneToMany(mappedBy = "staff")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Class> classes;
 
     @OneToMany(mappedBy = "staff")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Session> sessions;
 
     @Column(name = "is_archived")
