@@ -1,5 +1,8 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mohamed.backend.dto.ChangeStudentClassDto;
 import com.mohamed.backend.dto.ClassView;
 import com.mohamed.backend.dto.Response;
@@ -54,6 +57,9 @@ public class ClassService {
 
     @Autowired
     private StaffService staffService;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public List<ClassView> getClassesFromActiveSemester(){
@@ -239,7 +245,7 @@ public class ClassService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<ClassView> getAssignedClasses(){
+    public List<ClassView> getAssignedClasses() throws JsonProcessingException {
         log.info("Executing method [ClassService].[getAssignedClasses]");
 
         Semester semester = semesterRepository.findByActive(true)
@@ -249,9 +255,14 @@ public class ClassService {
                 });
         log.info("Semester Details:\n{}", semester);
 
+        log.info("Calling [classRepository].[findAllByStaffIdByActiveSemester]");
         List<ClassView> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
+        log.info("[classRepository].[findAllByStaffIdByActiveSemester] called successfully");
 
-        log.info("Assigned classes: \n {}", assignedClasses);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        String json = mapper.writeValueAsString(assignedClasses);
+
+        log.info("Assigned classes: \n {}", json);
         log.info("[ClassService].[getAssignedClasses] executed successfully");
         return assignedClasses;
     }

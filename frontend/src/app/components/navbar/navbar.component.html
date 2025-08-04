@@ -9,21 +9,31 @@
             <div class="w-100 d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
                 <!-- Main Menu (e.g. الصفوف, المواضيع) -->
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item"
-                        *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
-                        <a class="nav-link nav-font" href="/staff/instructor/classes">الصفوف</a>
-                    </li>
-                    <li class="nav-item"
-                        *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
-                        <a class="nav-link nav-font" href="/staff/instructor/attendance">تسجيل الحضور</a>
-                    </li>
-                    <li class="nav-item"
-                        *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
-                        <a class="nav-link nav-font" href="/staff/instructor/topics">المواضيع</a>
+
+                    <li class="nav-item dropdown"
+                        *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR') || hasPermission('SUPERVISOR')">
+                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            المعلم
+                        </a>
+                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
+                            <li>
+                                <a class="dropdown-item" routerLink="/staff/instructor/upcoming-sessions">الحصص
+                                    القادمة</a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" routerLink="/staff/instructor/classes">الصفوف</a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" routerLink="/staff/instructor/attendance">تسجيل الحضور</a>
+                            </li>
+
+                        </ul>
                     </li>
 
-
-                    <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR')">
+                    <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             المشرف
@@ -46,6 +56,11 @@
                             <li><a class="dropdown-item" routerLink="/staff/admin/semesters">الفصول</a>
                             </li>
                         </ul>
+                    </li>
+
+                    <li class="nav-item"
+                        *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
+                        <a class="nav-link nav-font" href="/staff/instructor/topics">المواضيع</a>
                     </li>
 
                 </ul>

@@ -6,6 +6,7 @@ import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.model.topics.SubTopic;
 import com.mohamed.backend.service.SubTopicService;
+import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,6 +31,8 @@ public class SubTopicController {
     @Autowired
     private SubTopicService subTopicService;
 
+    @Autowired
+    private Logger logger;
 
     @PostMapping("/all/create-sub-topic")
     @Operation(
@@ -44,7 +47,10 @@ public class SubTopicController {
     })
     public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic){
         try {
+            log.info("executing method [TopicService].[createSubTopic]");
             List<MainTopic> response = subTopicService.createSubTopic(subTopic);
+            log.info("[TopicService].[createSubTopic] executed successfully");
+            logger.logJsonObject("Response for [createSubTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -76,7 +82,10 @@ public class SubTopicController {
     })
     public ResponseEntity<?> editSubTopic(@RequestBody SubTopic subTopic){
         try {
+            log.info("executing method [TopicService].[editSubTopic]");
             List<MainTopic> response = subTopicService.editSubTopic(subTopic);
+            log.info("[TopicService].[editSubTopic] executed successfully");
+            logger.logJsonObject("Response for [editSubTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -108,7 +117,10 @@ public class SubTopicController {
     })
     public ResponseEntity<?> deleteSubTopic(@RequestBody SubTopic subTopic) throws Exception {
         try {
+            log.info("executing method [TopicService].[deleteSubTopic]");
             Response response = subTopicService.deleteSubTopic(subTopic);
+            log.info("[TopicService].[deleteSubTopic] executed successfully");
+            logger.logJsonObject("Response for [deleteSubTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

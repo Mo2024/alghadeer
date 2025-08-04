@@ -1,7 +1,11 @@
 package com.mohamed.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mohamed.backend.dto.AddSubTopicDto;
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.SessionDto;
 import com.mohamed.backend.dto.SessionView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
@@ -44,6 +48,9 @@ public class SessionService {
 
     @Autowired
     private SemesterRepository semesterRepository;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Transactional
     public void createSessions(Class class_) {
@@ -158,7 +165,7 @@ public class SessionService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<SessionView> getUpcomingSessions(){
+    public List<SessionView> getUpcomingSessions() throws JsonProcessingException {
         log.info("executing method [SessionService].[getUpcomingSessions]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
@@ -173,7 +180,10 @@ public class SessionService {
                 LocalDate.now()
         );
 
-        log.info("Upcoming classes:\n {}", upcomingSessions);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        String json = mapper.writeValueAsString(upcomingSessions);
+        log.info("Upcoming sessions:\n{}", json);
+
         log.info("[SessionService].[getUpcomingSessions] executed successfully");
         return upcomingSessions;
     }

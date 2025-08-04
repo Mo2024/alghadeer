@@ -127,7 +127,7 @@ public class SessionController {
 
     @GetMapping("/all/get-upcoming-sessions")
     @Operation(
-            summary = "Fetches upcoing sessions for staff",
+            summary = "Fetches upcoming sessions for staff",
             description = "Only staff are unauthorized to perform this request."
     )
     @ApiResponses(value = {
