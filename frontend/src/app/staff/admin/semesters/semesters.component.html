@@ -76,11 +76,16 @@
                 </li>
 
                 <!-- Page Numbers (RTL - highest to lowest) -->
-                <ng-container *ngFor="let p of [].constructor(page.totalPages); let i = index">
-                    <li class="page-item" [class.active]="(page.totalPages - 1 - i) === page.number">
-                        <a class="page-link" (click)="goToPage(page.totalPages - 1 - i)">
-                            {{ toArabicNumeral(page.totalPages - i) }}
+
+                <ng-container *ngFor="let p of visiblePages.slice().reverse()">
+                    <li class="page-item" [class.active]="p === page.number" *ngIf="p >= 0">
+                        <a class="page-link" (click)="goToPage(p)">
+                            {{ toArabicNumeral(p + 1) }}
                         </a>
+                    </li>
+
+                    <li class="page-item disabled" *ngIf="p === -1">
+                        <span class="page-link">...</span>
                     </li>
                 </ng-container>
 

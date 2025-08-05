@@ -20,6 +20,7 @@ export class StaffComponent {
   @Input() page: any = {};
   staff: any;
   confirmDeleteDisplay: boolean = false;
+  visiblePages: number[] = [];
 
 
   @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();
@@ -51,6 +52,8 @@ export class StaffComponent {
         if (res) {
           this.page = res;
           this.staff = res.content
+          this.updateVisiblePages();
+
         }
 
       },
@@ -82,9 +85,8 @@ export class StaffComponent {
   }
 
   goToPage(newPage: number) {
-    // Check bounds
     if (newPage < 0 || newPage >= this.page.totalPages) {
-      return; // Ignore invalid page numbers
+      return;
     }
 
     this.page.number = newPage;
@@ -92,9 +94,6 @@ export class StaffComponent {
     this.page.last = newPage === this.page.totalPages - 1;
 
     this.getStaff(newPage);
-
-    // Here you should load data for the new page, e.g.:
-    // this.loadPageData(newPage);
 
     console.log(`Navigated to page ${newPage + 1}`);
   }
@@ -122,5 +121,37 @@ export class StaffComponent {
     this.staff = page.content
   }
 
+  updateVisiblePages() {
+    const totalPages = this.page.totalPages;
+    const currentPage = this.page.number;
+
+    const pages: number[] = [];
+
+    // Always show first page
+    pages.push(0);
+
+    if (currentPage > 1 && currentPage < totalPages - 2) {
+      // Current page somewhere in the middle, show ellipsis once with current page
+      pages.push(-1);         // Ellipsis placeholder
+      pages.push(currentPage);
+    } else if (currentPage <= 1) {
+      // Near start, show page 1 and 2 explicitly (if exist)
+      for (let i = 1; i <= Math.min(2, totalPages - 2); i++) {
+        pages.push(i);
+      }
+    } else {
+      // Near end, show last few pages before last explicitly
+      for (let i = Math.max(totalPages - 3, 1); i < totalPages - 1; i++) {
+        pages.push(i);
+      }
+    }
+
+    // Always show last page if more than 1 page
+    if (totalPages > 1) {
+      pages.push(totalPages - 1);
+    }
+
+    this.visiblePages = pages;
+  }
 
 }

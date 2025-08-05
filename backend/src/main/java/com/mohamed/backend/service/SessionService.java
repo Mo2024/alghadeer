@@ -204,7 +204,7 @@ public class SessionService {
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual]");
-        Page<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqual(
+        Page<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualOrderByDateAsc(
                 staffService.getStaffId(),
                 LocalDate.now(),
                 pageable

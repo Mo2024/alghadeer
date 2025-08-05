@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.classinfo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.model.semester.Semester;
 import jakarta.persistence.*;
@@ -26,10 +27,12 @@ public class GradeClassAssignment {
 
     @ManyToOne
     @JoinColumn(name = "semester_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Semester semester;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Class class_;
 
 }

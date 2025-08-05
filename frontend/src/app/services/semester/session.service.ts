@@ -9,20 +9,25 @@ import { Observable } from 'rxjs';
 export class SessionService {
 
   private apiUrl = environment.apiUrl;
+  private pageSize = environment.pageSize;
 
   url = `${this.apiUrl}/api/session`;
 
   constructor(private http: HttpClient) { }
 
   changeSessionSubTopic(body: any): Observable<any> {
-    return this.http.put(`${this.url}/instructor/change-sub-topic`, body, { withCredentials: true });
+    return this.http.put(`${this.url}/all/change-sub-topic`, body, { withCredentials: true });
+  }
+
+  getUpcomingSessions(page: any): Observable<any> {
+    return this.http.get(`${this.url}/all/upcoming-sessions?page=${page}&size=${this.pageSize}`, { withCredentials: true });
   }
 
   takeAttendance(body: any): Observable<any> {
-    return this.http.post(`${this.url}/instructor/take-attendance`, body, { withCredentials: true });
+    return this.http.post(`${this.url}/all/take-attendance`, body, { withCredentials: true });
   }
 
   cancelSessions(body: any): Observable<any> {
-    return this.http.post(`${this.url}/instructor/cancel-sessions`, body, { withCredentials: true });
+    return this.http.post(`${this.url}/all/cancel-sessions`, body, { withCredentials: true });
   }
 }
