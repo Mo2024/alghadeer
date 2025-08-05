@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SessionService } from '../../../services/semester/session.service';
 import { ToastService } from '../../../services/toast.service';
 import { environment } from '../../../../environments/environment';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-upcoming-sessions',
@@ -112,6 +112,66 @@ export class UpcomingSessionsComponent {
     }
 
     this.visiblePages = pages;
+  }
+
+  formatArabicDateWithDigits(date: Date | string): string {
+    const arabicDate = formatDate(date, 'fullDate', 'ar');
+    return arabicDate.replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[+d]);
+  }
+
+  getArabicStartTimeIfDayMatches(obj: any): string | null {
+    const arabicNumbers: Record<string, string> = {
+      "0": "٠",
+      "1": "١",
+      "2": "٢",
+      "3": "٣",
+      "4": "٤",
+      "5": "٥",
+      "6": "٦",
+      "7": "٧",
+      "8": "٨",
+      "9": "٩",
+      ":": ":"
+    };
+
+    const toArabic = (str: string): string =>
+      str.split('').map(char => arabicNumbers[char] || char).join('');
+
+    const date = new Date(obj.date);
+    const dayOfWeekNames = [
+      "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY",
+      "THURSDAY", "FRIDAY", "SATURDAY"
+    ];
+    const dayName = dayOfWeekNames[date.getDay()];
+
+    for (const schedule of obj.class.classSchedules) {
+      if (schedule.dayOfWeek === dayName) {
+        // Extract hour and minutes from startTime "HH:mm:ss"
+        const [hourStr, minuteStr] = schedule.startTime.split(':');
+
+        // Convert hour to number and remove leading zero
+        let hour = parseInt(hourStr, 10);
+        const minute = parseInt(minuteStr, 10);
+
+        // Determine AM/PM in Arabic
+        const isPM = hour >= 12;
+        const meridiem = isPM ? 'مساءً' : 'صباحًا';
+
+        // Convert hour to 12-hour format
+        hour = hour % 12;
+        if (hour === 0) hour = 12;
+
+        // Format time string without seconds
+        const timeStr = `${hour}:${minute.toString().padStart(2, '0')}`;
+
+        // Convert to Arabic numbers
+        const arabicTime = toArabic(timeStr);
+
+        return `${arabicTime} ${meridiem}`;
+      }
+    }
+
+    return null;
   }
 
 

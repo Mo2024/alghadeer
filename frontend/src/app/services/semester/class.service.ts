@@ -18,6 +18,10 @@ export class ClassService {
     return this.http.post(`${this.url}/supervisor/change-student-class`, body, { withCredentials: true });
   }
 
+  getAssignedClasses(): Observable<any> {
+    return this.http.get(`${this.url}/all/assigned-classes`, { withCredentials: true });
+  }
+
   getClassesByActiveSemester(): Observable<any> {
     return this.http.get(`${this.url}/supervisor/get-classes-active-semester`, { withCredentials: true });
   }

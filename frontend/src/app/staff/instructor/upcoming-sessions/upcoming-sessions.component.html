@@ -22,20 +22,21 @@
                     <table class="table project-list-table table-nowrap align-middle table-borderless">
                         <thead>
                             <tr>
-                                <th scope="col" class="ps-4" style="width: 50px;">الرقم</th>
-                                <th scope="col">اسم الصف</th>
-                                <th scope="col">التاريخ</th>
+                                <th scope="col" class="ps-4">التاريخ</th>
+                                <th scope="col">الصف</th>
+                                <th scope="col">الوقت</th>
                                 <th scope="col" style="width: 100px;">الموضوع</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let session of upcomingSessions">
-                                <td class="ps-4">{{ session.id }}</td>
-                                <td><a class="text-body">{{ session.class.name }}</a></td>
-                                <td><a class="text-body">{{ session.date }}</a></td>
-                                <td><a class="text-body">{{ session.subTopic?.name || 'لم يحدد' }}</a>
+                                <td class="ps-4" data-label="التاريخ">{{ formatArabicDateWithDigits(session.date) }}
                                 </td>
+                                <td data-label="الصف">{{ session.class.name }}</td>
+                                <td data-label="الوقت">{{ getArabicStartTimeIfDayMatches(session) }}</td>
+                                <td data-label="الموضوع">{{ session.subTopic?.name || 'لم يحدد' }}</td>
                             </tr>
+
 
                         </tbody>
                     </table>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ToastService } from '../../../services/toast.service';
@@ -154,4 +154,10 @@ export class SemestersComponent {
 
     this.visiblePages = pages;
   }
+
+  formatArabicDateWithDigits(date: Date | string): string {
+    const arabicDate = formatDate(date, 'fullDate', 'ar');
+    return arabicDate.replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[+d]);
+  }
+
 }
