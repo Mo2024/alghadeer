@@ -1,9 +1,5 @@
 src/main/java/com/mohamed/backend/service/StaffService.java:    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
 src/main/java/com/mohamed/backend/service/AttendanceService.java:    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-src/main/java/com/mohamed/backend/service/SessionService.java:    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-src/main/java/com/mohamed/backend/service/SessionService.java:    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
 
-
-What I think is, make a bage that shows your classes, and also the upcoming classes,  
 
 

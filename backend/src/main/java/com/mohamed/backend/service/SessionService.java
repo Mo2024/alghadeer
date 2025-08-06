@@ -90,6 +90,8 @@ public class SessionService {
     @Transactional
     public Response cancelSessions(List<Integer> sessionIds) throws JsonProcessingException {
 
+        logger.logJsonObject("Request parameter:\n{}", sessionIds);
+
         log.info("Calling [sessionRepository].[findByIdIn]");
         List<Session> sessions = sessionRepository.findByIdIn(sessionIds);
         log.info("[sessionRepository].[findByIdIn] called successfully");
@@ -203,13 +205,13 @@ public class SessionService {
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 
-        log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual]");
-        Page<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualOrderByDateAsc(
+        log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc]");
+        Page<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(
                 staffService.getStaffId(),
                 LocalDate.now(),
                 pageable
         );
-        log.info("[sessionRepository].[findAllByStaffIdAndDateGreaterThanEqual] called successfully");
+        log.info("[sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc] called successfully");
 
         logger.logJsonObject("Upcoming sessions:\n{}", upcomingSessions);
 

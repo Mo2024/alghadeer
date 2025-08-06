@@ -29,6 +29,6 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
             @Param("sessionId") Integer sessionId
     );
 
-    Page<SessionView> findAllByStaffIdAndDateGreaterThanEqualOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
+    Page<SessionView> findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
 
 }

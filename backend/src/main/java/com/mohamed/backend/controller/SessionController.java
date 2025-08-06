@@ -36,7 +36,7 @@ public class SessionController {
     @Autowired
     private Logger logger;
 
-    @PostMapping("/instructor/take-attendance")
+    @PostMapping("/all/take-attendance")
     @Operation(
             summary = "Takes attendance of student for a given session",
             description = "Only admins/instructors/staff who is assigned to the class or session is authorized to perform this request."
@@ -71,7 +71,7 @@ public class SessionController {
         }
     }
 
-    @PostMapping("/instructor/cancel-sessions")
+    @PostMapping("/all/cancel-sessions")
     @Operation(
             summary = "Cancels a sessions in bulk (or individually too)",
             description = "Only admins/instructors/staff who is assigned to the class or session is authorized to perform this request."
@@ -106,7 +106,7 @@ public class SessionController {
         }
     }
 
-    @PutMapping("/instructor/change-sub-topic")
+    @PutMapping("/all/change-sub-topic")
     @Operation(
             summary = "Changes a sub-topic of a session",
             description = "Only admins/instructors/staff who is assigned to the class or session is authorized to perform this request."
