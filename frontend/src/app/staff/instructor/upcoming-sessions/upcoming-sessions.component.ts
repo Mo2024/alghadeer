@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SessionService } from '../../../services/semester/session.service';
 import { ToastService } from '../../../services/toast.service';
 import { environment } from '../../../../environments/environment';
 import { CommonModule, formatDate } from '@angular/common';
+import { SessionDetailsComponent } from './session-details/session-details.component';
+import { MainTopicService } from '../../../services/topics/main-topic.service';
 
 @Component({
   selector: 'app-upcoming-sessions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SessionDetailsComponent],
   templateUrl: './upcoming-sessions.component.html',
   styleUrl: './upcoming-sessions.component.css'
 })
@@ -19,15 +21,49 @@ export class UpcomingSessionsComponent {
   page: any = {};
   visiblePages: number[] = [];
 
+  showSessionDetails: boolean = false;
+  @Input() sessionObject: any
+  @Input() topics: any
 
-  constructor(private sessionService: SessionService, private toastService: ToastService) { }
+
+  constructor(private sessionService: SessionService, private toastService: ToastService, private mainTopicsService: MainTopicService) { }
 
 
   ngOnInit() {
-    this.getUpcomingClasses(this.pageNumber);
+    this.getUpcomingSessions(this.pageNumber);
+
+    this.mainTopicsService.getTopics().subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+
+        if (res) {
+          this.topics = res
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
   }
 
-  getUpcomingClasses(pageNumber: number) {
+  getUpcomingSessions(pageNumber: number) {
     this.sessionService.getUpcomingSessions(pageNumber).subscribe({
       next: async (res) => {
         if (!environment.production) {
@@ -77,7 +113,7 @@ export class UpcomingSessionsComponent {
     this.page.first = newPage === 0;
     this.page.last = newPage === this.page.totalPages - 1;
 
-    this.getUpcomingClasses(newPage);
+    this.getUpcomingSessions(newPage);
 
   }
 
@@ -174,8 +210,18 @@ export class UpcomingSessionsComponent {
     return null;
   }
 
+  toggleSessionDetailsClick(i: number) {
 
+    this.sessionObject = this.upcomingSessions[i]
+    this.toggleSessionDetails()
+  }
 
+  toggleSessionDetails() {
+    this.showSessionDetails = !this.showSessionDetails;
+  }
 
+  refreshSessionList() {
+    this.getUpcomingSessions(this.pageNumber)
+  }
 
 }

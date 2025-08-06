@@ -29,7 +29,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let session of upcomingSessions">
+                            <tr (click)="toggleSessionDetailsClick(i)"
+                                *ngFor="let session of upcomingSessions; let i = index">
                                 <td class="ps-4" data-label="التاريخ">{{ formatArabicDateWithDigits(session.date) }}
                                 </td>
                                 <td data-label="الصف">{{ session.class.name }}</td>
@@ -88,3 +89,8 @@
     </div>
 
 </div>
+
+<app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObject" [topics]="topics"
+    (closeSessionDetails)="toggleSessionDetails()" (refreshSessionList)="refreshSessionList()">
+
+</app-session-details>

@@ -1,0 +1,87 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5" dir="rtl">
+            <div class="col-md-6">
+                <div class="card border-secondary shadow rounded-3 border-0">
+                    <div
+                        class="card-header d-flex justify-content-between align-items-center bg-dark text-white rounded-top">
+                        تفاصيل الحصة
+                        <button type="button" class="btn-close btn-close-white" aria-label="إغلاق"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+
+                    <div class="card-body bg-light rounded-bottom">
+                        <div *ngIf="sessionObject">
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">التاريخ:</div>
+                                <div class="col-8">
+                                    {{ formatArabicDateWithDigits(sessionObject.date) }}
+                                    ({{ getArabicDayName(sessionObject.date) }})
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">الصف:</div>
+                                <div class="col-8">{{ sessionObject.class.name }}</div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">الوقت:</div>
+                                <div class="col-8">{{ getArabicScheduleTimeRange(sessionObject) }}</div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">الموضوع:</div>
+                                <div class="col-8">
+                                    <ng-container *ngIf="isEditable; else showTopic">
+                                        <select class="form-select mb-2" [(ngModel)]="selectedMainTopicIndex"
+                                            (change)="onMainTopicChange()">
+                                            <option [ngValue]="''">اختر الموضوع الرئيسي</option>
+                                            <option *ngFor="let topic of topics; let i = index" [ngValue]="i">
+                                                {{ topic.name }}
+                                            </option>
+                                        </select>
+
+                                        <select class="form-select" [(ngModel)]="selectedSubTopicIndex">
+                                            <option [ngValue]="''">اختر الموضوع الفرعي</option>
+                                            <option
+                                                *ngFor="let sub of topics[selectedMainTopicIndex]?.subTopics; let j = index"
+                                                [ngValue]="j">
+                                                {{ sub.name }}
+                                            </option>
+                                        </select>
+                                    </ng-container>
+
+                                    <ng-template #showTopic>
+                                        {{ sessionObject.subTopic?.name || 'لم يحدد' }}
+                                    </ng-template>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 text-start">
+                                <button *ngIf="!isEditable" class="btn btn-primary ms-2" (click)="isEditable = true">
+                                    تعديل الموضوع
+                                </button>
+
+                                <button *ngIf="!isEditable" class="btn btn-danger ms-2" (click)="cancelSession()">
+                                    إلغاء الحصة
+                                </button>
+
+                                <ng-container *ngIf="isEditable">
+                                    <button class="btn btn-success ms-2"
+                                        (click)="submitTopicChange(selectedMainTopicIndex, selectedSubTopicIndex)">
+                                        تم
+                                    </button>
+                                    <button class="btn btn-danger ms-auto" (click)="cancelEditing()">
+                                        إلغاء التعديل
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
