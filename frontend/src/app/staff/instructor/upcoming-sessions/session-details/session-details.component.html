@@ -59,6 +59,10 @@
                             </div>
 
                             <div class="mt-4 text-start">
+                                <button *ngIf="!isEditable"
+                                    (click)="goToAttendance(sessionObject)"
+                                    class="btn btn-success ms-2">الحضور</button>
+
                                 <button *ngIf="!isEditable" class="btn btn-primary ms-2" (click)="isEditable = true">
                                     تعديل الموضوع
                                 </button>
@@ -76,6 +80,7 @@
                                         إلغاء التعديل
                                     </button>
                                 </ng-container>
+
                             </div>
                         </div>
                     </div>

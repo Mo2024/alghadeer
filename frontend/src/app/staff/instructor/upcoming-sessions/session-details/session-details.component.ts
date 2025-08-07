@@ -5,11 +5,12 @@ import { MainTopicService } from '../../../../services/topics/main-topic.service
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-session-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './session-details.component.html',
   styleUrl: './session-details.component.css'
 })
@@ -38,7 +39,7 @@ export class SessionDetailsComponent {
   };
 
 
-  constructor(private sessionService: SessionService, private toastService: ToastService) { }
+  constructor(private sessionService: SessionService, private toastService: ToastService, private router: Router) { }
 
 
   // Arabic digits
@@ -183,6 +184,11 @@ export class SessionDetailsComponent {
         }
       }
     })
+  }
+
+  goToAttendance(sessionObject: any) {
+    this.sessionService.setSession(sessionObject);
+    this.router.navigate(['/staff/instructor/assigned-classes/attendance']);
   }
 
 }
