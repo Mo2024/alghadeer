@@ -1,5 +1,6 @@
 package com.mohamed.backend.repository.user;
 
+import com.mohamed.backend.dto.StudentView;
 import com.mohamed.backend.model.user.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +17,4 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     boolean existsByCpr(String cpr);
 
     int countByIdIn(List<Integer> studentsId);
-
 }

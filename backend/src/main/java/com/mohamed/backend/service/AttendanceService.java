@@ -1,8 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mohamed.backend.dto.AttendanceRequestDTO;
-import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.classinfo.Class;
@@ -12,6 +11,7 @@ import com.mohamed.backend.repository.classinfo.AttendanceRepository;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.SessionRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
+import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.utils.Logger;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -42,6 +43,9 @@ public class AttendanceService {
 
     @Autowired
     private SessionRepository sessionRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Autowired
     private Logger logger;
@@ -137,5 +141,33 @@ public class AttendanceService {
         log.info("[attendanceRepository].[saveAll] called successfully");
 
         return new Response("تم تسجيل الحضور بنجاح");
+    }
+
+    public GetAttendanceStatusDto getAttendanceStatus(int sessionId, int classId) throws JsonProcessingException {
+        log.info("Request parameter sessionId {} classId {}", sessionId, classId);
+
+        GetAttendanceStatusDto response = new GetAttendanceStatusDto();
+
+        log.info("Calling [attendanceRepository].[isAttendanceTaken]");
+        boolean isAttendanceTaken = attendanceRepository.countAttendanceBySessionId(sessionId) > 0;
+        log.info("[attendanceRepository].[isAttendanceTaken] called successfully: {}", isAttendanceTaken);
+
+        response.setAttendanceTaken(isAttendanceTaken);
+
+        if (isAttendanceTaken) {
+            log.info("Calling [attendanceRepository].[findBySessionId]");
+            List<Attendance> attendanceList = attendanceRepository.findBySessionId(sessionId);
+            logger.logJsonObject("[attendanceRepository].[findBySessionId] called successfully:\n{}", attendanceList);
+            response.setAttendanceList(attendanceList);
+            response.setStudents(null);
+        } else {
+            log.info("Calling [classRepository].[findStudentByClassId]");
+            List<StudentView> students = classRepository.findStudentByClassId(classId);
+            log.info("[classRepository].[findStudentByClassId] called successfully:\n{}", students);
+            response.setStudents(students);
+            response.setAttendanceList(null);
+        }
+
+        return response;
     }
 }

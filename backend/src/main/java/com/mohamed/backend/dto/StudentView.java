@@ -1,6 +1,7 @@
 package com.mohamed.backend.dto;
 
 public interface StudentView {
-    int getId();
+    Integer getId();
+
     String getName();
 }
