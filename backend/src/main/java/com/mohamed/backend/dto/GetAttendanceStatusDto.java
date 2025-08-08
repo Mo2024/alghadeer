@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class GetAttendanceStatusDto {
-    List<StudentView> students;
+    List<StudentAttendanceView> students;
     boolean attendanceTaken;
-    List<Attendance> attendanceList;
+    List<AttendanceView> attendanceList;
 }

@@ -4,4 +4,5 @@ public interface StudentView {
     Integer getId();
 
     String getName();
+    
 }

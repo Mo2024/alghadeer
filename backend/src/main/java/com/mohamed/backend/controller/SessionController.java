@@ -51,7 +51,7 @@ public class SessionController {
     public ResponseEntity<?> takeAttendance(@RequestBody AttendanceRequestDTO attendanceRequest) {
         try {
             log.info("executing method [attendanceService].[takeAttendance]");
-            Response response = attendanceService.takeAttendance(attendanceRequest);
+            GetAttendanceStatusDto response = attendanceService.takeAttendance(attendanceRequest);
             log.info("[attendanceService].[takeAttendance] executed successfully");
             logger.logJsonObject("Response for [takeAttendance]:\n{}", response);
             return ResponseEntity.ok().body(response);

@@ -1,6 +1,7 @@
 package com.mohamed.backend.repository.classinfo;
 
 import com.mohamed.backend.dto.ClassView;
+import com.mohamed.backend.dto.StudentAttendanceView;
 import com.mohamed.backend.dto.StudentView;
 import com.mohamed.backend.model.classinfo.Class;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -75,11 +76,11 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
     List<ClassView> findAllByStaffIdByActiveSemester(Integer staffId);
 
     @Query("""
-                SELECT s.id AS id, s.name AS name
+                SELECT s AS student, false AS isAbsent
                 FROM Class c
                 JOIN c.students s
                 WHERE c.id = :classId
             """)
-    List<StudentView> findStudentByClassId(@Param("classId") int classId);
+    List<StudentAttendanceView> findStudentByClassId(@Param("classId") int classId);
 
 }

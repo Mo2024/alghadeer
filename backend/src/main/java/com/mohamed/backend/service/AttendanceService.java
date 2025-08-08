@@ -52,7 +52,7 @@ public class AttendanceService {
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Response takeAttendance(AttendanceRequestDTO attendanceRequest) throws JsonProcessingException {
+    public GetAttendanceStatusDto takeAttendance(AttendanceRequestDTO attendanceRequest) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", attendanceRequest);
 
         Integer sessionId = attendanceRequest.getSession().getId();
@@ -140,7 +140,7 @@ public class AttendanceService {
         attendanceRepository.saveAll(attendanceRequest.getAttendances());
         log.info("[attendanceRepository].[saveAll] called successfully");
 
-        return new Response("تم تسجيل الحضور بنجاح");
+        return getAttendanceStatus(attendanceRequest.getSession().getId(), attendanceRequest.getSession().getSemesterClass().getId());
     }
 
     public GetAttendanceStatusDto getAttendanceStatus(int sessionId, int classId) throws JsonProcessingException {
@@ -156,13 +156,13 @@ public class AttendanceService {
 
         if (isAttendanceTaken) {
             log.info("Calling [attendanceRepository].[findBySessionId]");
-            List<Attendance> attendanceList = attendanceRepository.findBySessionId(sessionId);
+            List<AttendanceView> attendanceList = attendanceRepository.findBySessionId(sessionId);
             logger.logJsonObject("[attendanceRepository].[findBySessionId] called successfully:\n{}", attendanceList);
             response.setAttendanceList(attendanceList);
             response.setStudents(null);
         } else {
             log.info("Calling [classRepository].[findStudentByClassId]");
-            List<StudentView> students = classRepository.findStudentByClassId(classId);
+            List<StudentAttendanceView> students = classRepository.findStudentByClassId(classId);
             log.info("[classRepository].[findStudentByClassId] called successfully:\n{}", students);
             response.setStudents(students);
             response.setAttendanceList(null);
