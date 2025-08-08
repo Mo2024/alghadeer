@@ -10,4 +10,5 @@ public interface ClassView {
     String getName();
 
     List<ClassSchedule> getClassSchedules();
+
 }

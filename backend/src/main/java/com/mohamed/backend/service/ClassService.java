@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mohamed.backend.dto.ChangeStudentClassDto;
 import com.mohamed.backend.dto.ClassView;
+import com.mohamed.backend.dto.ClassView2;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
@@ -271,7 +272,7 @@ public class ClassService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<ClassView> getAssignedClasses() throws JsonProcessingException {
+    public List<ClassView2> getAssignedClasses() throws JsonProcessingException {
 
         log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
@@ -284,7 +285,7 @@ public class ClassService {
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         log.info("Calling [classRepository].[findAllByStaffIdByActiveSemester]");
-        List<ClassView> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
+        List<ClassView2> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
         log.info("[classRepository].[findAllByStaffIdByActiveSemester] called successfully");
 
         logger.logJsonObject("Assigned classes:\n{}", assignedClasses);

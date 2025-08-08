@@ -1,4 +1,8 @@
 package com.mohamed.backend.dto;
 
-public interface ClassView2 {
+import java.util.List;
+
+public interface ClassView2 extends ClassView {
+    List<SessionViewNested> getSessions();
+
 }

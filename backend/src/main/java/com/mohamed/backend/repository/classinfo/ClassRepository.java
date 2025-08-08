@@ -1,6 +1,7 @@
 package com.mohamed.backend.repository.classinfo;
 
 import com.mohamed.backend.dto.ClassView;
+import com.mohamed.backend.dto.ClassView2;
 import com.mohamed.backend.dto.StudentAttendanceView;
 import com.mohamed.backend.dto.StudentView;
 import com.mohamed.backend.model.classinfo.Class;
@@ -73,7 +74,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
                 WHERE c.staff.id = :staffId
                   AND c.semester.active = true
             """)
-    List<ClassView> findAllByStaffIdByActiveSemester(Integer staffId);
+    List<ClassView2> findAllByStaffIdByActiveSemester(Integer staffId);
 
     @Query("""
                 SELECT s AS student, false AS isAbsent

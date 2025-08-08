@@ -2,6 +2,7 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.ChangeStudentClassDto;
 import com.mohamed.backend.dto.ClassView;
+import com.mohamed.backend.dto.ClassView2;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.service.ClassService;
@@ -115,7 +116,7 @@ public class ClassController {
     public ResponseEntity<?> getAssignedClasses() {
         try {
             log.info("executing method [classService].[getAssignedClasses]");
-            List<ClassView> response = classService.getAssignedClasses();
+            List<ClassView2> response = classService.getAssignedClasses();
             log.info("[classService].[getAssignedClasses] executed successfully");
             logger.logJsonObject("Response for [getAssignedClasses]:\n{}", response);
             return ResponseEntity.ok().body(response);
