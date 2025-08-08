@@ -186,9 +186,4 @@ export class SessionDetailsComponent {
     })
   }
 
-  goToAttendance(sessionObject: any) {
-    this.sessionService.setSession(sessionObject);
-    this.router.navigate(['/staff/instructor/assigned-classes/attendance']);
-  }
-
 }

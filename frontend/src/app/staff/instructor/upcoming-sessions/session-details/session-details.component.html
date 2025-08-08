@@ -60,7 +60,8 @@
 
                             <div class="mt-4 text-start">
                                 <button *ngIf="!isEditable"
-                                    (click)="goToAttendance(sessionObject)"
+                                    [routerLink]="['/staff/instructor/assigned-classes/attendance']"
+                                    [queryParams]="{ sessionId: sessionObject.id, classId: sessionObject.class.id }"
                                     class="btn btn-success ms-2">الحضور</button>
 
                                 <button *ngIf="!isEditable" class="btn btn-primary ms-2" (click)="isEditable = true">

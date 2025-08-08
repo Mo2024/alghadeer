@@ -38,12 +38,18 @@ export const authGuard: CanActivateFn = (route, state) => {
         } else {
           permissionService.setPermissions(new Map());
           if (!['/staff/login', '/login'].includes(state.url)) {
+
             if (state.url.includes('/staff/')) {
               router.navigate(['/staff/login']);
             } else {
+              sessionStorage.removeItem('redirectUrl');
+
               router.navigate(['/login']);
             }
-          } else return true
+          } else {
+
+            return true
+          }
           return false;
         }
       } else {
