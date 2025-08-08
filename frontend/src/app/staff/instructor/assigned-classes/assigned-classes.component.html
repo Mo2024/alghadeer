@@ -59,8 +59,10 @@
                         </strong>
 
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3">
-                            <li *ngFor="let session of assignedClass.sessions" class="list-group-item session-item"
-                                [class.cancelled]="session.cancelled">
+                            <li (click)="toggleSessionDetailsClick(i,j)"
+                                *ngFor="let session of assignedClass.sessions; let j = index;"
+                                class="list-group-item session-item" [class.cancelled]="session.cancelled"
+                                [class.finished]="checkIfSessionFinished(session, assignedClass.classSchedules)">
 
                                 <div class="session-info">
                                     <div class="info-row">
@@ -86,3 +88,8 @@
         </div>
     </div>
 </div>
+
+
+<app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObjectInput" [topics]="topics"
+    (closeSessionDetails)="toggleSessionDetails()" (refreshSessionList)="refreshSessionList()">
+</app-session-details>

@@ -96,19 +96,25 @@
     font-weight: 600;
 }
 
-.session-item.cancelled {
-    background: #fff5f5;
-    border-color: #feb2b2;
+.session-item.finished {
+    background: #f0fdf4;
+    /* light greenish background */
+    border-color: #68d391;
+    /* green border */
 }
 
-.session-item.cancelled .value {
-    background: #fed7d7;
-    color: #9b2c2c;
+.session-item.finished .value {
+    background: #c6f6d5;
+    /* lighter green */
+    color: #2f855a;
+    /* dark green text */
 }
 
-.session-item.cancelled .subtopic {
-    background: #fed7d7;
-    color: #9b2c2c;
+.session-item.finished .subtopic {
+    background: #c6f6d5;
+    /* same lighter green */
+    color: #2f855a;
+    /* dark green text */
 }
 
 

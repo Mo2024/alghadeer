@@ -3,11 +3,13 @@ import { ClassService } from '../../../services/semester/class.service';
 import { ToastService } from '../../../services/toast.service';
 import { environment } from '../../../../environments/environment';
 import { CommonModule, formatDate } from '@angular/common';
+import { SessionDetailsComponent } from '../upcoming-sessions/session-details/session-details.component';
+import { MainTopicService } from '../../../services/topics/main-topic.service';
 
 @Component({
   selector: 'app-assigned-classes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SessionDetailsComponent],
   templateUrl: './assigned-classes.component.html',
   styleUrl: './assigned-classes.component.css'
 })
@@ -15,8 +17,11 @@ export class AssignedClassesComponent {
 
   assignedClasses: any;
 
+  sessionObjectInput: any;
+  showSessionDetails: boolean = false
+  topics: any
 
-  constructor(private classService: ClassService, private toastService: ToastService) { }
+  constructor(private classService: ClassService, private toastService: ToastService, private mainTopicsService: MainTopicService) { }
 
 
   ngOnInit() {
@@ -32,6 +37,36 @@ export class AssignedClassesComponent {
         if (res) {
           this.assignedClasses = res;
 
+        }
+
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
+
+    this.mainTopicsService.getTopics().subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+
+        if (res) {
+          this.topics = res
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
         }
 
       },
@@ -177,6 +212,51 @@ export class AssignedClassesComponent {
     return `${hourArabic}:${minuteArabic} ${period}`;
   }
 
+  toggleSessionDetailsClick(classIndex: number, sessionIndex: number) {
+    this.sessionObjectInput = { ...this.assignedClasses[classIndex].sessions[sessionIndex] }
+    this.sessionObjectInput.class = { ...this.assignedClasses[classIndex] }
+    this.sessionObjectInput.class.sessions = null
+    console.log(this.sessionObjectInput)
+    this.toggleSessionDetails()
+  }
+
+  toggleSessionDetails() {
+    this.showSessionDetails = !this.showSessionDetails;
+  }
+
+  refreshSessionList() {
+    this.getAssignedClasses()
+  }
+  checkIfSessionFinished(session: any, classSchedules: any[]) {
+    const daysOfWeek = [
+      "SUNDAY",
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY",
+      "SATURDAY"
+    ];
+
+    const sessionDate = new Date(session.date);
+    const sessionDay = daysOfWeek[sessionDate.getDay()];
+
+    const matchedSchedule = classSchedules.find(
+      (schedule) => schedule.dayOfWeek === sessionDay
+    );
+
+    if (!matchedSchedule) {
+      return false;
+    }
+
+    const [endHour, endMinute, endSecond] = matchedSchedule.endTime.split(":").map(Number);
+    const sessionEndDateTime = new Date(sessionDate);
+    sessionEndDateTime.setHours(endHour, endMinute, endSecond, 0);
+
+    const now = new Date();
+
+    return now > sessionEndDateTime;
+  }
 
 
 }
