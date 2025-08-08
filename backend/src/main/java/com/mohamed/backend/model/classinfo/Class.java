@@ -42,6 +42,7 @@ public class Class {
 
     @OneToMany(mappedBy = "semesterClass", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OrderBy("date ASC")
     private List<Session> sessions = new ArrayList<>();
 
     @ManyToOne
