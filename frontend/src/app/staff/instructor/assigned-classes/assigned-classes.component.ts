@@ -122,4 +122,61 @@ export class AssignedClassesComponent {
     return null;
   }
 
+  arabicDayName(day: string): string {
+    const map: { [key: string]: string } = {
+      SUNDAY: 'الأحد',
+      MONDAY: 'الاثنين',
+      TUESDAY: 'الثلاثاء',
+      WEDNESDAY: 'الأربعاء',
+      THURSDAY: 'الخميس',
+      FRIDAY: 'الجمعة',
+      SATURDAY: 'السبت',
+    };
+    return map[day.toUpperCase()] || day;
+  }
+
+
+  formatTime(timeStr: string): string {
+    return timeStr.slice(0, 5);
+  }
+
+  convertToArabicNumbers(str: string): string {
+    const numbersMap: { [key: string]: string } = {
+      '0': '٠',
+      '1': '١',
+      '2': '٢',
+      '3': '٣',
+      '4': '٤',
+      '5': '٥',
+      '6': '٦',
+      '7': '٧',
+      '8': '٨',
+      '9': '٩',
+    };
+
+    return str.replace(/\d/g, (digit) => numbersMap[digit]);
+  }
+
+
+  convertToArabicTimeWithPeriod(time24: string): string {
+    const [hourStr, minuteStr] = time24.split(':');
+    let hour = parseInt(hourStr, 10);
+    const minute = minuteStr;
+
+    const period = hour >= 12 ? 'مساءً' : 'صباحاً';
+
+    if (hour === 0) {
+      hour = 12;
+    } else if (hour > 12) {
+      hour -= 12;
+    }
+
+    const hourArabic = this.convertToArabicNumbers(hour.toString());
+    const minuteArabic = this.convertToArabicNumbers(minute);
+
+    return `${hourArabic}:${minuteArabic} ${period}`;
+  }
+
+
+
 }

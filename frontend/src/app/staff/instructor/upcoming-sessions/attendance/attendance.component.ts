@@ -42,6 +42,7 @@ export class AttendanceComponent {
 
         if (res) {
           this.statusObject = res;
+          if (res.students && res.students.length === 0) this.toastService.show("لا يوجد طلبة في هذا الصف", 'error')
         } else {
           this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
         }
