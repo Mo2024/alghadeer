@@ -154,7 +154,7 @@ export class SessionDetailsComponent {
   }
 
   cancelSession() {
-    this.sessionService.cancelSessions([this.sessionObject.id]).subscribe({
+    this.sessionService.cancelSessionsBySessionId([this.sessionObject.id]).subscribe({
       next: async (res) => {
         if (!environment.production) {
           console.log(res)

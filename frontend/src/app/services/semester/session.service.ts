@@ -34,8 +34,8 @@ export class SessionService {
     return this.http.post(`${this.url}/all/take-attendance`, body, { withCredentials: true });
   }
 
-  cancelSessions(body: any): Observable<any> {
-    return this.http.post(`${this.url}/all/cancel-sessions`, body, { withCredentials: true });
+  cancelSessionsBySessionId(body: any): Observable<any> {
+    return this.http.post(`${this.url}/all/cancel-sessions-by-session-id`, body, { withCredentials: true });
   }
 
 }
