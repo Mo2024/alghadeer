@@ -2,6 +2,7 @@ package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.*;
 import com.mohamed.backend.exceptions.HandledRejection;
+import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.service.AttendanceService;
 import com.mohamed.backend.service.SessionService;
 import com.mohamed.backend.utils.Logger;
@@ -181,7 +182,7 @@ public class SessionController {
     @GetMapping("/all/upcoming-sessions")
     @Operation(
             summary = "Fetches upcoming sessions for staff",
-            description = "Only staff are unauthorized to perform this request."
+            description = "Only staff are authorized to perform this request."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
@@ -193,9 +194,44 @@ public class SessionController {
         try {
             Pageable pageable = PageRequest.of(page, size);
             log.info("executing method [sessionService].[getUpcomingSessions]");
-            Page<SessionView> response = sessionService.getUpcomingSessions(pageable);
+            Page<SessionViewExtends> response = sessionService.getUpcomingSessions(pageable);
             log.info("[sessionService].[getUpcomingSessions] executed successfully");
             logger.logJsonObject("Response for [getUpcomingSessions]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/all/get-sessions-by-active-semester")
+    @Operation(
+            summary = "Fetches sessions of an active semester",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getSessionsByActiveSemester() {
+        try {
+            log.info("executing method [sessionService].[getSessionsByActiveSemester]");
+            List<SessionView> response = sessionService.getSessionsByActiveSemester();
+            log.info("[sessionService].[getSessionsByActiveSemester] executed successfully");
+            logger.logJsonObject("Response for [getSessionsByActiveSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

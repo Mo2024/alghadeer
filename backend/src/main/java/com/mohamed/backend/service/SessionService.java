@@ -2,9 +2,7 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mohamed.backend.dto.AddSubTopicDto;
-import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.SessionView;
+import com.mohamed.backend.dto.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.ClassSchedule;
@@ -244,7 +242,7 @@ public class SessionService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public Page<SessionView> getUpcomingSessions(Pageable pageable) throws JsonProcessingException {
+    public Page<SessionViewExtends> getUpcomingSessions(Pageable pageable) throws JsonProcessingException {
         log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
@@ -256,7 +254,7 @@ public class SessionService {
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc]");
-        Page<SessionView> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(
+        Page<SessionViewExtends> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(
                 staffService.getStaffId(),
                 LocalDate.now(),
                 pageable
@@ -268,4 +266,25 @@ public class SessionService {
         return upcomingSessions;
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<SessionView> getSessionsByActiveSemester() throws JsonProcessingException {
+
+        log.info("Calling [semesterRepository].[findByActive]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        logger.logJsonObject("Semester Details:\n{}", semester);
+
+        log.info("Calling [sessionRepository].[findBySemesterActiveTrue]");
+        List<SessionView> sessions = sessionRepository.findBySemesterActiveTrue();
+        log.info("[sessionRepository].[findBySemesterActiveTrue] called successfully");
+
+        logger.logJsonObject("Assigned sessions:\n{}", sessions);
+
+        return sessions;
+    }
 }

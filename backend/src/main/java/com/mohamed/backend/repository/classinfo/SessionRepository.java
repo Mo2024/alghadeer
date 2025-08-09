@@ -1,6 +1,7 @@
 package com.mohamed.backend.repository.classinfo;
 
 import com.mohamed.backend.dto.SessionView;
+import com.mohamed.backend.dto.SessionViewExtends;
 import com.mohamed.backend.model.classinfo.Session;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,9 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
             @Param("sessionId") Integer sessionId
     );
 
-    Page<SessionView> findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
+    Page<SessionViewExtends> findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
 
     List<Session> findByDateIn(List<LocalDate> dates);
+
+    List<SessionView> findBySemesterActiveTrue();
 }
