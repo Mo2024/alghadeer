@@ -31,4 +31,5 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
 
     Page<SessionView> findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
 
+    List<Session> findByDateIn(List<LocalDate> dates);
 }

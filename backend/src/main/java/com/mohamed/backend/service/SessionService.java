@@ -88,7 +88,7 @@ public class SessionService {
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
-    public Response cancelSessions(List<Integer> sessionIds) throws JsonProcessingException {
+    public Response cancelSessionsBySessionIds(List<Integer> sessionIds) throws JsonProcessingException {
 
         logger.logJsonObject("Request parameter:\n{}", sessionIds);
 
@@ -134,6 +134,56 @@ public class SessionService {
 
         return new Response("تم إلغاء الحصص بنجاح");
     }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @Transactional
+    public Response cancelSessionsByDates(List<LocalDate> dates) throws JsonProcessingException {
+
+        logger.logJsonObject("Request parameter:\n{}", dates);
+
+        log.info("Calling [sessionRepository].[findByDateIn]");
+        List<Session> sessions = sessionRepository.findByDateIn(dates);
+        log.info("[sessionRepository].[findByDateIn] called successfully");
+
+        for (Session session : sessions) {
+            log.info("Calling [sessionRepository].[isAuthorizedToTakeAttendanceForSession]");
+            boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
+            log.info("[sessionRepository].[isAuthorizedToTakeAttendanceForSession] called successfully");
+
+            log.info("Calling [classRepository].[isAuthorizedToTakeAttendanceForClass]");
+            boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), session.getSemesterClass().getId());
+            log.info("[classRepository].[isAuthorizedToTakeAttendanceForClass] called successfully");
+
+            log.info("Calling [staffRepository].[isInstructorOnly]");
+            boolean isInstructorOnly = staffRepository.isInstructorOnly(staffService.getStaffId());
+            log.info("[staffRepository].[isInstructorOnly] called successfully");
+
+            // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
+            if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
+                log.error("Staff instructor is not assigned to this class/session");
+                throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لإلغاء الحصة");
+            }
+
+            if (session.getCancelled()) {
+                logger.logJsonObjectError("Staff tried to cancel a cancelled session:\n{}", session);
+                throw new HandledRejection("لا يمكن إلغاء حصة تم إلغاؤها مسبقًا");
+            }
+
+            if (!session.getSemester().getActive()) {
+                logger.logJsonObjectError("Staff tried to cancel a session from a closed semester:\n{}", session);
+                throw new HandledRejection("لا يمكن إلغاء حصة من فصل منتهٍ");
+            }
+
+            session.setCancelled(true);
+        }
+
+        log.info("Calling [sessionRepository].[saveAll]");
+        sessionRepository.saveAll(sessions);
+        log.info("[sessionRepository].[saveAll] called successfully");
+
+        return new Response("تم إلغاء الحصص بنجاح");
+    }
+
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
