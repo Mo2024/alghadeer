@@ -118,6 +118,21 @@
 }
 
 
+.session-item.cancelled {
+    background: #fff5f5;
+    border-color: #feb2b2;
+}
+
+.session-item.cancelled .value {
+    background: #fed7d7;
+    color: #9b2c2c;
+}
+
+.session-item.cancelled .subtopic {
+    background: #fed7d7;
+    color: #9b2c2c;
+}
+
 /* ---- */
 
 .schedule-title {

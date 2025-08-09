@@ -59,20 +59,22 @@
                             </div>
 
                             <div class="mt-4 text-start">
-                                <button *ngIf="!isEditable"
+                                <button *ngIf="!isEditable && !sessionObject.cancelled"
                                     [routerLink]="['/staff/instructor/assigned-classes/attendance']"
                                     [queryParams]="{ sessionId: sessionObject.id, classId: sessionObject.class.id }"
                                     class="btn btn-success ms-2">الحضور</button>
 
-                                <button *ngIf="!isEditable" class="btn btn-primary ms-2" (click)="isEditable = true">
+                                <button *ngIf="!isEditable && !sessionObject.cancelled" class="btn btn-primary ms-2"
+                                    (click)="isEditable = true">
                                     تعديل الموضوع
                                 </button>
 
-                                <button *ngIf="!isEditable" class="btn btn-danger ms-2" (click)="cancelSession()">
+                                <button *ngIf="!isEditable && !sessionObject.cancelled" class="btn btn-danger ms-2"
+                                    (click)="cancelSession()">
                                     إلغاء الحصة
                                 </button>
 
-                                <ng-container *ngIf="isEditable">
+                                <ng-container *ngIf="isEditable && !sessionObject.cancelled">
                                     <button class="btn btn-success ms-2"
                                         (click)="submitTopicChange(selectedMainTopicIndex, selectedSubTopicIndex)">
                                         تم

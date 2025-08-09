@@ -258,5 +258,18 @@ export class AssignedClassesComponent {
     return now > sessionEndDateTime;
   }
 
+  trackByAssignedClass(index: number, assignedClass: any) {
+    return assignedClass.id;
+  }
+
+  trackBySchedule(index: number, schedule: any) {
+    return schedule.id;
+  }
+
+  trackBySession(index: number, session: any) {
+    return session.id;
+  }
+
+
 
 }
