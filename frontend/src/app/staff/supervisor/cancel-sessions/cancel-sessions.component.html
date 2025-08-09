@@ -1,0 +1,48 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">إلغاء الحصص</div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()">
+
+                        <div class="row form-group mb-1" dir="rtl">
+                            <label
+                                class="form-label fw-semibold">{{ cancelType == 'byDate' ? 'التاريخ' : 'الحصة'}}</label>
+                            <div class="col-10">
+
+                                <select [(ngModel)]="assignedVariable" name="assignedVariable" class="form-select">
+                                    <option [value]="''">{{ cancelType == 'byDate' ? 'اختر التاريخ' : 'اختر الحصة'}}
+                                    </option>
+                                    <option *ngFor="let session of sessions; let i = index" [value]="i">
+                                        {{ cancelType == 'byDate' ? session : session.class.name + ' (' + session.date + ')' }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-auto d-flex align-items-end pb-1">
+                                <i (click)="addSession(assignedVariable)" class="bx bx-plus text-success"
+                                    style="font-size: 1.5rem; cursor: pointer;"></i>
+                            </div>
+                        </div>
+
+                        <label class="form-label mt-3 fw-semibold">الحصص الملغية</label>
+                        <ul class="list-group" style="padding-right: 0; margin-right: 0;">
+                            <li *ngFor="let sessionToCancel of sessionsToCancel; let j = index;"
+                                class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ cancelType == 'byDate' ? getSession(j) :  getSession(j).class.name + ' (' + getSession(j).date + ')' }}
+                                <i (click)="removeSession(j)" class="bx bx-minus text-danger"
+                                    style="font-size: 1.5rem; cursor: pointer;"></i>
+                            </li>
+                        </ul>
+                        <div class="text-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">إلغاء الحصص</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

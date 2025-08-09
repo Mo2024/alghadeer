@@ -14,6 +14,7 @@ import { TransferStudentComponent } from './staff/supervisor/transfer-student/tr
 import { UpcomingSessionsComponent } from './staff/instructor/upcoming-sessions/upcoming-sessions.component';
 import { AssignedClassesComponent } from './staff/instructor/assigned-classes/assigned-classes.component';
 import { AttendanceComponent } from './staff/instructor/upcoming-sessions/attendance/attendance.component';
+import { CancelSessionsComponent } from './staff/supervisor/cancel-sessions/cancel-sessions.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
@@ -77,6 +78,12 @@ export const routes: Routes = [
     {
         path: 'staff/supervisor/transfer-student',
         component: TransferStudentComponent,
+        canActivate: [authGuard],
+        data: { role: 'SUPERVISOR', accessControlled: true }
+    },
+    {
+        path: 'staff/supervisor/cancel-sessions',
+        component: CancelSessionsComponent,
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },

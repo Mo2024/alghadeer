@@ -279,12 +279,34 @@ public class SessionService {
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 
-        log.info("Calling [sessionRepository].[findBySemesterActiveTrue]");
-        List<SessionView> sessions = sessionRepository.findBySemesterActiveTrue();
-        log.info("[sessionRepository].[findBySemesterActiveTrue] called successfully");
+        log.info("Calling [sessionRepository].[findBySemesterActiveTrueAndCancelledFalseOrderByDateAsc]");
+        List<SessionView> sessions = sessionRepository.findBySemesterActiveTrueAndCancelledFalseOrderByDateAsc();
+        log.info("[sessionRepository].[findBySemesterActiveTrueAndCancelledFalseOrderByDateAsc] called successfully");
 
-        logger.logJsonObject("Assigned sessions:\n{}", sessions);
+        logger.logJsonObject("Sessions of active semester:\n{}", sessions);
 
         return sessions;
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<LocalDate> getDatesOfSessions() throws JsonProcessingException {
+
+        log.info("Calling [semesterRepository].[findByActive]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        logger.logJsonObject("Semester Details:\n{}", semester);
+
+        log.info("Calling [sessionRepository].[findDistinctDatesBySemesterActiveTrueAndCancelledFalseOrderByDateAsc]");
+        List<LocalDate> dates = sessionRepository.findDistinctDatesBySemesterActiveTrueAndCancelledFalseOrderByDateAsc();
+        log.info("[sessionRepository].[findDistinctDatesBySemesterActiveTrueAndCancelledFalseOrderByDateAsc] called successfully");
+
+        logger.logJsonObject("Dates of sessions:\n{}", dates);
+
+        return dates;
     }
 }

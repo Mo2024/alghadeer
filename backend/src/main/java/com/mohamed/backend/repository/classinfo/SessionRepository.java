@@ -34,5 +34,9 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
 
     List<Session> findByDateIn(List<LocalDate> dates);
 
-    List<SessionView> findBySemesterActiveTrue();
+    @Query("SELECT DISTINCT s.date FROM Session s WHERE s.semester.active = true AND s.cancelled = false ORDER BY s.date ASC")
+    List<LocalDate> findDistinctDatesBySemesterActiveTrueAndCancelledFalseOrderByDateAsc();
+
+    List<SessionView> findBySemesterActiveTrueAndCancelledFalseOrderByDateAsc();
+
 }

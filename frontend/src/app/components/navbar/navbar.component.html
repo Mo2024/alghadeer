@@ -38,6 +38,13 @@
                             <li><a class="dropdown-item" routerLink="/staff/supervisor/transfer-student">تحويل
                                     الطالب</a>
                             </li>
+                            <li><a class="dropdown-item" [routerLink]="['/staff/supervisor/cancel-sessions']"
+                                    [queryParams]="{ type: 'byDate' }">إلغاء
+                                    الحصة بالتاريخ</a>
+                            </li>
+                            <li><a class="dropdown-item" [routerLink]="['/staff/supervisor/cancel-sessions']"
+                                    [queryParams]="{ type: 'bySession' }">إلغاء الحصة بالحصص</a>
+                            </li>
                         </ul>
                     </li>
 

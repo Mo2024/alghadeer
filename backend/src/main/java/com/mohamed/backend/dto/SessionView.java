@@ -9,4 +9,7 @@ public interface SessionView {
     Integer getId();
 
     LocalDate getDate();
+
+    @JsonProperty("class")
+    ClassView getSemesterClass();
 }
