@@ -143,6 +143,7 @@ public class AttendanceService {
         return getAttendanceStatus(attendanceRequest.getSession().getId(), attendanceRequest.getSession().getSemesterClass().getId());
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public GetAttendanceStatusDto getAttendanceStatus(int sessionId, int classId) throws JsonProcessingException {
         log.info("Request parameter sessionId {} classId {}", sessionId, classId);
 

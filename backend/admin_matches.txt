@@ -1,5 +1,0 @@
-src/main/java/com/mohamed/backend/service/StaffService.java:    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-src/main/java/com/mohamed/backend/service/AttendanceService.java:    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-
-
-
