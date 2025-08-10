@@ -31,7 +31,7 @@
                                 style="user-select: none;">
                                 {{ student.student.name }}
 
-                                <input type="checkbox" class="form-check-input ms-3" [(ngModel)]="student.isAbsent"
+                                <input type="checkbox" class="form-check-input ms-3" [(ngModel)]="student.isPresent"
                                     [name]="'student_' + student.student.id" style="width: 1.25rem; height: 1.25rem;" />
                             </label>
                         </div>
@@ -62,7 +62,7 @@
                                     {{ attendance?.student.name }}
                                 </td>
                                 <td class="text-center" data-label="الحالة">
-                                    <span *ngIf="attendance.isAbsent; else presentIcon"
+                                    <span *ngIf="!attendance.isPresent; else presentIcon"
                                         class="badge-soft-danger rounded-pill py-1 px-2" title="غائب"
                                         style="font-size: 1.3rem;"><i class="bx bx-x-circle"></i></span>
                                     <ng-template #presentIcon>
