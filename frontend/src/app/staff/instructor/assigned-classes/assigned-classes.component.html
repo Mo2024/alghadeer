@@ -63,7 +63,8 @@
                                     </div>
                                     <div class="info-row">
                                         <span class="label">الموضوع:</span>
-                                        <span class="subtopic">{{ session.subTopic.name }}</span>
+                                        <span
+                                            class="subtopic">{{ session.subTopic?.name ? session.subTopic.name : 'لم يحدد'}}</span>
                                     </div>
                                 </div>
                             </li>
