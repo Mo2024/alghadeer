@@ -77,7 +77,7 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
     List<ClassView2> findAllByStaffIdByActiveSemester(Integer staffId);
 
     @Query("""
-                SELECT s AS student, false AS isAbsent
+                SELECT s AS student, false AS isPresent
                 FROM Class c
                 JOIN c.students s
                 WHERE c.id = :classId

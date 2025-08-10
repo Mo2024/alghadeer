@@ -32,7 +32,7 @@ public class Attendance {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Student student;
 
-    @Column(name = "isAbsent")
-    private Boolean isAbsent;
+    @Column(name = "is_present")
+    private Boolean isPresent;
 
 }
