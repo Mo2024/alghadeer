@@ -37,7 +37,7 @@
                                 <td data-label="الفصل الدراسي">{{ getSemesterLabel(semester.semester) }}</td>
                                 <td data-label="تاريخ البداية">{{ formatArabicDateWithDigits(semester.startDate) }}</td>
                                 <td data-label="تاريخ النهاية">{{ formatArabicDateWithDigits(semester.endDate) }}</td>
-                                <td data-label="الإجراءات">
+                                <td data-label="إغلاق">
                                     <a *ngIf="semester.active; else disabledClose"
                                         (click)="toggleConfirmCloseSemester(semester.id)" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="إغلاق" class="px-2 text-danger">
