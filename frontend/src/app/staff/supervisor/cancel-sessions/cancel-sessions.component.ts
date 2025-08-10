@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../services/toast.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cancel-sessions',
@@ -25,12 +26,31 @@ export class CancelSessionsComponent {
   removedSession: Map<any, any> = new Map<any, any>();
   sessionsToCancel: any = []
 
+  private queryParamSubscription: Subscription | undefined;
+
   isDisabled: boolean = false;
 
+  ngOnDestroy() {
+    if (this.queryParamSubscription) {
+      this.queryParamSubscription.unsubscribe();
+    }
+  }
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
-      this.cancelType = params.get('type');
+    this.queryParamSubscription = this.route.queryParamMap.subscribe(params => {
+      const newType = params.get('type');
+
+      if (newType !== 'bySession' && newType !== 'byDate') {
+        this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+      }
+
+      if (newType !== this.cancelType) {
+        this.cancelType = newType;
+        this.assignedVariable = '';
+        this.removedSession.clear();
+        this.sessionsToCancel = []
+        console.log('Type changed to:', this.cancelType);
+      }
 
     });
     this.getSessionsData()
