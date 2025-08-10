@@ -130,15 +130,15 @@ public class SemesterService {
             count += class_.getGradeClassAssignments() == null ? 0 : class_.getGradeClassAssignments().size();
         }
 
-        if (count != 12) {
-            log.error("Grade Class Assignments is not equal to 12 (total grades)");
-            throw new HandledRejection("عدد تعيينات الصف الدراسي لا يساوي 12 (إجمالي الصفوف)");
-        }
-
         if (semesterReq.isDefaultClasses()) {
             log.info("calling class service...");
             classService.createDefaultClasses(semester, semesterReq.getClasses());
         } else {
+//            Removing this for now as the team mentioned sometimes there are semesters with no 10th,11th,12th grade 
+//            if (count != 12) {
+//                log.error("Grade Class Assignments is not equal to 12 (total grades)");
+//                throw new HandledRejection("عدد تعيينات الصف الدراسي لا يساوي 12 (إجمالي الصفوف)");
+//            }
             log.info("calling class service...");
             classService.createCustomClasses(semesterReq.getClasses(), semester);
         }
