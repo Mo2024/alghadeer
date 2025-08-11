@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -66,7 +67,7 @@ public class SessionService {
                 if (startDate.getDayOfWeek().name().equals(classSchedule.getDayOfWeek().toString())) {
                     Session session = Session.builder()
                             .date(startDate)
-                            .subTopic(null)
+                            .subTopics(null)
                             .staff(class_.getStaff())
                             .semester(class_.getSemester())
                             .semesterClass(class_)
@@ -195,13 +196,18 @@ public class SessionService {
                 });
         log.info("[sessionRepository].[findById] called successfully");
 
-        log.info("Calling [subTopicRepository].[findById]");
-        SubTopic subTopic = subTopicRepository.findById(addSubTopicDto.getSubTopicId())
-                .orElseThrow(() -> {
-                    log.error("Sub topic not found");
-                    return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
-                });
-        log.info("[subTopicRepository].[findById] called successfully");
+        List<SubTopic> subTopics = new ArrayList<>();
+        log.info("Calling [subTopicRepository].[findById] for multiple IDs");
+        for (Integer id : addSubTopicDto.getSubTopicsId()) {
+            SubTopic subTopic = subTopicRepository.findById(id)
+                    .orElseThrow(() -> {
+                        log.error("Sub topic not found");
+                        return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
+                    });
+            subTopics.add(subTopic);
+        }
+        log.info("[subTopicRepository].[findById] called successfully for all IDs");
+
 
         log.info("Calling [sessionRepository].[isAuthorizedToTakeAttendanceForSession]");
         boolean isAssignedToSession = sessionRepository.isAuthorizedToTakeAttendanceForSession(staffService.getStaffId(), session.getId());
@@ -232,7 +238,7 @@ public class SessionService {
             throw new HandledRejection("لا يمكن تغيير الموضوع الفرعي لحصة في فصل دراسي مغلق");
         }
 
-        session.setSubTopic(subTopic);
+        session.setSubTopics(subTopics);
 
         log.info("Calling [subTopicRepository].[save]");
         sessionRepository.save(session);

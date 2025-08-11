@@ -2,9 +2,11 @@ package com.mohamed.backend.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AddSubTopicDto {
 
     private int sessionId;
-    private int subTopicId;
+    private List<Integer> subTopicsId;
 }

@@ -30,9 +30,13 @@ public class Session {
     @Column(name = "date")
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name = "sub_topic_id")
-    private SubTopic subTopic;
+    @ManyToMany
+    @JoinTable(
+            name = "session_topics",
+            joinColumns = @JoinColumn(name = "session_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_topic_id")
+    )
+    private List<SubTopic> subTopics;
 
     @ManyToOne
     @JoinColumn(name = "semester_id")
@@ -58,7 +62,7 @@ public class Session {
         return "Session{" +
                 "id=" + id +
                 ", date=" + date +
-                ", subTopic=" + (subTopic != null ? subTopic.getId() : null) +
+//                ", subTopics=" + (subTopics != null ? subTopic.getId() : null) +
                 ", semester=" + (semester != null ? semester.getId() : null) +
                 ", class_=" + (semesterClass != null ? semesterClass.getId() : null) +
                 ", cancelled=" + cancelled +
