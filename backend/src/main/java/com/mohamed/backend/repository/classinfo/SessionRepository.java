@@ -30,7 +30,7 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
             @Param("sessionId") Integer sessionId
     );
 
-    Page<SessionViewExtends> findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
+    Page<SessionViewExtends> findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseAndSemesterActiveTrueOrderByDateAsc(Integer staffId, LocalDate date, Pageable pageable);
 
     List<Session> findByDateIn(List<LocalDate> dates);
 

@@ -259,13 +259,13 @@ public class SessionService {
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 
-        log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc]");
-        Page<SessionViewExtends> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc(
+        log.info("Calling [sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseAndSemesterActiveTrueOrderByDateAsc]");
+        Page<SessionViewExtends> upcomingSessions = sessionRepository.findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseAndSemesterActiveTrueOrderByDateAsc(
                 staffService.getStaffId(),
                 LocalDate.now(),
                 pageable
         );
-        log.info("[sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseOrderByDateAsc] called successfully");
+        log.info("[sessionRepository].[findAllByStaffIdAndDateGreaterThanEqualAndCancelledFalseAndSemesterActiveTrueOrderByDateAsc] called successfully");
 
         logger.logJsonObject("Upcoming sessions:\n{}", upcomingSessions);
 
@@ -316,3 +316,4 @@ public class SessionService {
         return dates;
     }
 }
+
