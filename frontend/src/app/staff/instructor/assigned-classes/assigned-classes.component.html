@@ -63,9 +63,20 @@
                                     </div>
                                     <div class="info-row">
                                         <span class="label">الموضوع:</span>
-                                        <span
-                                            class="subtopic">{{ session.subTopic?.name ? session.subTopic.name : 'لم يحدد'}}</span>
+                                        <span class="subtopic">
+                                            <ng-container *ngIf="session.subTopics?.length; else noSubtopics">
+                                                <ul
+                                                    style="margin: 0; padding-right: 1rem; list-style-type: arabic-indic; direction: rtl;">
+                                                    <li *ngFor="let st of session.subTopics"
+                                                        style="margin-bottom: 4px;">
+                                                        {{ st.name }}
+                                                    </li>
+                                                </ul>
+                                            </ng-container>
+                                            <ng-template #noSubtopics>لم يحدد</ng-template>
+                                        </span>
                                     </div>
+
                                 </div>
                             </li>
                         </ul>
@@ -79,6 +90,6 @@
 </div>
 
 
-<app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObjectInput" [topics]="topics"
+<app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObjectInput"
     (closeSessionDetails)="toggleSessionDetails()" (refreshSessionList)="refreshSessionList()">
 </app-session-details>

@@ -42,19 +42,49 @@
                                             </option>
                                         </select>
 
-                                        <select class="form-select" [(ngModel)]="selectedSubTopicIndex">
-                                            <option [ngValue]="''">اختر الموضوع الفرعي</option>
-                                            <option
-                                                *ngFor="let sub of topics[selectedMainTopicIndex]?.subTopics; let j = index"
-                                                [ngValue]="j">
-                                                {{ sub.name }}
-                                            </option>
-                                        </select>
+                                        <div class="d-flex align-items-center gap-2 mb-4">
+                                            <select class="form-select flex-grow-1" [(ngModel)]="selectedSubTopicIndex">
+                                                <option [ngValue]="''">اختر الموضوع الفرعي</option>
+
+                                                <ng-container
+                                                    *ngFor="let sub of topics[selectedMainTopicIndex]?.subTopics; let j = index">
+                                                    <option *ngIf="!topicsToChange.includes(sub.id)" [ngValue]="j">
+                                                        {{ sub.name }}
+                                                    </option>
+                                                </ng-container>
+
+
+
+                                            </select>
+
+                                            <i (click)="addSubTopic()" class="bx bx-plus text-success"
+                                                style="font-size: 1.5rem; cursor: pointer;"></i>
+                                        </div>
+
+                                        <ul class="list-group mt-1" style="padding-right: 0; margin-right: 0;">
+                                            <li *ngFor="let id of topicsToChange; let i = index"
+                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                {{ getSubTopicName(id) }}
+                                                <i (click)="removeSubTopic(id, i)" class="bx bx-minus text-danger"
+                                                    style="font-size: 1.5rem; cursor: pointer;"></i>
+                                            </li>
+                                        </ul>
+
                                     </ng-container>
 
                                     <ng-template #showTopic>
-                                        {{ sessionObject.subTopic?.name || 'لم يحدد' }}
+                                        <div *ngIf="sessionObject.subTopics?.length; else noSubtopics">
+                                            <ol
+                                                style="list-style-type: arabic-indic; padding-right: 1.2rem; margin: 0; direction: rtl;">
+                                                <li *ngFor="let st of sessionObject.subTopics"
+                                                    style="margin-bottom: 4px;">
+                                                    {{ st.name }}
+                                                </li>
+                                            </ol>
+                                        </div>
+                                        <ng-template #noSubtopics>لم يحدد</ng-template>
                                     </ng-template>
+
                                 </div>
                             </div>
 
@@ -65,7 +95,7 @@
                                     class="btn btn-success ms-2">الحضور</button>
 
                                 <button *ngIf="!isEditable && !sessionObject.cancelled" class="btn btn-primary ms-2"
-                                    (click)="isEditable = true">
+                                    (click)="toggleChangeSubTopicBtn()">
                                     تعديل الموضوع
                                 </button>
 
@@ -75,11 +105,12 @@
                                 </button>
 
                                 <ng-container *ngIf="isEditable && !sessionObject.cancelled">
-                                    <button class="btn btn-success ms-2"
-                                        (click)="submitTopicChange(selectedMainTopicIndex, selectedSubTopicIndex)">
+                                    <button [disabled]="isDisabledSubTopic || isDisabled" class="btn btn-success ms-2"
+                                        (click)="submitTopicChange()">
                                         تم
                                     </button>
-                                    <button class="btn btn-danger ms-auto" (click)="cancelEditing()">
+                                    <button [disabled]="isDisabledSubTopic" class="btn btn-danger ms-auto"
+                                        (click)="cancelEditing()">
                                         إلغاء التعديل
                                     </button>
                                 </ng-container>

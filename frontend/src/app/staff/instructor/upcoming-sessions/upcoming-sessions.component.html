@@ -25,7 +25,8 @@
                                 <th scope="col" class="ps-4">التاريخ</th>
                                 <th scope="col">الصف</th>
                                 <th scope="col">الوقت</th>
-                                <th scope="col" style="width: 100px;">الموضوع</th>
+                                <th scope="col" class="d-table-cell d-lg-none d-md-none" style="width: 100px;">الموضوع
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,14 +36,19 @@
                                 </td>
                                 <td data-label="الصف">{{ session.class.name }}</td>
                                 <td data-label="الوقت">{{ getArabicStartTimeIfDayMatches(session) }}</td>
-                                <td data-label="الموضوع">{{ session.subTopic?.name || 'لم يحدد' }}</td>
+                                <td data-label="الموضوع" class="d-table-cell d-lg-none d-md-none">
+                                    <ng-container *ngIf="session.subTopics?.length; else noTopic">
+                                        <span *ngFor="let topic of session.subTopics; let last = last">
+                                            {{ topic.name }}<span *ngIf="!last">، </span>
+                                        </span>
+                                    </ng-container>
+                                    <ng-template #noTopic>لم يحدد</ng-template>
+                                </td>
+
+
                             </tr>
-
-
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
         </div>
@@ -90,6 +96,6 @@
 
 </div>
 
-<app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObject" [topics]="topics"
+<app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObject"
     (closeSessionDetails)="toggleSessionDetails()" (refreshSessionList)="refreshSessionList()">
 </app-session-details>

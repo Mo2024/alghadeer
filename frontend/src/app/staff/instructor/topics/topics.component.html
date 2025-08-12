@@ -39,7 +39,7 @@
                             <div class="d-flex gap-2">
                                 <i (click)="toggleEditTopicOpen(true, sub?.name, topic.id, sub?.id)"
                                     class="bx bx-edit-alt text-warning fs-5"></i>
-                                <i class="bx bx-trash text-danger fs-5"></i>
+                                <i class="bx bx-trash text-danger fs-5" (click)="deleteSubTopic(sub.id, i, j)"></i>
                             </div>
                         </li>
                     </ul>

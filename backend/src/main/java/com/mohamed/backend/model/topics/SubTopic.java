@@ -32,5 +32,9 @@ public class SubTopic {
     @JoinColumn(name = "main_topic_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private MainTopic mainTopic;
-    
+
+    @JsonProperty("mainTopicId")
+    public Integer getMainTopicId() {
+        return mainTopic != null ? mainTopic.getId() : null;
+    }
 }

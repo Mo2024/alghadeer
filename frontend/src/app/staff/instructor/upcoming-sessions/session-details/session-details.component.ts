@@ -21,12 +21,19 @@ export class SessionDetailsComponent {
   @Output() refreshSessionList: EventEmitter<void> = new EventEmitter<void>();
 
   isDisabled: boolean = false;
+  isDisabledSubTopic: boolean = false
 
   isEditable = false;
   selectedMainTopicIndex: any = '';
   selectedSubTopicIndex: any = '';
 
-  @Input() topics: any;
+  removedSubTopic: Map<any, Map<any, any>> = new Map();
+  innerMap: Map<any, any> = new Map<any, any>();
+  mainTopicIdsOfSubTopicsToChange: Map<any, any> = new Map<any, any>();
+
+  topicsToChange: any = [];
+
+  topics: any;
 
   arabicDaysMap: any = {
     'SUNDAY': 'الأحد',
@@ -39,9 +46,75 @@ export class SessionDetailsComponent {
   };
 
 
-  constructor(private sessionService: SessionService, private toastService: ToastService, private router: Router) { }
+  constructor(private sessionService: SessionService, private toastService: ToastService, private router: Router, private mainTopicService: MainTopicService) { }
+
+  ngOnInit() {
+
+    this.getTopics();
+
+  }
 
 
+  getTopics() {
+    const subTopicsId: any = []
+    this.sessionObject.subTopics.forEach((subtopic: any) => {
+      subTopicsId.push(subtopic.id)
+
+    });
+    console.log(subTopicsId)
+    this.mainTopicService.getTopics().subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+        if (res) {
+          this.topics = res;
+        }
+
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
+  }
+
+  toggleChangeSubTopicBtn() {
+    this.isDisabledSubTopic = true
+    this.isEditable = true
+    this.getTopics();
+    for (let i = 0; i < this.sessionObject.subTopics.length; i++) {
+      const subTopic = this.sessionObject.subTopics[i]
+      const mainTopicId = subTopic.mainTopicId
+
+      let innerMap = this.removedSubTopic.get(mainTopicId);
+      if (!innerMap) {
+        innerMap = new Map<any, any>();
+      }
+
+      innerMap.set(subTopic.id, subTopic);
+      this.removedSubTopic.set(mainTopicId, innerMap);
+
+      this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
+      this.topicsToChange.push(subTopic.id);
+
+      this.selectedSubTopicIndex = '';
+    }
+    // console.log(this.mainTopicsId)
+    this.isDisabledSubTopic = false
+
+  }
   // Arabic digits
   formatArabicDateWithDigits(dateString: string): string {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' } as const;
@@ -97,13 +170,9 @@ export class SessionDetailsComponent {
   }
 
   onMainTopicChange() {
-    console.log(this.selectedMainTopicIndex)
-    console.log(this.selectedSubTopicIndex)
-    console.log(this.topics[this.selectedMainTopicIndex]?.subTopics)
-    console.log(this.topics[this.selectedMainTopicIndex])
-    console.log(this.topics)
+
     // Optional: Reset subtopic when main topic changes
-    // this.sessionObject.subTopic = null;
+    this.selectedSubTopicIndex = '';
   }
 
   emitCloseClicked(): void {
@@ -116,18 +185,36 @@ export class SessionDetailsComponent {
     this.isEditable = !this.isEditable
   }
 
-  submitTopicChange(selectedMainTopicIndex: number, selectedSubTopicIndex: number) {
+  submitTopicChange() {
+    this.isDisabled = true
     this.sessionService.changeSessionSubTopic({
       sessionId: this.sessionObject.id,
-      subTopicId: this.topics[selectedMainTopicIndex].subTopics[selectedSubTopicIndex].id
+      subTopicsId: this.topicsToChange
     }).subscribe({
       next: async (res) => {
         if (!environment.production) {
           console.log(res)
         }
 
+        this.isDisabled = false
         if (res) {
-          this.sessionObject.subTopic = this.topics[selectedMainTopicIndex].subTopics[selectedSubTopicIndex]
+
+          const newSubTopics: any = []
+          this.topicsToChange.forEach((subTopicId: number) => {
+            const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
+            const subTopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
+            newSubTopics.push(subTopic)
+          });
+          this.sessionObject.subTopics = newSubTopics;
+
+          this.selectedMainTopicIndex = '';
+          this.selectedSubTopicIndex = '';
+
+          this.removedSubTopic.clear();
+          this.innerMap.clear();
+          this.mainTopicIdsOfSubTopicsToChange.clear();
+          this.topicsToChange = []
+            ;
           this.isEditable = !this.isEditable
           this.refreshSessionList.emit()
         } else {
@@ -139,6 +226,7 @@ export class SessionDetailsComponent {
         if (!environment.production) {
           console.log(error)
         }
+        this.isDisabled = false
 
         if (error.error.status === "ALGD-400") {
           this.toastService.show(error.error.message, 'error');
@@ -186,4 +274,54 @@ export class SessionDetailsComponent {
     })
   }
 
+  addSubTopic() {
+    if (this.selectedSubTopicIndex === '') return;
+
+    const subTopic = this.topics[this.selectedMainTopicIndex].subTopics[this.selectedSubTopicIndex];
+    const mainTopicId = this.topics[this.selectedMainTopicIndex];
+
+    let innerMap = this.removedSubTopic.get(mainTopicId);
+    if (!innerMap) {
+      innerMap = new Map<any, any>();
+    }
+
+    innerMap.set(subTopic.id, subTopic);
+    this.removedSubTopic.set(mainTopicId, innerMap);
+
+    this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
+    this.topicsToChange.push(subTopic.id);
+
+    this.topics[this.selectedMainTopicIndex].subTopics.splice(this.selectedSubTopicIndex, 1);
+
+    this.selectedSubTopicIndex = '';
+  }
+
+
+  removeSubTopic(subTopicId: number, index: number) {
+    this.getSubTopicName(subTopicId)
+
+    const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
+    const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
+
+    this.mainTopicIdsOfSubTopicsToChange.delete(subTopicId)
+    this.removedSubTopic.get(mainTopicId)?.delete(subTopicId);
+    this.topicsToChange.splice(index, 1)
+    const mainTopicIndex = this.topics.findIndex(
+      (mainTopic: any) => mainTopic.id === mainTopicId
+    );
+    console.log(mainTopicIndex)
+
+    const isDuplicate = this.topics[mainTopicIndex].subTopics.some(
+      (subTopic: any) => subTopic.id === subTopic.id
+    );
+
+    if (!isDuplicate) this.topics[mainTopicIndex].subTopics.push(subtopic)
+
+  }
+
+  getSubTopicName(subTopicId: number) {
+    const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
+    const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
+    return subtopic.name
+  }
 }
