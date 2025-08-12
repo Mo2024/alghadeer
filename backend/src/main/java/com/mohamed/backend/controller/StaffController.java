@@ -1,8 +1,11 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.*;
+import com.mohamed.backend.dto.user.ArchiveDto;
+import com.mohamed.backend.dto.user.Login;
+import com.mohamed.backend.dto.user.StaffListView;
+import com.mohamed.backend.dto.user.StaffView;
 import com.mohamed.backend.exceptions.HandledRejection;
-import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.service.StaffService;
 import com.mohamed.backend.utils.Logger;
@@ -11,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,12 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController

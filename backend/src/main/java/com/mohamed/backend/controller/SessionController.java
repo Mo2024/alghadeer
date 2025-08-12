@@ -1,13 +1,16 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.*;
+import com.mohamed.backend.dto.class_.AddSubTopicDto;
+import com.mohamed.backend.dto.class_.AttendanceRequestDTO;
+import com.mohamed.backend.dto.class_.GetAttendanceStatusDto;
+import com.mohamed.backend.dto.session.SessionView;
+import com.mohamed.backend.dto.session.SessionViewExtends;
 import com.mohamed.backend.exceptions.HandledRejection;
-import com.mohamed.backend.model.classinfo.Session;
 import com.mohamed.backend.service.AttendanceService;
 import com.mohamed.backend.service.SessionService;
 import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

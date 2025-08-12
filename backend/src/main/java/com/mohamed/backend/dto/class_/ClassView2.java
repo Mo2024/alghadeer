@@ -1,4 +1,6 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.class_;
+
+import com.mohamed.backend.dto.session.SessionViewNested;
 
 import java.util.List;
 

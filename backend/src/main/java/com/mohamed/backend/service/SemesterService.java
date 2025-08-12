@@ -2,8 +2,8 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.SemesterDto;
-import com.mohamed.backend.dto.SemesterView;
+import com.mohamed.backend.dto.semester.SemesterDto;
+import com.mohamed.backend.dto.semester.SemesterView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.enums.Grade;

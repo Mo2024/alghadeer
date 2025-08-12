@@ -1,7 +1,7 @@
 package com.mohamed.backend.repository.user;
 
-import com.mohamed.backend.dto.StaffListView;
-import com.mohamed.backend.dto.StaffView;
+import com.mohamed.backend.dto.user.StaffListView;
+import com.mohamed.backend.dto.user.StaffView;
 import com.mohamed.backend.model.user.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,22 +17,25 @@ import java.util.Optional;
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
     boolean existsByEmail(String email);
+
     Optional<Staff> findByEmailAndArchived(String email, Boolean isArchived);
+
     Optional<Staff> findByIdAndArchived(Integer id, Boolean isArchived);
 
     Page<StaffView> findAllByArchivedFalse(Pageable pageable);
+
     List<StaffListView> findAllByArchivedFalse();
 
 
     @Query(value = """
-    SELECT COUNT(*) = 1
-    FROM staff_permission
-    WHERE staff_id = :staffId
-      AND permission = 'INSTRUCTOR'
-      AND (
-        SELECT COUNT(*) FROM staff_permission sp2 WHERE sp2.staff_id = :staffId
-      ) = 1
-""", nativeQuery = true)
+                SELECT COUNT(*) = 1
+                FROM staff_permission
+                WHERE staff_id = :staffId
+                  AND permission = 'INSTRUCTOR'
+                  AND (
+                    SELECT COUNT(*) FROM staff_permission sp2 WHERE sp2.staff_id = :staffId
+                  ) = 1
+            """, nativeQuery = true)
     boolean isInstructorOnly(@Param("staffId") Integer staffId);
 
 

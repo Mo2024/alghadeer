@@ -1,7 +1,7 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.session;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mohamed.backend.model.topics.SubTopic;
+import com.mohamed.backend.dto.class_.ClassView;
 
 import java.time.LocalDate;
 

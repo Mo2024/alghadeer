@@ -1,9 +1,8 @@
 package com.mohamed.backend.repository.classinfo;
 
-import com.mohamed.backend.dto.ClassView;
-import com.mohamed.backend.dto.ClassView2;
-import com.mohamed.backend.dto.StudentAttendanceView;
-import com.mohamed.backend.dto.StudentView;
+import com.mohamed.backend.dto.class_.ClassView;
+import com.mohamed.backend.dto.class_.ClassView2;
+import com.mohamed.backend.dto.user.StudentAttendanceView;
 import com.mohamed.backend.model.classinfo.Class;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

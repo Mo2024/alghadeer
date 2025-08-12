@@ -1,7 +1,6 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.SemesterView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.topics.MainTopic;
 import com.mohamed.backend.service.MainTopicService;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;

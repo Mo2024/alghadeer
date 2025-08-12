@@ -1,7 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mohamed.backend.dto.SemesterEnrollmentView;
+import com.mohamed.backend.dto.semester.SemesterEnrollmentView;
 
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
@@ -11,7 +11,7 @@ import com.mohamed.backend.utils.HashUtils;
 import com.mohamed.backend.utils.ImageUtils;
 import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
-import com.mohamed.backend.dto.Login;
+import com.mohamed.backend.dto.user.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Student;

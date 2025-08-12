@@ -1,11 +1,9 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.Login;
+import com.mohamed.backend.dto.user.Login;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.dto.SemesterEnrollmentView;
-import com.mohamed.backend.dto.StudentView;
+import com.mohamed.backend.dto.semester.SemesterEnrollmentView;
 import com.mohamed.backend.exceptions.HandledRejection;
-import com.mohamed.backend.model.semester.SemesterEnrollment;
 import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.service.StudentService;
 import com.mohamed.backend.utils.Logger;
@@ -13,20 +11,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController

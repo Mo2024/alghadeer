@@ -1,4 +1,4 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.session;
 
 import com.mohamed.backend.model.topics.SubTopic;
 

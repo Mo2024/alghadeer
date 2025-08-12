@@ -1,11 +1,9 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.class_;
 
-import com.mohamed.backend.model.classinfo.Attendance;
-import lombok.AllArgsConstructor;
+import com.mohamed.backend.dto.user.StudentAttendanceView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

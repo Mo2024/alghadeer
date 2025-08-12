@@ -1,8 +1,8 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.ChangeStudentClassDto;
-import com.mohamed.backend.dto.ClassView;
-import com.mohamed.backend.dto.ClassView2;
+import com.mohamed.backend.dto.class_.ChangeStudentClassDto;
+import com.mohamed.backend.dto.class_.ClassView;
+import com.mohamed.backend.dto.class_.ClassView2;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.service.ClassService;

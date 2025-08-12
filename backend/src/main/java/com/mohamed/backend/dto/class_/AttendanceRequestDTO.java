@@ -1,8 +1,7 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.class_;
 
 import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.classinfo.Session;
-import com.mohamed.backend.model.user.Student;
 import lombok.Data;
 
 import java.util.List;

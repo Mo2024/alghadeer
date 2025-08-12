@@ -2,6 +2,7 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.*;
+import com.mohamed.backend.dto.user.*;
 import com.mohamed.backend.model.enums.Permission;
 import com.mohamed.backend.model.user.StaffPermission;
 import com.mohamed.backend.security.StaffDetails;

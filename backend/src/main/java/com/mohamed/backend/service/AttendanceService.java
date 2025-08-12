@@ -1,7 +1,10 @@
 package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mohamed.backend.dto.*;
+import com.mohamed.backend.dto.class_.AttendanceRequestDTO;
+import com.mohamed.backend.dto.class_.AttendanceView;
+import com.mohamed.backend.dto.class_.GetAttendanceStatusDto;
+import com.mohamed.backend.dto.user.StudentAttendanceView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.classinfo.Class;

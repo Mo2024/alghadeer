@@ -1,9 +1,10 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.*;
+import com.mohamed.backend.dto.semester.SemesterDto;
+import com.mohamed.backend.dto.semester.SemesterView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.enums.Grade;
-import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.service.SemesterService;
 import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,8 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController

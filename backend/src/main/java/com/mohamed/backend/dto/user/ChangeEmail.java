@@ -1,4 +1,4 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.user;
 
 import lombok.Data;
 

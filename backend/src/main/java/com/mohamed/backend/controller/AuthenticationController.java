@@ -1,15 +1,12 @@
 package com.mohamed.backend.controller;
 
-import com.mohamed.backend.dto.ClassView;
 import com.mohamed.backend.dto.Response;
-import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.service.AuthenticationService;
 import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j

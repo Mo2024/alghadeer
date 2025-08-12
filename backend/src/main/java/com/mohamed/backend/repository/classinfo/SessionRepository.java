@@ -1,13 +1,11 @@
 package com.mohamed.backend.repository.classinfo;
 
-import com.mohamed.backend.dto.SessionView;
-import com.mohamed.backend.dto.SessionViewExtends;
+import com.mohamed.backend.dto.session.SessionView;
+import com.mohamed.backend.dto.session.SessionViewExtends;
 import com.mohamed.backend.model.classinfo.Session;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

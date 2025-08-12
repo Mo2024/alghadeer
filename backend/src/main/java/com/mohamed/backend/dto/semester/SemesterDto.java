@@ -1,4 +1,4 @@
-package com.mohamed.backend.dto;
+package com.mohamed.backend.dto.semester;
 
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.enums.SemesterList;

@@ -1,6 +1,6 @@
 package com.mohamed.backend.repository.semester;
 
-import com.mohamed.backend.dto.SemesterView;
+import com.mohamed.backend.dto.semester.SemesterView;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.enums.SemesterList;
 import org.springframework.data.domain.Page;
@@ -21,16 +21,17 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
     Page<SemesterView> findAllByOrderByIdDesc(Pageable pageable);
 
     @Query("""
-    SELECT COUNT(s) > 0
-    FROM Semester s
-    WHERE
-        (:startDate <= s.endDate AND :endDate >= s.startDate)
-""")
+                SELECT COUNT(s) > 0
+                FROM Semester s
+                WHERE
+                    (:startDate <= s.endDate AND :endDate >= s.startDate)
+            """)
     boolean existsOverlappingSemester(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
 
     boolean existsByActive(boolean active);
+
     Optional<Semester> findByActive(boolean active);
 }
