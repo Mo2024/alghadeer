@@ -23,10 +23,6 @@ export class NavbarComponent {
   constructor(public toastService: ToastService, public permissionsService: PermissionsService, public router: Router, private authService: AuthService) { }
 
   ngOnInit() {
-    if (!environment.production) {
-      console.log(this.permissionsService.getPermissions());
-      console.log(this.permissionsService.hasPermission('ADMIN'));
-    }
     this.subscription = this.permissionsService.permissions$.subscribe(perms => {
       this.permissions = perms;
     });
@@ -60,9 +56,6 @@ export class NavbarComponent {
         }
       },
       error: (error) => {
-        if (!environment.production) {
-          console.log(error);
-        }
         if (error.error.status === "ALGD-500") {
           this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
         }
@@ -70,5 +63,5 @@ export class NavbarComponent {
     });
   }
 
-  
+
 }

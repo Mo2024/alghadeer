@@ -17,9 +17,6 @@ export const authGuard: CanActivateFn = (route, state) => {
     map((res: any) => {
       if (accessControlled) {
         if (res) {
-          if (!environment.production) {
-            console.log(res);
-          }
           permissionService.setPermissions(res);
 
           const permissionsMap = res as { [key: string]: boolean };
@@ -65,10 +62,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 
     }),
     catchError((error) => {
-      if (!environment.production) {
-        console.log(error)
-      }
-
       permissionService.setPermissions(new Map());
 
       if (!['/staff/login', '/login'].includes(state.url) && accessControlled) {

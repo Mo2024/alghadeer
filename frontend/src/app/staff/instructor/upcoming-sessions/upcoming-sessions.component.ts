@@ -34,9 +34,6 @@ export class UpcomingSessionsComponent {
 
     this.mainTopicsService.getTopics().subscribe({
       next: async (res) => {
-        if (!environment.production) {
-          console.log(res)
-        }
 
         if (res) {
           this.topics = res
@@ -46,9 +43,6 @@ export class UpcomingSessionsComponent {
 
       },
       error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
 
         if (error.error.status === "ALGD-400") {
           this.toastService.show(error.error.message, 'error');
@@ -66,9 +60,6 @@ export class UpcomingSessionsComponent {
   getUpcomingSessions(pageNumber: number) {
     this.sessionService.getUpcomingSessions(pageNumber).subscribe({
       next: async (res) => {
-        if (!environment.production) {
-          console.log(res)
-        }
         if (res) {
           this.page = res;
           this.upcomingSessions = res.content
@@ -78,9 +69,6 @@ export class UpcomingSessionsComponent {
 
       },
       error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
 
         if (error.error.status === "ALGD-400") {
           this.toastService.show(error.error.message, 'error');
