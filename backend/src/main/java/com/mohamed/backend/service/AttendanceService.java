@@ -114,7 +114,7 @@ public class AttendanceService {
         log.info("[staffRepository].[isInstructorOnly] called successfully");
 
         // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
-        if ((isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
+        if (!(isAssignedToClass || isAssignedToSession) && isInstructorOnly) {
             log.error("Staff instructor is not assigned to this class/session");
             throw new HandledRejection("المُدرّس غير مُعيّن في هذا الصف لأخذ الحضور");
         }

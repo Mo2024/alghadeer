@@ -1,0 +1,1 @@
+remmeber to change the many to manyy tbale to sessions_topics in Session.java
