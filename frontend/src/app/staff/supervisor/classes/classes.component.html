@@ -17,13 +17,13 @@
     </div>
 
     <div class="accordion" id="topicsAccordion">
-        <div *ngFor="let assignedClass of assignedClasses; let i = index; trackBy: trackByAssignedClass"
+        <div *ngFor="let activeClass of activeClasses; let i = index; trackBy: trackByActiveClass"
             class="accordion-item mb-3 shadow-sm rounded-4 border-0">
 
             <h2 class="accordion-header" id="heading{{ i }}">
                 <button class="accordion-button collapsed fw-bold rounded-top-4" type="button" data-bs-toggle="collapse"
                     [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
-                    {{ assignedClass.name }}
+                    {{ activeClass.name }}
                 </button>
             </h2>
 
@@ -34,15 +34,15 @@
                     <div class="mb-4 p-3 rounded-3 shadow-sm bg-light">
                         <strong class="d-block mb-2 schedule-title">جدول الصف</strong>
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3">
-                            <li *ngFor="let assignedClassSchedule of assignedClass.classSchedules; trackBy: trackBySchedule"
+                            <li *ngFor="let activeClassSchedule of activeClass.classSchedules; trackBy: trackBySchedule"
                                 class="list-group-item schedule-item">
                                 <span class="schedule-day">
-                                    {{ arabicDayName(assignedClassSchedule.dayOfWeek) }}
+                                    {{ arabicDayName(activeClassSchedule.dayOfWeek) }}
                                 </span>
                                 <span class="schedule-time">
-                                    {{ convertToArabicTimeWithPeriod(assignedClassSchedule.startTime) }}
+                                    {{ convertToArabicTimeWithPeriod(activeClassSchedule.startTime) }}
                                     -
-                                    {{ convertToArabicTimeWithPeriod(assignedClassSchedule.endTime) }}
+                                    {{ convertToArabicTimeWithPeriod(activeClassSchedule.endTime) }}
                                 </span>
                             </li>
                         </ul>
@@ -52,9 +52,9 @@
                         <strong class="d-block mb-2 schedule-title">حصص الصف</strong>
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3">
                             <li (click)="toggleSessionDetailsClick(i,j)"
-                                *ngFor="let session of assignedClass.sessions; let j = index; trackBy: trackBySession"
+                                *ngFor="let session of activeClass.sessions; let j = index; trackBy: trackBySession"
                                 class="list-group-item session-item" [class.cancelled]="session.cancelled"
-                                [class.finished]="checkIfSessionFinished(session, assignedClass.classSchedules)">
+                                [class.finished]="checkIfSessionFinished(session, activeClass.classSchedules)">
 
                                 <div class="session-info">
                                     <div class="info-row">

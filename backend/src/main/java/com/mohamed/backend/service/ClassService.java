@@ -291,4 +291,26 @@ public class ClassService {
         return assignedClasses;
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public List<ClassView2> getActiveClassesWithSessions() throws JsonProcessingException {
+
+        log.info("Calling [semesterRepository].[findByActive]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        logger.logJsonObject("Semester Details:\n{}", semester);
+
+        log.info("Calling [classRepository].[findAllBySemesterActiveTrue]");
+        List<ClassView2> assignedClasses = classRepository.findAllBySemesterActiveTrue();
+        log.info("[classRepository].[findAllBySemesterActiveTrue] called successfully");
+
+        logger.logJsonObject("Assigned classes:\n{}", assignedClasses);
+
+        return assignedClasses;
+    }
+
 }

@@ -22,6 +22,10 @@ export class ClassService {
     return this.http.get(`${this.url}/all/assigned-classes`, { withCredentials: true });
   }
 
+  getActiveClasses(): Observable<any> {
+    return this.http.get(`${this.url}/supervisor/active-classes-with-sessions`, { withCredentials: true });
+  }
+
   getClassesByActiveSemester(): Observable<any> {
     return this.http.get(`${this.url}/supervisor/get-classes-active-semester`, { withCredentials: true });
   }

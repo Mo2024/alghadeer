@@ -83,4 +83,5 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
             """)
     List<StudentAttendanceView> findStudentByClassId(@Param("classId") int classId);
 
+    List<ClassView2> findAllBySemesterActiveTrue();
 }

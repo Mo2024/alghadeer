@@ -23,7 +23,6 @@ export class UpcomingSessionsComponent {
 
   showSessionDetails: boolean = false;
   @Input() sessionObject: any
-  @Input() topics: any
 
 
   constructor(private sessionService: SessionService, private toastService: ToastService, private mainTopicsService: MainTopicService) { }
@@ -31,35 +30,14 @@ export class UpcomingSessionsComponent {
 
   ngOnInit() {
     this.getUpcomingSessions(this.pageNumber);
-
-    this.mainTopicsService.getTopics().subscribe({
-      next: async (res) => {
-
-        if (res) {
-          this.topics = res
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-
-      },
-      error: (error) => {
-
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-      }
-    })
   }
 
   getUpcomingSessions(pageNumber: number) {
     this.sessionService.getUpcomingSessions(pageNumber).subscribe({
       next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
         if (res) {
           this.page = res;
           this.upcomingSessions = res.content

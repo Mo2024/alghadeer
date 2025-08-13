@@ -1,21 +1,20 @@
 import { Component } from '@angular/core';
 import { ClassService } from '../../../services/semester/class.service';
 import { ToastService } from '../../../services/toast.service';
-import { environment } from '../../../../environments/environment';
-import { CommonModule, formatDate } from '@angular/common';
-import { SessionDetailsComponent } from '../upcoming-sessions/session-details/session-details.component';
 import { MainTopicService } from '../../../services/topics/main-topic.service';
+import { CommonModule, formatDate } from '@angular/common';
+import { SessionDetailsComponent } from '../../instructor/upcoming-sessions/session-details/session-details.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-assigned-classes',
+  selector: 'app-classes',
   standalone: true,
   imports: [CommonModule, SessionDetailsComponent],
-  templateUrl: './assigned-classes.component.html',
-  styleUrl: './assigned-classes.component.css'
+  templateUrl: './classes.component.html',
+  styleUrl: './classes.component.css'
 })
-export class AssignedClassesComponent {
-
-  assignedClasses: any;
+export class ClassesComponent {
+  activeClasses: any;
 
   sessionObjectInput: any;
   showSessionDetails: boolean = false
@@ -25,17 +24,17 @@ export class AssignedClassesComponent {
 
 
   ngOnInit() {
-    this.getAssignedClasses();
+    this.getActiveClasses();
   }
 
-  getAssignedClasses() {
-    this.classService.getAssignedClasses().subscribe({
+  getActiveClasses() {
+    this.classService.getActiveClasses().subscribe({
       next: async (res) => {
         if (!environment.production) {
           console.log(res)
         }
         if (res) {
-          this.assignedClasses = res;
+          this.activeClasses = res;
 
         }
 
@@ -56,6 +55,7 @@ export class AssignedClassesComponent {
         }
       }
     })
+
   }
 
   toArabicNumeral(num: number): string {
@@ -183,8 +183,8 @@ export class AssignedClassesComponent {
   }
 
   toggleSessionDetailsClick(classIndex: number, sessionIndex: number) {
-    this.sessionObjectInput = { ...this.assignedClasses[classIndex].sessions[sessionIndex] }
-    this.sessionObjectInput.class = { ...this.assignedClasses[classIndex] }
+    this.sessionObjectInput = { ...this.activeClasses[classIndex].sessions[sessionIndex] }
+    this.sessionObjectInput.class = { ...this.activeClasses[classIndex] }
     this.sessionObjectInput.class.sessions = null
     console.log(this.sessionObjectInput)
     this.toggleSessionDetails()
@@ -195,7 +195,7 @@ export class AssignedClassesComponent {
   }
 
   refreshSessionList() {
-    this.getAssignedClasses()
+    this.getActiveClasses()
   }
   checkIfSessionFinished(session: any, classSchedules: any[]) {
     const daysOfWeek = [
@@ -228,8 +228,8 @@ export class AssignedClassesComponent {
     return now > sessionEndDateTime;
   }
 
-  trackByAssignedClass(index: number, assignedClass: any) {
-    return assignedClass.id;
+  trackByActiveClass(index: number, activeClass: any) {
+    return activeClass.id;
   }
 
   trackBySchedule(index: number, schedule: any) {
