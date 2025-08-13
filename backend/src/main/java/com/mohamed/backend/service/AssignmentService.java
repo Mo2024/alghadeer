@@ -27,6 +27,8 @@ public class AssignmentService {
 
     private final StaffRepository staffRepository;
 
+    private final StudentAssignmentService studentAssignmentService;
+
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
@@ -88,10 +90,14 @@ public class AssignmentService {
                 .build();
 
         log.info("Calling [assignmentRepository].[save]");
-        assignmentRepository.save(assignment);
+        assignment = assignmentRepository.save(assignment);
         log.info("[assignmentRepository].[save] called successfully");
 
         logger.logJsonObject("Assignment created successfully\n {}", assignment);
+
+        log.info("Calling [studentAssignmentService].[createStudentAssignment]");
+        studentAssignmentService.createStudentAssignment(assignment.getId(), classId);
+        log.info("[studentAssignmentService].[createStudentAssignment] called successfully");
 
         return assignment;
     }

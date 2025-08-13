@@ -3,6 +3,7 @@ package com.mohamed.backend.model.classinfo.assignment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.user.Student;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertFalse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -36,7 +37,8 @@ public class StudentsAssignment {
     @Column(name = "grade")
     private Integer grade;
 
-//    @Column(name = "exer")
+    @Column(name = "assignment_done")
+    private boolean assignmentDone;
 
     @JsonProperty("totalGrade")
     public Integer getTotalGrade() {

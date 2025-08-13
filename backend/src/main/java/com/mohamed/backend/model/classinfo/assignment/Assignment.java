@@ -38,7 +38,4 @@ public class Assignment {
     @Column(name = "total_grade")
     private Integer totalGrade;
 
-    @Transient
-    @JsonProperty("studentsAssignments")
-    private List<StudentsAssignment> studentsAssignments;
 }
