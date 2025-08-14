@@ -1,7 +1,6 @@
 package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohamed.backend.dto.*;
 import com.mohamed.backend.dto.class_.AddSubTopicDto;
 import com.mohamed.backend.dto.session.SessionView;
@@ -19,8 +18,8 @@ import com.mohamed.backend.repository.topic.SubTopicRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Logger;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,31 +31,16 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SessionService {
 
-    @Autowired
-    private SessionRepository sessionRepository;
-
-    @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private StaffRepository staffRepository;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private SubTopicRepository subTopicRepository;
-
-    @Autowired
-    private SemesterRepository semesterRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Logger logger;
+    private final SessionRepository sessionRepository;
+    private final ClassRepository classRepository;
+    private final StaffRepository staffRepository;
+    private final StaffService staffService;
+    private final SubTopicRepository subTopicRepository;
+    private final SemesterRepository semesterRepository;
+    private final Logger logger;
 
     @Transactional
     public void createSessions(Class class_) {

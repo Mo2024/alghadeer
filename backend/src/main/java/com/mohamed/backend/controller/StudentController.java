@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +26,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/students")
+@RequiredArgsConstructor
 @Tag(name = "Student Management", description = "Operations related to student entity")
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private Logger logger;
+    private final StudentService studentService;
+    private final Logger logger;
 
     @PostMapping("/register")
     @Operation(

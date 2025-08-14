@@ -5,14 +5,12 @@ import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.Logger;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +19,10 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AuthenticationService {
 
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private Logger logger;
+    private final Logger logger;
 
     public Map<?, Boolean> getAuthentication() throws JsonProcessingException {
 

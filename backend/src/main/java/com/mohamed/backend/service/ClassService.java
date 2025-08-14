@@ -21,8 +21,8 @@ import com.mohamed.backend.utils.Defaults;
 import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -32,34 +32,18 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ClassService {
 
-    @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private StaffRepository staffRepository;
-
-    @Autowired
-    private ClassScheduleRepository classScheduleRepository;
-
-    @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private GradeClassAssignmentRepository gradeClassAssignmentRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private SemesterRepository semesterRepository;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private Logger logger;
+    private final ClassRepository classRepository;
+    private final StaffRepository staffRepository;
+    private final ClassScheduleRepository classScheduleRepository;
+    private final SessionService sessionService;
+    private final GradeClassAssignmentRepository gradeClassAssignmentRepository;
+    private final StudentRepository studentRepository;
+    private final SemesterRepository semesterRepository;
+    private final StaffService staffService;
+    private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public List<ClassView> getClassesFromActiveSemester() throws JsonProcessingException {

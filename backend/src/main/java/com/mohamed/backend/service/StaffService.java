@@ -9,12 +9,11 @@ import com.mohamed.backend.security.StaffDetails;
 import com.mohamed.backend.utils.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Staff;
-import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,19 +28,12 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StaffService {
 
-    @Autowired
-    private StaffRepository staffRepository;
-
-    @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private SimpleEmail simpleEmail;
-
-    @Autowired
-    private Logger logger;
+    private final StaffRepository staffRepository;
+    private final SimpleEmail simpleEmail;
+    private final Logger logger;
 
     public Integer getStaffId() {
         StaffDetails staffDetails = (StaffDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -113,9 +105,9 @@ public class StaffService {
         String to = staff.getEmail();
         String subject = "كلمة المرور لحسابك الجديد";  // "Password for your new account" in Arabic
         String body = "مرحباً،\n\n" +
-                "كلمة المرور الخاصة بحسابك الجديد هي: " + password + "\n" +
-                "يرجى الاحتفاظ بها وعدم مشاركتها مع أي شخص.\n\n" +
-                "مع تحياتنا.";
+                      "كلمة المرور الخاصة بحسابك الجديد هي: " + password + "\n" +
+                      "يرجى الاحتفاظ بها وعدم مشاركتها مع أي شخص.\n\n" +
+                      "مع تحياتنا.";
 
         try {
             simpleEmail.sendSimpleEmail(to, subject, body);
@@ -187,7 +179,7 @@ public class StaffService {
         logger.logJsonObject("Staff info:\n{}", staff);
 
         if (login.getUsername() == null || login.getPassword() == null ||
-                login.getUsername().isBlank() || login.getPassword().isBlank()) {
+            login.getUsername().isBlank() || login.getPassword().isBlank()) {
             log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else if (!staff.getHash().equals(HashUtils.sha256(login.getPassword()))) {

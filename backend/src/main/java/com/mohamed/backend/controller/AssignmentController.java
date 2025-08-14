@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/assignment")
@@ -26,7 +24,6 @@ import java.util.Map;
 public class AssignmentController {
 
     private final AssignmentService assignmentService;
-
     private final Logger logger;
 
     @PostMapping("/all/create-assignment")

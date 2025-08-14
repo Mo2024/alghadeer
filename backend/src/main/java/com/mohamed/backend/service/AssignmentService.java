@@ -8,6 +8,7 @@ import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.assignment.AssignmentRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Logger;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +21,14 @@ import org.springframework.stereotype.Service;
 public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
-
     private final ClassRepository classRepository;
-
     private final StaffService staffService;
-
     private final StaffRepository staffRepository;
-
     private final StudentAssignmentService studentAssignmentService;
-
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @Transactional
     public Assignment createAssignment(Assignment assignmentReq, Integer classId) throws JsonProcessingException {
 
         if (assignmentReq.getStartDateTime() == null) {

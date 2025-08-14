@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,17 +31,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/session")
+@RequiredArgsConstructor
 @Tag(name = "Session Management", description = "Operations related to session entity")
 public class SessionController {
 
-    @Autowired
-    private AttendanceService attendanceService;
-
-    @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private Logger logger;
+    private final AttendanceService attendanceService;
+    private final SessionService sessionService;
+    private final Logger logger;
 
     @PostMapping("/all/take-attendance")
     @Operation(

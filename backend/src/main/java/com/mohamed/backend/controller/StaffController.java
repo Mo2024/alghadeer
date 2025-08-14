@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,15 +30,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/staff")
+@RequiredArgsConstructor
 @Tag(name = "Staff Management", description = "Operations related to staff entity")
 public class StaffController {
 
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private Logger logger;
+    private final StaffService staffService;
+    private final Logger logger;
 
     @PostMapping("/admin/register")
     @Operation(

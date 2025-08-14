@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,14 +24,12 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/semester")
+@RequiredArgsConstructor
 @Tag(name = "Semester Management", description = "Operations related to semester lifecycle and student enrollment")
 public class SemesterController {
 
-    @Autowired
-    private SemesterService semesterService;
-
-    @Autowired
-    private Logger logger;
+    private final SemesterService semesterService;
+    private final Logger logger;
 
     @PostMapping("/admin/create")
     @Operation(

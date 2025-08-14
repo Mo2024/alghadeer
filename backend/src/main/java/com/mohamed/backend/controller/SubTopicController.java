@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,14 +26,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/sub-topics")
+@RequiredArgsConstructor
 @Tag(name = "Sub-topic Management", description = "Operations related to sub-topic entity")
 public class SubTopicController {
 
-    @Autowired
-    private SubTopicService subTopicService;
-
-    @Autowired
-    private Logger logger;
+    private final SubTopicService subTopicService;
+    private final Logger logger;
 
     @PostMapping("/all/create-sub-topic")
     @Operation(
@@ -45,7 +44,7 @@ public class SubTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic){
+    public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic) {
         try {
             log.info("executing method [TopicService].[createSubTopic]");
             List<MainTopic> response = subTopicService.createSubTopic(subTopic);
@@ -80,7 +79,7 @@ public class SubTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> editSubTopic(@RequestBody SubTopic subTopic){
+    public ResponseEntity<?> editSubTopic(@RequestBody SubTopic subTopic) {
         try {
             log.info("executing method [TopicService].[editSubTopic]");
             List<MainTopic> response = subTopicService.editSubTopic(subTopic);

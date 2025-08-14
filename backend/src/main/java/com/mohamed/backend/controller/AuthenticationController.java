@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -23,14 +23,12 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 @Tag(name = "Authentication Management", description = "Operations related to authenticating user")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private Logger logger;
+    private final AuthenticationService authenticationService;
+    private final Logger logger;
 
     @GetMapping("/get-auth")
     @Operation(

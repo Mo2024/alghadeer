@@ -18,8 +18,8 @@ import com.mohamed.backend.model.user.Student;
 import com.mohamed.backend.repository.user.StudentRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,22 +37,14 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StudentService {
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private ImageUtils imageUtils;
-
-    @Autowired
-    private SemesterRepository semesterRepository;
-
-    @Autowired
-    private SemesterEnrollmentRepository semesterEnrollmentRepository;
-
-    @Autowired
-    private Logger logger;
+    private final StudentRepository studentRepository;
+    private final ImageUtils imageUtils;
+    private final SemesterRepository semesterRepository;
+    private final SemesterEnrollmentRepository semesterEnrollmentRepository;
+    private final Logger logger;
 
     public Page<Student> getStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
@@ -174,7 +166,7 @@ public class StudentService {
         logger.logJsonObject("Student info:\n{}", student);
 
         if (login.getUsername() == null || login.getPassword() == null ||
-                login.getUsername().isBlank() || login.getPassword().isBlank()) {
+            login.getUsername().isBlank() || login.getPassword().isBlank()) {
             log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else if (!student.getHash().equals(HashUtils.sha256(login.getPassword()))) {

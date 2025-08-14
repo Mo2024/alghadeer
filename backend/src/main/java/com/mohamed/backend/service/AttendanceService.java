@@ -14,11 +14,10 @@ import com.mohamed.backend.repository.classinfo.AttendanceRepository;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.SessionRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
-import com.mohamed.backend.repository.user.StudentRepository;
 import com.mohamed.backend.utils.Logger;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -30,28 +29,15 @@ import java.util.Set;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AttendanceService {
 
-    @Autowired
-    private AttendanceRepository attendanceRepository;
-
-    @Autowired
-    private StaffRepository staffRepository;
-
-    @Autowired
-    private StaffService staffService;
-
-    @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
-    private SessionRepository sessionRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private Logger logger;
+    private final AttendanceRepository attendanceRepository;
+    private final StaffRepository staffRepository;
+    private final StaffService staffService;
+    private final ClassRepository classRepository;
+    private final SessionRepository sessionRepository;
+    private final Logger logger;
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")

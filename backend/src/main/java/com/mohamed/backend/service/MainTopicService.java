@@ -8,22 +8,20 @@ import com.mohamed.backend.repository.topic.MainTopicRepository;
 import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class MainTopicService {
 
-    @Autowired
-    private MainTopicRepository mainTopicRepository;
-
-    @Autowired
-    private Logger logger;
+    private final MainTopicRepository mainTopicRepository;
+    private final Logger logger;
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")

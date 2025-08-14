@@ -18,8 +18,8 @@ import com.mohamed.backend.security.StudentDetails;
 import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,28 +30,16 @@ import java.time.LocalDate;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SemesterService {
 
-    @Autowired
-    private SemesterRepository semesterRepository;
-
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private SemesterEnrollmentRepository semesterEnrollmentRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private GradeClassAssignmentRepository gradeClassAssignmentRepository;
-
-    @Autowired
-    private ClassService classService;
-
-    @Autowired
-    private Logger logger;
+    private final SemesterRepository semesterRepository;
+    private final StudentService studentService;
+    private final SemesterEnrollmentRepository semesterEnrollmentRepository;
+    private final StudentRepository studentRepository;
+    private final GradeClassAssignmentRepository gradeClassAssignmentRepository;
+    private final ClassService classService;
+    private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     public Page<SemesterView> getSemesters(Pageable pageable) {
