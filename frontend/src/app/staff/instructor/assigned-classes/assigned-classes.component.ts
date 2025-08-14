@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ClassService } from '../../../services/semester/class.service';
 import { ToastService } from '../../../services/toast.service';
 import { environment } from '../../../../environments/environment';
 import { CommonModule, formatDate } from '@angular/common';
 import { SessionDetailsComponent } from '../upcoming-sessions/session-details/session-details.component';
 import { MainTopicService } from '../../../services/topics/main-topic.service';
+import { AssignmentDetailsComponent } from './assignment-details/assignment-details.component';
 
 @Component({
   selector: 'app-assigned-classes',
   standalone: true,
-  imports: [CommonModule, SessionDetailsComponent],
+  imports: [CommonModule, SessionDetailsComponent, AssignmentDetailsComponent],
   templateUrl: './assigned-classes.component.html',
   styleUrl: './assigned-classes.component.css'
 })
@@ -17,8 +18,10 @@ export class AssignedClassesComponent {
 
   assignedClasses: any;
 
+  assignmentObjectInput: any;
   sessionObjectInput: any;
   showSessionDetails: boolean = false
+  showAssignmentDetails: boolean = false
   topics: any
 
   constructor(private classService: ClassService, private toastService: ToastService) { }
@@ -190,6 +193,17 @@ export class AssignedClassesComponent {
     this.toggleSessionDetails()
   }
 
+  toggleAssignmentDetailsClick(classIndex: number, assignmentIndex: number) {
+    this.assignmentObjectInput = { ...this.assignedClasses[classIndex].assignments[assignmentIndex] }
+    this.assignmentObjectInput.class = { ...this.assignedClasses[classIndex] }
+    this.assignmentObjectInput.class.assignments = null
+    this.toggleAssignmentDetails()
+  }
+
+  toggleAssignmentDetails() {
+    this.showAssignmentDetails = !this.showAssignmentDetails;
+  }
+
   toggleSessionDetails() {
     this.showSessionDetails = !this.showSessionDetails;
   }
@@ -238,6 +252,9 @@ export class AssignedClassesComponent {
 
   trackBySession(index: number, session: any) {
     return session.id;
+  }
+  trackByAssignment(index: number, assignment: any) {
+    return assignment.id;
   }
 
 

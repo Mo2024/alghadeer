@@ -5,11 +5,12 @@ import { MainTopicService } from '../../../services/topics/main-topic.service';
 import { CommonModule, formatDate } from '@angular/common';
 import { SessionDetailsComponent } from '../../instructor/upcoming-sessions/session-details/session-details.component';
 import { environment } from '../../../../environments/environment';
+import { AssignmentDetailsComponent } from '../../instructor/assigned-classes/assignment-details/assignment-details.component';
 
 @Component({
   selector: 'app-classes',
   standalone: true,
-  imports: [CommonModule, SessionDetailsComponent],
+  imports: [CommonModule, SessionDetailsComponent, AssignmentDetailsComponent],
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.css'
 })
@@ -19,6 +20,9 @@ export class ClassesComponent {
   sessionObjectInput: any;
   showSessionDetails: boolean = false
   topics: any
+  assignmentObjectInput: any;
+  showAssignmentDetails: boolean = false
+
 
   constructor(private classService: ClassService, private toastService: ToastService) { }
 
@@ -127,6 +131,33 @@ export class ClassesComponent {
     return null;
   }
 
+
+  toggleSessionDetailsClick(classIndex: number, sessionIndex: number) {
+    this.sessionObjectInput = { ...this.activeClasses[classIndex].sessions[sessionIndex] }
+    this.sessionObjectInput.class = { ...this.activeClasses[classIndex] }
+    this.sessionObjectInput.class.sessions = null
+    console.log(this.sessionObjectInput)
+    this.toggleSessionDetails()
+  }
+
+  toggleAssignmentDetailsClick(classIndex: number, assignmentIndex: number) {
+    this.assignmentObjectInput = { ...this.activeClasses[classIndex].assignments[assignmentIndex] }
+    this.assignmentObjectInput.class = { ...this.activeClasses[classIndex] }
+    this.assignmentObjectInput.class.assignments = null
+    this.toggleAssignmentDetails()
+  }
+
+  toggleAssignmentDetails() {
+    this.showAssignmentDetails = !this.showAssignmentDetails;
+  }
+
+  toggleSessionDetails() {
+    this.showSessionDetails = !this.showSessionDetails;
+  }
+  trackByAssignment(index: number, assignment: any) {
+    return assignment.id;
+  }
+
   arabicDayName(day: string): string {
     const map: { [key: string]: string } = {
       SUNDAY: 'الأحد',
@@ -180,18 +211,6 @@ export class ClassesComponent {
     const minuteArabic = this.convertToArabicNumbers(minute);
 
     return `${hourArabic}:${minuteArabic} ${period}`;
-  }
-
-  toggleSessionDetailsClick(classIndex: number, sessionIndex: number) {
-    this.sessionObjectInput = { ...this.activeClasses[classIndex].sessions[sessionIndex] }
-    this.sessionObjectInput.class = { ...this.activeClasses[classIndex] }
-    this.sessionObjectInput.class.sessions = null
-    console.log(this.sessionObjectInput)
-    this.toggleSessionDetails()
-  }
-
-  toggleSessionDetails() {
-    this.showSessionDetails = !this.showSessionDetails;
   }
 
   refreshSessionList() {

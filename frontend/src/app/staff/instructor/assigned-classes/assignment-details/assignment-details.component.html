@@ -1,0 +1,49 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5" dir="rtl">
+            <div class="col-md-6">
+                <div class="card border-secondary shadow rounded-3 border-0">
+                    <div
+                        class="card-header d-flex justify-content-between align-items-center bg-dark text-white rounded-top">
+                        تفاصيل النشاط
+                        <button type="button" class="btn-close btn-close-white" aria-label="إغلاق"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+
+                    <div class="card-body bg-light rounded-bottom">
+                        <div *ngIf="assignmentObject">
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">الاسم:</div>
+                                <div class="col-8">{{ assignmentObject.name || '—' }}</div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">تاريخ البداية:</div>
+                                <div class="col-8">{{ formatArabicDateTime(assignmentObject.startDateTime) }}</div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">تاريخ النهاية:</div>
+                                <div class="col-8">{{ formatArabicDateTime(assignmentObject.endDateTime) }}</div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">الدرجة الكلية:</div>
+                                <div class="col-8">{{ toArabicNumbers(assignmentObject.totalGrade) }}</div>
+                            </div>
+
+
+
+                            <div class="mt-4 text-start">
+                                <button class="btn btn-secondary" (click)="emitCloseClicked()">
+                                    إغلاق
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

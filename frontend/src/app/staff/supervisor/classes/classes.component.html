@@ -50,12 +50,12 @@
 
                     <div class="mb-4 p-3 rounded-3 shadow-sm bg-light">
                         <strong class="d-block mb-2 schedule-title">حصص الصف</strong>
-                        <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3">
-                            <li (click)="toggleSessionDetailsClick(i,j)"
-                                *ngFor="let session of activeClass.sessions; let j = index; trackBy: trackBySession"
+                        <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
+                            style="max-height: 300px; overflow-y: auto;">
+                            <li *ngFor="let session of activeClass.sessions; let j = index; trackBy: trackBySession"
                                 class="list-group-item session-item" [class.cancelled]="session.cancelled"
-                                [class.finished]="checkIfSessionFinished(session, activeClass.classSchedules)">
-
+                                [class.finished]="checkIfSessionFinished(session, activeClass.classSchedules)"
+                                (click)="toggleSessionDetailsClick(i,j)">
                                 <div class="session-info">
                                     <div class="info-row">
                                         <span class="label">التاريخ:</span>
@@ -76,11 +76,26 @@
                                             <ng-template #noSubtopics>لم يحدد</ng-template>
                                         </span>
                                     </div>
-
                                 </div>
                             </li>
                         </ul>
                     </div>
+                    <div class="mb-4 p-3 rounded-3 shadow-sm bg-light">
+                        <strong class="d-block mb-2 schedule-title">الأنشطة</strong>
+                        <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
+                            style="max-height: 250px; overflow-y: auto;">
+                            <li *ngFor="let assignment of activeClass.assignments; let k = index; trackBy: trackByAssignment"
+                                class="list-group-item session-item" (click)="toggleAssignmentDetailsClick(i,k)">
+                                <div class="session-info">
+                                    <div class="info-row">
+                                        <span class="label">النشاط:</span>
+                                        <span class="value">{{ assignment.name }}</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
 
                 </div>
             </div>
@@ -93,3 +108,7 @@
 <app-session-details *ngIf="showSessionDetails" [sessionObject]="sessionObjectInput"
     (closeSessionDetails)="toggleSessionDetails()" (refreshSessionList)="refreshSessionList()">
 </app-session-details>
+
+<app-assignment-details *ngIf="showAssignmentDetails" (closeAssignmentDetails)="toggleAssignmentDetails()"
+    [assignmentObject]="assignmentObjectInput">
+</app-assignment-details>

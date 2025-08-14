@@ -1,6 +1,7 @@
 package com.mohamed.backend.model.classinfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mohamed.backend.model.classinfo.assignment.Assignment;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.model.user.Student;
@@ -45,6 +46,10 @@ public class Class {
     @OrderBy("date ASC")
     private List<Session> sessions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "class_", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("startDateTime DESC")
+    private List<Assignment> assignments = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "semester_id")
     private Semester semester;
@@ -56,10 +61,10 @@ public class Class {
     @Override
     public String toString() {
         return "Class{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", semester=" + (semester != null ? semester.getId() : null) +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", semester=" + (semester != null ? semester.getId() : null) +
+               '}';
     }
 
     public void addStudent(Student student) {
