@@ -8,6 +8,7 @@ import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.assignment.AssignmentRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Logger;
+import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,11 @@ public class AssignmentService {
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     @Transactional
     public Assignment createAssignment(Assignment assignmentReq, Integer classId) throws JsonProcessingException {
+
+        if (assignmentReq.getName() == null || assignmentReq.getName().trim().isEmpty() || !ValidationUtils.isArabic(assignmentReq.getName())) {
+            log.error("Invalid name:\n{}", assignmentReq.getName());
+            throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
+        }
 
         if (assignmentReq.getStartDateTime() == null) {
             log.error("Start date/time must not be null");
@@ -60,7 +66,7 @@ public class AssignmentService {
         Class class_ = classRepository.findByIdAndSemesterActiveTrue(classId)
                 .orElseThrow(() -> {
                     log.error("Class ID does not exist or semester is not active:{}", classId);
-                    throw new HandledRejection("الصف غير موجود أو الفصل الدراسي غير نشط");
+                    return new HandledRejection("الصف غير موجود أو الفصل الدراسي غير نشط");
                 });
         log.info("[classRepository].[findByIdAndSemesterActiveTrue] called successfully");
 
@@ -83,6 +89,7 @@ public class AssignmentService {
                 .startDateTime(assignmentReq.getStartDateTime())
                 .endDateTime(assignmentReq.getEndDateTime())
                 .totalGrade(assignmentReq.getTotalGrade())
+                .name(assignmentReq.getName())
                 .class_(class_)
                 .build();
 

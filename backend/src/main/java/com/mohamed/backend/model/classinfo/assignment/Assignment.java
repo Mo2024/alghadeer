@@ -24,6 +24,9 @@ public class Assignment {
     @SequenceGenerator(name = "assignments_seq", sequenceName = "assignments_sequence", initialValue = 1, allocationSize = 1)
     private Integer id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "start_date_time")
     private LocalDateTime startDateTime;
 
