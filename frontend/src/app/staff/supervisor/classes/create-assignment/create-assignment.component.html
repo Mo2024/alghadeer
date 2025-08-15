@@ -1,0 +1,59 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    إضافة نشاط
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #activityForm="ngForm">
+
+                        <div class="form-group mb-1">
+                            <label for="classId" class="mb-1">الصف</label>
+                            <select [(ngModel)]="classId" name="classId" id="classId" class="form-control text-end"
+                                required>
+                                <option [value]="''">اختر الصف</option>
+                                <option *ngFor="let c of classes" [value]="c.id">
+                                    {{ c.name }}
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="name" class="mb-1">الاسم</label>
+                            <input type="text" [(ngModel)]="activity.name" name="name" class="form-control text-end"
+                                id="name" placeholder="يرجى إدخال اسم النشاط" required>
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="startDateTime" class="mb-1">تاريخ ووقت البداية</label>
+                            <input type="datetime-local" [(ngModel)]="activity.startDateTime" name="startDateTime"
+                                class="form-control text-end" id="startDateTime" required>
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="endDateTime" class="mb-1">تاريخ ووقت النهاية</label>
+                            <input type="datetime-local" [(ngModel)]="activity.endDateTime" name="endDateTime"
+                                class="form-control text-end" id="endDateTime" required>
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="totalGrade" class="mb-1">الدرجة الكلية</label>
+                            <input type="number" [(ngModel)]="activity.totalGrade" name="totalGrade"
+                                class="form-control text-end" id="totalGrade" placeholder="أدخل الدرجة الكلية" min="0"
+                                required>
+                        </div>
+
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">
+                                حفظ النشاط
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
