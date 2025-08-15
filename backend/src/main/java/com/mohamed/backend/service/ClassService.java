@@ -8,6 +8,7 @@ import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.GradeClassAssignment;
+import com.mohamed.backend.model.classinfo.assignment.Assignment;
 import com.mohamed.backend.model.enums.Grade;
 import com.mohamed.backend.model.semester.Semester;
 import com.mohamed.backend.model.user.Staff;
@@ -254,7 +255,7 @@ public class ClassService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<ClassView2> getAssignedClasses() throws JsonProcessingException {
+    public List<?> getAssignedClasses(boolean withSessionsANndAssignments) throws JsonProcessingException {
 
         log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
@@ -266,9 +267,19 @@ public class ClassService {
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 
-        log.info("Calling [classRepository].[findAllByStaffIdByActiveSemester]");
-        List<ClassView2> assignedClasses = classRepository.findAllByStaffIdByActiveSemester(staffService.getStaffId());
-        log.info("[classRepository].[findAllByStaffIdByActiveSemester] called successfully");
+        List<?> assignedClasses;
+
+        if (withSessionsANndAssignments) {
+            log.info("Calling [classRepository].[findAllClassView2ByStaffIdAndActiveSemester]");
+            assignedClasses = classRepository.findAllClassView2ByStaffIdAndActiveSemester(staffService.getStaffId());
+            log.info("[classRepository].[findAllClassView2ByStaffIdAndActiveSemester] called successfully");
+
+        } else {
+            log.info("Calling [classRepository].[findAllClassViewByStaffIdAndActiveSemester]");
+            assignedClasses = classRepository.findAllClassViewByStaffIdAndActiveSemester(staffService.getStaffId());
+            log.info("[classRepository].[findAllClassViewByStaffIdAndActiveSemester] called successfully");
+        }
+
 
         logger.logJsonObject("Assigned classes:\n{}", assignedClasses);
 

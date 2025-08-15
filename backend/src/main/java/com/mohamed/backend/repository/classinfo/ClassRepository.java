@@ -74,7 +74,16 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
                 WHERE c.staff.id = :staffId
                   AND c.semester.active = true
             """)
-    List<ClassView2> findAllByStaffIdByActiveSemester(Integer staffId);
+    List<ClassView2> findAllClassView2ByStaffIdAndActiveSemester(Integer staffId);
+
+    @Query("""
+                SELECT c
+                FROM Class c
+                WHERE c.staff.id = :staffId
+                  AND c.semester.active = true
+            """)
+    List<ClassView> findAllClassViewByStaffIdAndActiveSemester(Integer staffId);
+
 
     @Query("""
                 SELECT s AS student, false AS isPresent

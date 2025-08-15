@@ -17,6 +17,7 @@ import { AttendanceComponent } from './staff/instructor/upcoming-sessions/attend
 import { CancelSessionsComponent } from './staff/supervisor/cancel-sessions/cancel-sessions.component';
 import { ClassesComponent } from './staff/supervisor/classes/classes.component';
 import { SubmitAssignmentComponent } from './staff/instructor/assigned-classes/submit-assignment/submit-assignment.component';
+import { CreateAssignmentComponent } from './staff/instructor/assigned-classes/create-assignment/create-assignment.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
@@ -72,6 +73,12 @@ export const routes: Routes = [
     {
         path: 'staff/instructor/assigned-classes/assignment',
         component: SubmitAssignmentComponent,
+        canActivate: [authGuard],
+        data: { role: 'INSTRUCTOR', accessControlled: true }
+    },
+    {
+        path: 'staff/instructor/assigned-classes/create-assignment',
+        component: CreateAssignmentComponent,
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },

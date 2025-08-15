@@ -111,10 +111,10 @@ public class ClassController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getAssignedClasses() {
+    public ResponseEntity<?> getAssignedClasses(@RequestParam(defaultValue = "true") boolean withSessionsAndAssignments) {
         try {
             log.info("executing method [classService].[getAssignedClasses]");
-            List<ClassView2> response = classService.getAssignedClasses();
+            List<?> response = classService.getAssignedClasses(withSessionsAndAssignments);
             log.info("[classService].[getAssignedClasses] executed successfully");
             logger.logJsonObject("Response for [getAssignedClasses]:\n{}", response);
             return ResponseEntity.ok().body(response);
