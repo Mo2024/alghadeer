@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface StudentsAssignmentRepository extends JpaRepository<StudentsAssignment, Integer> {
 
     @Modifying
@@ -17,4 +19,5 @@ public interface StudentsAssignmentRepository extends JpaRepository<StudentsAssi
             """, nativeQuery = true)
     int bulkCreateStudentAssignment(@Param("assignmentId") Integer assignmentId, @Param("classId") Integer classId);
 
+    Optional<StudentsAssignment> findByIdAndStudentIdAndAssignmentId(Integer id, Integer studentId, Integer assignmentId);
 }
