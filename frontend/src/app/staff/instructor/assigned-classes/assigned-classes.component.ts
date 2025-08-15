@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { CommonModule, formatDate } from '@angular/common';
 import { SessionDetailsComponent } from '../upcoming-sessions/session-details/session-details.component';
 import { MainTopicService } from '../../../services/topics/main-topic.service';
-import { AssignmentDetailsComponent } from './assignment-details/assignment-details.component';
+import { AssignmentDetailsComponent } from './assignments/assignment-details/assignment-details.component';
 
 @Component({
   selector: 'app-assigned-classes',

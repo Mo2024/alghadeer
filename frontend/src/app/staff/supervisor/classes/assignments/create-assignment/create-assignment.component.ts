@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToastService } from '../../../../services/toast.service';
-import { AssignmentService } from '../../../../services/semester/assignment.service';
-import { ClassService } from '../../../../services/semester/class.service';
-import { environment } from '../../../../../environments/environment';
+import { ToastService } from '../../../../../services/toast.service';
+import { AssignmentService } from '../../../../../services/semester/assignment.service';
+import { ClassService } from '../../../../../services/semester/class.service';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-create-assignment',

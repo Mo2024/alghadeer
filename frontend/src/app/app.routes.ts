@@ -16,9 +16,10 @@ import { AssignedClassesComponent } from './staff/instructor/assigned-classes/as
 import { AttendanceComponent } from './staff/instructor/upcoming-sessions/attendance/attendance.component';
 import { CancelSessionsComponent } from './staff/supervisor/cancel-sessions/cancel-sessions.component';
 import { ClassesComponent } from './staff/supervisor/classes/classes.component';
-import { SubmitAssignmentComponent } from './staff/instructor/assigned-classes/submit-assignment/submit-assignment.component';
-import { CreateAssignmentComponent } from './staff/instructor/assigned-classes/create-assignment/create-assignment.component';
-import { CreateAssignmentComponent as CreateAssignmentSupervisorComponent } from './staff/supervisor/classes/create-assignment/create-assignment.component';
+import { SubmitAssignmentComponent } from './staff/instructor/assigned-classes/assignments/submit-assignment/submit-assignment.component';
+import { CreateAssignmentComponent } from './staff/instructor/assigned-classes/assignments/create-assignment/create-assignment.component';
+import { CreateAssignmentComponent as CreateAssignmentSupervisorComponent } from './staff/supervisor/classes/assignments/create-assignment/create-assignment.component';
+import { SubmitAssignmentComponent as SubmitAssignmentSupervisorComponent } from './staff/supervisor/classes/assignments/submit-assignment/submit-assignment.component';
 
 export const routes: Routes = [
     { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
@@ -72,13 +73,13 @@ export const routes: Routes = [
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
     {
-        path: 'staff/instructor/assigned-classes/assignment',
+        path: 'staff/instructor/assigned-classes/assignments/submit',
         component: SubmitAssignmentComponent,
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
     {
-        path: 'staff/instructor/assigned-classes/create-assignment',
+        path: 'staff/instructor/assigned-classes/assignments/create',
         component: CreateAssignmentComponent,
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
@@ -110,14 +111,14 @@ export const routes: Routes = [
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
-        path: 'staff/supervisor/classes/create-assignment',
+        path: 'staff/supervisor/classes/assignments/create',
         component: CreateAssignmentSupervisorComponent,
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
-        path: 'staff/supervisor/classes/assignments',
-        component: SubmitAssignmentComponent,
+        path: 'staff/supervisor/classes/assignments/submit',
+        component: SubmitAssignmentSupervisorComponent,
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
