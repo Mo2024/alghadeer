@@ -6,6 +6,7 @@ import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.assignment.Assignment;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.assignment.AssignmentRepository;
+import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Logger;
 import com.mohamed.backend.utils.ValidationUtils;
@@ -14,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -26,6 +30,7 @@ public class AssignmentService {
     private final StaffService staffService;
     private final StaffRepository staffRepository;
     private final StudentAssignmentService studentAssignmentService;
+    private final SemesterRepository semesterRepository;
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
@@ -105,5 +110,37 @@ public class AssignmentService {
 
         return assignment;
     }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<Assignment> getAssignmentsForClass(Integer classId) {
+        log.info("Parameters classId {}", classId);
+
+        log.info("Calling [semesterRepository].[findByActive]");
+        semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        Integer staffId = staffService.getStaffId();
+
+        log.info("Calling [classRepository].[isAuthorizedToTakeAttendanceForClass]");
+        boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffId, classId);
+        log.info("[classRepository].[isAuthorizedToTakeAttendanceForClass] called successfully");
+
+        log.info("Calling [staffRepository].[isInstructorOnly]");
+        boolean isInstructorOnly = staffRepository.isInstructorOnly(staffId);
+        log.info("[staffRepository].[isInstructorOnly] called successfully");
+
+        // idk why i put the above query pls revise and revise this logic tbh I think to make sure admins/staff don't get validated?
+        if (!isAssignedToClass && isInstructorOnly) {
+            log.error("Staff instructor is not assigned to this class");
+            throw new AuthorizationDeniedException("المُدرّس غير مُعيّن في هذا الصف");
+        }
+
+        return assignmentRepository.findByClassId(classId);
+    }
+
 
 }

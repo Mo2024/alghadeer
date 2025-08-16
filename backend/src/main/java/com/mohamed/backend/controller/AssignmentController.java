@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/assignment")
@@ -79,6 +81,40 @@ public class AssignmentController {
             Response response = studentAssignmentService.submitAssignment(studentsAssignment);
             log.info("[studentAssignmentService].[submitAssignment] executed successfully");
             logger.logJsonObject("Response for [submitAssignment]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/all/get-assignments")
+    @Operation(
+            summary = "Fetches Assignments for a class",
+            description = "Only instructors assigned to the class, supervisor and admin are authorized"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getAssignmentsForClass(@RequestParam Integer classId) {
+        try {
+            log.info("executing method [assignmentService].[getAssignmentsForClass]");
+            List<Assignment> response = assignmentService.getAssignmentsForClass(classId);
+            log.info("[assignmentService].[getAssignmentsForClass] executed successfully");
+            logger.logJsonObject("Response for [getAssignmentsForClass]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

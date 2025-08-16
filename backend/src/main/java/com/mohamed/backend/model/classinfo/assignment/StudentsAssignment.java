@@ -45,4 +45,14 @@ public class StudentsAssignment {
         return assignment != null ? assignment.getTotalGrade() : null;
     }
 
+    @JsonProperty("studentName")
+    public String getStudentName() {
+        return student != null ? student.getName() : null;
+    }
+
+    @JsonProperty("studentId")
+    public Integer getStudent_Id() {
+        return student != null ? student.getId() : null;
+    }
+
 }

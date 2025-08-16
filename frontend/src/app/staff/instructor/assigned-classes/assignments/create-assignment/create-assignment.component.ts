@@ -89,6 +89,15 @@ export class CreateAssignmentComponent {
       this.toastService.show('الرجاء إدخال درجة كلية صحيحة', 'error');
       return;
     }
+
+    if (!Number.isInteger(this.activity.totalGrade)) {
+      this.toastService.show(
+        "الرجاء إدخال درجة صحيحة بدون فواصل عشرية",
+        'error'
+      );
+      return;
+    }
+
     this.isDisabled = true;
 
     this.assignmentService.createAssignment(this.activity, this.classId).subscribe({

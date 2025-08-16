@@ -1,1 +1,55 @@
-<p>submit-assignment works!</p>
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    إضافة نشاط
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #activityForm="ngForm">
+
+                        <div class="form-group mb-1">
+                            <label for="assignmentId" class="mb-1">النشاط</label>
+                            <select [(ngModel)]="assignmentIndex" name="assignmentId" id="assignmentId"
+                                class="form-control text-end" required>
+                                <option [value]="''">اختر النشاط</option>
+                                <option *ngFor="let a of assignments; let i = index" [value]="i">
+                                    {{ a?.name }}
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="studentAssignmentId" class="mb-1">الطالب</label>
+                            <select [(ngModel)]="studentAssignmentIndex" name="studentAssignmentId"
+                                id="studentAssignmentId" class="form-control text-end" required>
+                                <option [value]="''">اختر الطالب</option>
+                                <ng-container *ngIf="assignmentIndex !== ''">
+                                    <option
+                                        *ngFor="let sa of assignments[assignmentIndex]?.studentsAssignments; let j = index"
+                                        [value]="j">
+                                        {{ sa?.studentName }}
+                                    </option>
+                                </ng-container>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="name" class="mb-1">الدرجة</label>
+                            <input type="number" [(ngModel)]="grade" name="grade" class="form-control text-end"
+                                id="grade" placeholder="يرجى إدخال الدرجة" required>
+                        </div>
+
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">
+                                حفظ النشاط
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
