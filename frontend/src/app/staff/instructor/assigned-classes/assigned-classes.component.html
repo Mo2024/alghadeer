@@ -54,7 +54,8 @@
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
                             style="max-height: 300px; overflow-y: auto;">
                             <li *ngFor="let session of assignedClass.sessions; let j = index; trackBy: trackBySession"
-                                class="list-group-item session-item" [class.cancelled]="session.cancelled"
+                                (click)="toggleSessionDetailsClick(i,j)" class="list-group-item session-item"
+                                [class.cancelled]="session.cancelled"
                                 [class.finished]="checkIfSessionFinished(session, assignedClass.classSchedules)">
                                 <div class="session-info">
                                     <div class="info-row">
@@ -92,7 +93,8 @@
                             </button>
                         </div>
 
-                        <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
+                        <ul *ngIf="assignedClass.assignments.length > 0"
+                            class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
                             style="max-height: 250px; overflow-y: auto;">
                             <li *ngFor="let assignment of assignedClass.assignments; let k = index; trackBy: trackByAssignment"
                                 (click)="toggleAssignmentDetailsClick(i,k)" class="list-group-item session-item">
