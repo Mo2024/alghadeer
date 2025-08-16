@@ -1,19 +1,23 @@
 <div class="container py-4" dir="rtl">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0 position-relative pb-2 fw-bold" style="
-        color: #2c3e50;
-    ">
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="color: #34495e;">
             الصفوف
             <span style="
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 50%;
-            height: 3px;
-            background: linear-gradient(to right, #3498db, #2ecc71);
-            border-radius: 3px;
-        "></span>
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 50%;
+                height: 3px;
+                background: linear-gradient(to right, #3498db, #1abc9c);
+                border-radius: 3px;
+            "></span>
         </h4>
+        <button class="btn shadow-sm rounded-4 px-4 py-2"
+            routerLink='/staff/instructor/assigned-classes/assignments/create'
+            style="background: linear-gradient(90deg, #3498db, #1abc9c); color: #fff; border: none;">
+            إنشاء نشاط
+        </button>
+
     </div>
 
     <div class="accordion" id="topicsAccordion">
@@ -36,12 +40,9 @@
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3">
                             <li *ngFor="let assignedClassSchedule of assignedClass.classSchedules; trackBy: trackBySchedule"
                                 class="list-group-item schedule-item">
-                                <span class="schedule-day">
-                                    {{ arabicDayName(assignedClassSchedule.dayOfWeek) }}
-                                </span>
+                                <span class="schedule-day">{{ arabicDayName(assignedClassSchedule.dayOfWeek) }}</span>
                                 <span class="schedule-time">
-                                    {{ convertToArabicTimeWithPeriod(assignedClassSchedule.startTime) }}
-                                    -
+                                    {{ convertToArabicTimeWithPeriod(assignedClassSchedule.startTime) }} -
                                     {{ convertToArabicTimeWithPeriod(assignedClassSchedule.endTime) }}
                                 </span>
                             </li>
@@ -54,8 +55,7 @@
                             style="max-height: 300px; overflow-y: auto;">
                             <li *ngFor="let session of assignedClass.sessions; let j = index; trackBy: trackBySession"
                                 class="list-group-item session-item" [class.cancelled]="session.cancelled"
-                                [class.finished]="checkIfSessionFinished(session, assignedClass.classSchedules)"
-                                (click)="toggleSessionDetailsClick(i,j)">
+                                [class.finished]="checkIfSessionFinished(session, assignedClass.classSchedules)">
                                 <div class="session-info">
                                     <div class="info-row">
                                         <span class="label">التاريخ:</span>
@@ -80,12 +80,22 @@
                             </li>
                         </ul>
                     </div>
+
                     <div class="mb-4 p-3 rounded-3 shadow-sm bg-light">
-                        <strong class="d-block mb-2 schedule-title">الأنشطة</strong>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="schedule-title">الأنشطة</strong>
+                            <button routerLink='/staff/instructor/assigned-classes/assignments/submit'
+                                [queryParams]="{ classId: assignedClass.id }"
+                                class="btn btn-sm shadow-sm rounded-4 px-3 py-1"
+                                style="background: linear-gradient(90deg, #2ecc71, #27ae60); color: #fff; border: none;">
+                                تسليم النشاط
+                            </button>
+                        </div>
+
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
                             style="max-height: 250px; overflow-y: auto;">
                             <li *ngFor="let assignment of assignedClass.assignments; let k = index; trackBy: trackByAssignment"
-                                class="list-group-item session-item" (click)="toggleAssignmentDetailsClick(i,k)">
+                                class="list-group-item session-item">
                                 <div class="session-info">
                                     <div class="info-row">
                                         <span class="label">النشاط:</span>
@@ -99,7 +109,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 

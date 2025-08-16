@@ -6,11 +6,12 @@ import { CommonModule, formatDate } from '@angular/common';
 import { SessionDetailsComponent } from '../../instructor/upcoming-sessions/session-details/session-details.component';
 import { environment } from '../../../../environments/environment';
 import { AssignmentDetailsComponent } from '../../instructor/assigned-classes/assignments/assignment-details/assignment-details.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-classes',
   standalone: true,
-  imports: [CommonModule, SessionDetailsComponent, AssignmentDetailsComponent],
+  imports: [CommonModule, SessionDetailsComponent, AssignmentDetailsComponent, RouterModule],
   templateUrl: './classes.component.html',
   styleUrl: './classes.component.css'
 })
