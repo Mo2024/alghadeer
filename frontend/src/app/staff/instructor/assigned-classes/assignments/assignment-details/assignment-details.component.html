@@ -19,12 +19,14 @@
 
                             <div class="row mb-3">
                                 <div class="col-4 fw-bold text-dark">تاريخ البداية:</div>
-                                <div class="col-8">{{ formatArabicDateTime(assignmentObject.startDateTime) }}</div>
+                                <div class="col-8" [innerHTML]="formatArabicDateTime(assignmentObject.startDateTime)">
+                                </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-4 fw-bold text-dark">تاريخ النهاية:</div>
-                                <div class="col-8">{{ formatArabicDateTime(assignmentObject.endDateTime) }}</div>
+                                <div class="col-8" [innerHTML]="formatArabicDateTime(assignmentObject.endDateTime)">
+                                </div>
                             </div>
 
                             <div class="row mb-3">

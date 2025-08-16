@@ -95,7 +95,7 @@
                         <ul class="list-group list-group-flush mb-3 rounded-3 border border-light shadow-sm p-3"
                             style="max-height: 250px; overflow-y: auto;">
                             <li *ngFor="let assignment of assignedClass.assignments; let k = index; trackBy: trackByAssignment"
-                                class="list-group-item session-item">
+                                (click)="toggleAssignmentDetailsClick(i,k)" class="list-group-item session-item">
                                 <div class="session-info">
                                     <div class="info-row">
                                         <span class="label">النشاط:</span>
