@@ -6,8 +6,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "announcement_targets")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
