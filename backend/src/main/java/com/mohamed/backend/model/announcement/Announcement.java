@@ -29,7 +29,7 @@ public class Announcement {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "star_date_time")
+    @Column(name = "start_date_time")
     private LocalDateTime startDate;
 
     @Column(name = "end_date_time")

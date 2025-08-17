@@ -2,8 +2,11 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.exceptions.HandledRejection;
+import com.mohamed.backend.model.announcement.Announcement;
+import com.mohamed.backend.model.announcement.AnnouncementTarget;
 import com.mohamed.backend.model.classinfo.Class;
 import com.mohamed.backend.model.classinfo.assignment.Assignment;
+import com.mohamed.backend.model.enums.AnnouncementType;
 import com.mohamed.backend.repository.classinfo.ClassRepository;
 import com.mohamed.backend.repository.classinfo.assignment.AssignmentRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
@@ -31,6 +34,7 @@ public class AssignmentService {
     private final StaffRepository staffRepository;
     private final StudentAssignmentService studentAssignmentService;
     private final SemesterRepository semesterRepository;
+    private final AnnouncementService announcementService;
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
@@ -107,6 +111,27 @@ public class AssignmentService {
         log.info("Calling [studentAssignmentService].[createStudentAssignment]");
         studentAssignmentService.createStudentAssignment(assignment.getId(), classId);
         log.info("[studentAssignmentService].[createStudentAssignment] called successfully");
+
+        Announcement announcement = Announcement
+                .builder()
+                .announcementType(AnnouncementType.REMINDER)
+                .assignment(assignment)
+                .semester(class_.getSemester())
+                .startDate(assignment.getStartDateTime())
+                .endDate(assignment.getEndDateTime())
+                .content("تم نشر واجب جديد بعنوان \"" + assignment.getName() + "\"، نرجو منكم إنجازه.")
+                .build();
+
+        AnnouncementTarget announcementTarget = AnnouncementTarget
+                .builder()
+                .announcement(null)
+                .semesterClass(class_)
+                .isGeneral(false)
+                .build();
+
+        log.info("Calling [announcementService].[createInternalAnnouncement]");
+        announcementService.createInternalAnnouncement(announcement, announcementTarget);
+        log.info("[announcementService].[createInternalAnnouncement] called successfully");
 
         return assignment;
     }
