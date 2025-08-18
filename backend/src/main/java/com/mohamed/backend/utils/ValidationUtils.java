@@ -9,7 +9,9 @@ import java.time.Year;
 
 public class ValidationUtils {
     public static boolean isArabic(String text) {
-        return text != null && text.matches("^[\\p{InArabic}\\s]+$");
+        if (text == null) return false;
+
+        return text.matches("^[\\p{InArabic}\\s\\p{P}\\p{N}]+$");
     }
 
     public static boolean isValidCpr(String cpr) {

@@ -25,7 +25,4 @@ public class AnnouncementTarget {
     @JoinColumn(name = "class_id")
     private Class semesterClass;
 
-    @Column(name = "is_general")
-    private boolean isGeneral;
-
 }

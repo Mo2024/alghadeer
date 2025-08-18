@@ -39,7 +39,7 @@ public class Announcement {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AnnouncementTarget> targets;
+    private List<AnnouncementTarget> announcementTargets;
 
     @ManyToOne
     @JoinColumn(name = "semester_id")
@@ -48,6 +48,12 @@ public class Announcement {
     @ManyToOne
     @JoinColumn(name = "assignment_id")
     private Assignment assignment;
+
+    @Column(name = "is_general")
+    private boolean isGeneral;
+
+    @Column(name = "is_cancelled")
+    private boolean isCancelled;
 
     @PrePersist
     public void prePersist() {

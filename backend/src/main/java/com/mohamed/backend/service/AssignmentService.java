@@ -120,13 +120,14 @@ public class AssignmentService {
                 .startDate(assignment.getStartDateTime())
                 .endDate(assignment.getEndDateTime())
                 .content("تم نشر واجب جديد بعنوان \"" + assignment.getName() + "\"، نرجو منكم إنجازه.")
+                .isGeneral(false)
+                .isCancelled(false)
                 .build();
 
         AnnouncementTarget announcementTarget = AnnouncementTarget
                 .builder()
                 .announcement(null)
                 .semesterClass(class_)
-                .isGeneral(false)
                 .build();
 
         log.info("Calling [announcementService].[createInternalAnnouncement]");
