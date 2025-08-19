@@ -1,0 +1,91 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    إضافة إعلان
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="onSubmit()" #announcementForm="ngForm">
+
+                        <div class="form-group mb-1">
+                            <label for="announcementType" class="mb-1">نوع الإعلان</label>
+                            <select [(ngModel)]="announcement.announcementType" name="announcementType"
+                                id="announcementType" class="form-control text-end" required>
+                                <option [value]="''">اختر نوع الإعلان</option>
+                                <option *ngFor="let type of announcementTypes" [value]="type.value">
+                                    {{ type.label }}
+                                </option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group mb-1">
+                            <label for="content" class="mb-1">المحتوى</label>
+                            <input [(ngModel)]="announcement.content" name="content" id="content" type="text"
+                                class="form-control text-end" placeholder="أدخل محتوى الإعلان" required>
+                        </div>
+
+
+                        <div class="form-group mb-1">
+                            <label for="startDate" class="mb-1">تاريخ ووقت البداية</label>
+                            <input type="datetime-local" [(ngModel)]="announcement.startDate" name="startDate"
+                                id="startDate" class="form-control text-end" required>
+                        </div>
+
+                        <div class="form-group mb-1">
+                            <label for="endDate" class="mb-1">تاريخ ووقت النهاية</label>
+                            <input type="datetime-local" [(ngModel)]="announcement.endDate" name="endDate" id="endDate"
+                                class="form-control text-end" required>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="generalSwitch"
+                                [(ngModel)]="announcement.general" name="general">
+                            <label class="form-check-label" for="generalSwitch">
+                                هل تريد أن يكون الإعلان عامًا؟
+                            </label>
+                        </div>
+
+                        <ng-container *ngIf="!announcement.general">
+                            <div class="row form-group mb-1 form-label fw-semibold" dir="rtl">
+                                <label for="classIndex" class="mb-1">اختر الصف</label>
+                                <div class="col-10">
+                                    <select [(ngModel)]="classIndex" name="classIndex" id="classIndex"
+                                        class="form-control text-end" required>
+                                        <option [value]="''">اختر الصف</option>
+                                        <option *ngFor="let c of classes; let i = index;" [value]="i">
+                                            {{ c.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-auto d-flex align-items-end pb-1">
+                                    <i (click)="addClass(classIndex)" class="bx bx-plus text-success"
+                                        style="font-size: 1.5rem; cursor: pointer;"></i>
+                                </div>
+                            </div>
+
+                            <label for="classId" class="form-label fw-semibold">الصفوف</label>
+                            <ul class="list-group" style="padding-right: 0; margin-right: 0;">
+                                <li *ngFor="let announcementTarget of announcement.announcementTargets; let i = index;"
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ removedClasses.get(announcementTarget.semesterClass.id)?.name }}
+                                    <i (click)="removeClass(i)" class="bx bx-minus text-danger"
+                                        style="font-size: 1.5rem; cursor: pointer;"></i>
+                                </li>
+                            </ul>
+                        </ng-container>
+
+                        <!-- Submit -->
+                        <div class="d-flex justify-content-start mt-2">
+                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">
+                                حفظ الإعلان
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -91,10 +91,6 @@ public class AnnouncementService {
             throw new HandledRejection("تاريخ انتهاء الإعلان لا يمكن أن يكون قبل تاريخ البدء");
         }
 
-        if (announcement.getAnnouncementTargets() == null || announcement.getAnnouncementTargets().isEmpty()) {
-            log.error("No announcement targets provided");
-            throw new HandledRejection("يجب توفير المستلمين للإعلان");
-        }
 
         log.info("Calling [announcementRepository].[save]");
         Announcement savedAnnouncement = announcementRepository.save(announcement);
@@ -103,6 +99,11 @@ public class AnnouncementService {
         logger.logJsonObject("Announcement:\n{}", savedAnnouncement);
 
         if (!announcement.isGeneral()) {
+            if (announcement.getAnnouncementTargets() == null || announcement.getAnnouncementTargets().isEmpty()) {
+                log.error("No announcement targets provided");
+                throw new HandledRejection("يجب توفير المستلمين للإعلان");
+            }
+
             for (AnnouncementTarget target : announcement.getAnnouncementTargets()) {
                 log.info("Calling [classRepository].[findByIdAndSemesterActiveTrue]");
                 classRepository.findByIdAndSemesterActiveTrue(target.getSemesterClass().getId())

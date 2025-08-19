@@ -9,6 +9,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { StaffComponent } from './staff/admin/staff/staff.component';
 import { SemestersComponent } from './staff/admin/semesters/semesters.component';
 import { CreateComponent } from './staff/admin/semesters/create/create.component';
+import { CreateComponent as CreateAnnonucementComponent } from './staff/supervisor/announcements/create/create.component';
 import { TopicsComponent } from './staff/instructor/topics/topics.component';
 import { TransferStudentComponent } from './staff/supervisor/transfer-student/transfer-student.component';
 import { UpcomingSessionsComponent } from './staff/instructor/upcoming-sessions/upcoming-sessions.component';
@@ -118,6 +119,12 @@ export const routes: Routes = [
     {
         path: 'staff/supervisor/classes/assignments/submit',
         component: SubmitAssignmentComponent,
+        canActivate: [authGuard],
+        data: { role: 'SUPERVISOR', accessControlled: true }
+    },
+    {
+        path: 'staff/supervisor/announcements/create',
+        component: CreateAnnonucementComponent,
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
