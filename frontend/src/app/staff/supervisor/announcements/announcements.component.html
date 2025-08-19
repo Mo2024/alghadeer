@@ -42,11 +42,6 @@
                     <span>{{ formatArabicDateTime(announcement.endDate) }}</span>
                 </div>
 
-                <div class="announcement-field">
-                    <span class="label">ملغى:</span>
-                    <span>{{ announcement.cancelled ? 'نعم' : 'لا' }}</span>
-                </div>
-
                 <!-- Show classes if not general -->
                 <div class="announcement-field" *ngIf="!announcement.general">
                     <span class="label">الصفوف:</span>
@@ -63,6 +58,19 @@
                     <span class="label">الواجب:</span>
                     <span>{{ announcement.assignment.name }}</span>
                 </div>
+
+                <div class="announcement-field d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="label">ملغى:</span>
+                        <span>{{ announcement.cancelled ? 'نعم' : 'لا' }}</span>
+                    </div>
+
+                    <button class="btn btn-sm btn-danger" *ngIf="!announcement.cancelled"
+                        (click)="cancelAnnouncement(announcement.id, i)">
+                        إلغاء
+                    </button>
+                </div>
+
 
             </div>
         </div>

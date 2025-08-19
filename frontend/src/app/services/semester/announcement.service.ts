@@ -22,4 +22,9 @@ export class AnnouncementService {
   getAnnouncements(page: any): Observable<any> {
     return this.http.get(`${this.url}/supervisor/get-announcements-active?page=${page}&size=${environment.pageSize}`, { withCredentials: true });
   }
+
+
+  cancelAnnouncement(id: any): Observable<any> {
+    return this.http.post(`${this.url}/supervisor/cancel-announcement?announcementId=${id}`, {}, { withCredentials: true });
+  }
 }

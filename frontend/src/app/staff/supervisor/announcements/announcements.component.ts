@@ -155,4 +155,32 @@ export class AnnouncementsComponent {
 
   }
 
+  cancelAnnouncement(id: any, index: any) {
+    this.announcementsService.cancelAnnouncement(id).subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+        if (res) {
+          this.announcements[index].cancelled = true
+          this.page.content[index].cancelled = true
+
+        }
+
+      },
+      error: (error) => {
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
+  }
+
 }
