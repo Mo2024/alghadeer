@@ -9,11 +9,10 @@ import { AssignmentDetailsComponent } from '../../instructor/assigned-classes/as
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-classes',
-  standalone: true,
-  imports: [CommonModule, SessionDetailsComponent, AssignmentDetailsComponent, RouterModule],
-  templateUrl: './classes.component.html',
-  styleUrl: './classes.component.css'
+    selector: 'app-classes',
+    imports: [CommonModule, SessionDetailsComponent, AssignmentDetailsComponent, RouterModule],
+    templateUrl: './classes.component.html',
+    styleUrl: './classes.component.css'
 })
 export class ClassesComponent {
   activeClasses: any;

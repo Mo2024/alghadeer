@@ -7,11 +7,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-transfer-student',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './transfer-student.component.html',
-  styleUrl: './transfer-student.component.css'
+    selector: 'app-transfer-student',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './transfer-student.component.html',
+    styleUrl: './transfer-student.component.css'
 })
 export class TransferStudentComponent {
 

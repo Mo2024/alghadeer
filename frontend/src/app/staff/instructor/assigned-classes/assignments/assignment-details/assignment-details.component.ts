@@ -2,11 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-assignment-details',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './assignment-details.component.html',
-  styleUrl: './assignment-details.component.css'
+    selector: 'app-assignment-details',
+    imports: [CommonModule],
+    templateUrl: './assignment-details.component.html',
+    styleUrl: './assignment-details.component.css'
 })
 export class AssignmentDetailsComponent {
 

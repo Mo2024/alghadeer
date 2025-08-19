@@ -8,12 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { ToastComponent } from '../../../../components/toast/toast.component';
 
 @Component({
-  selector: 'app-create',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ToastComponent],
-  providers: [ToastService],
-  templateUrl: './create.component.html',
-  styleUrl: './create.component.css'
+    selector: 'app-create',
+    imports: [CommonModule, FormsModule, ToastComponent],
+    providers: [ToastService],
+    templateUrl: './create.component.html',
+    styleUrl: './create.component.css'
 })
 export class CreateComponent {
   @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();

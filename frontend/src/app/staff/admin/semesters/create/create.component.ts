@@ -10,11 +10,10 @@ import { environment } from '../../../../../environments/environment';
 import { Router } from '@angular/router';
 import { StaffService } from '../../../../services/user/staff.service';
 @Component({
-  selector: 'app-create',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './create.component.html',
-  styleUrl: './create.component.css'
+    selector: 'app-create',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './create.component.html',
+    styleUrl: './create.component.css'
 })
 export class CreateComponent {
 

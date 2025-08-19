@@ -7,11 +7,10 @@ import { environment } from '../../../../../environments/environment';
 import { AnnouncementService } from '../../../../services/semester/announcement.service';
 
 @Component({
-  selector: 'app-create',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './create.component.html',
-  styleUrl: './create.component.css'
+    selector: 'app-create',
+    imports: [FormsModule, CommonModule],
+    templateUrl: './create.component.html',
+    styleUrl: './create.component.css'
 })
 export class CreateComponent {
 

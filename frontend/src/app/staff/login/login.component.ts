@@ -7,11 +7,10 @@ import { ToastService } from '../../services/toast.service';
 import { StaffService } from '../../services/user/staff.service';
 import { environment } from '../../../environments/environment.development';
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+    selector: 'app-login',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css'
 })
 export class LoginComponent {
 

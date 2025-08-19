@@ -7,11 +7,10 @@ import { SessionDetailsComponent } from './session-details/session-details.compo
 import { MainTopicService } from '../../../services/topics/main-topic.service';
 
 @Component({
-  selector: 'app-upcoming-sessions',
-  standalone: true,
-  imports: [CommonModule, SessionDetailsComponent],
-  templateUrl: './upcoming-sessions.component.html',
-  styleUrl: './upcoming-sessions.component.css'
+    selector: 'app-upcoming-sessions',
+    imports: [CommonModule, SessionDetailsComponent],
+    templateUrl: './upcoming-sessions.component.html',
+    styleUrl: './upcoming-sessions.component.css'
 })
 export class UpcomingSessionsComponent {
 

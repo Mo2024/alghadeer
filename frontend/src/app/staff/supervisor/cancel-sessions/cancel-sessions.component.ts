@@ -8,11 +8,10 @@ import { ToastService } from '../../../services/toast.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-cancel-sessions',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './cancel-sessions.component.html',
-  styleUrl: './cancel-sessions.component.css'
+    selector: 'app-cancel-sessions',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './cancel-sessions.component.html',
+    styleUrl: './cancel-sessions.component.css'
 })
 export class CancelSessionsComponent {
 

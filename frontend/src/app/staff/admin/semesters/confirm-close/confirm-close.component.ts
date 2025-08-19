@@ -3,11 +3,10 @@ import { SemesterService } from '../../../../services/semester/semester.service'
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-  selector: 'app-confirm-close',
-  standalone: true,
-  imports: [],
-  templateUrl: './confirm-close.component.html',
-  styleUrl: './confirm-close.component.css'
+    selector: 'app-confirm-close',
+    imports: [],
+    templateUrl: './confirm-close.component.html',
+    styleUrl: './confirm-close.component.css'
 })
 export class ConfirmCloseComponent {
 

@@ -8,11 +8,10 @@ import { CreateComponent } from './create/create.component';
 import { EditComponent } from './edit/edit.component';
 
 @Component({
-  selector: 'app-topics',
-  standalone: true,
-  imports: [CommonModule, CreateComponent, EditComponent],
-  templateUrl: './topics.component.html',
-  styleUrl: './topics.component.css'
+    selector: 'app-topics',
+    imports: [CommonModule, CreateComponent, EditComponent],
+    templateUrl: './topics.component.html',
+    styleUrl: './topics.component.css'
 })
 export class TopicsComponent {
   topics: any;

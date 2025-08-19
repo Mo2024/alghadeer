@@ -7,11 +7,10 @@ import { environment } from '../../../../../../environments/environment';
 import { ClassService } from '../../../../../services/semester/class.service';
 
 @Component({
-  selector: 'app-create-assignment',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './create-assignment.component.html',
-  styleUrl: './create-assignment.component.css'
+    selector: 'app-create-assignment',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './create-assignment.component.html',
+    styleUrl: './create-assignment.component.css'
 })
 export class CreateAssignmentComponent {
 

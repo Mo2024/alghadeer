@@ -7,11 +7,10 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-  selector: 'app-submit-assignment',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './submit-assignment.component.html',
-  styleUrl: './submit-assignment.component.css'
+    selector: 'app-submit-assignment',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './submit-assignment.component.html',
+    styleUrl: './submit-assignment.component.css'
 })
 export class SubmitAssignmentComponent {
 

@@ -8,11 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { PermissionsService } from '../../services/auth/permissions.service';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+    selector: 'app-login',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.css'
 })
 export class LoginComponent {
 

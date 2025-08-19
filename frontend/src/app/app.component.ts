@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [RouterOutlet, NavbarComponent, ToastComponent, CommonModule],
   providers: [ToastService],
   templateUrl: './app.component.html',

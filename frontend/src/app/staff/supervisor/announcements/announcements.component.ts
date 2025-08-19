@@ -7,7 +7,6 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-announcements',
-  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './announcements.component.html',
   styleUrl: './announcements.component.css'

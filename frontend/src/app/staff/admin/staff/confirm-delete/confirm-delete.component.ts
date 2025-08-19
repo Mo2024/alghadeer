@@ -3,11 +3,10 @@ import { environment } from '../../../../../environments/environment';
 import { StaffService } from '../../../../services/user/staff.service';
 
 @Component({
-  selector: 'app-confirm-delete',
-  standalone: true,
-  imports: [],
-  templateUrl: './confirm-delete.component.html',
-  styleUrl: './confirm-delete.component.css'
+    selector: 'app-confirm-delete',
+    imports: [],
+    templateUrl: './confirm-delete.component.html',
+    styleUrl: './confirm-delete.component.css'
 })
 export class ConfirmDeleteComponent {
 

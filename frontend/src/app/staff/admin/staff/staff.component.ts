@@ -7,11 +7,10 @@ import { RouterModule } from '@angular/router';
 import { ConfirmDeleteComponent } from './confirm-delete/confirm-delete.component';
 
 @Component({
-  selector: 'app-staff',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ConfirmDeleteComponent],
-  templateUrl: './staff.component.html',
-  styleUrl: './staff.component.css'
+    selector: 'app-staff',
+    imports: [CommonModule, RouterModule, ConfirmDeleteComponent],
+    templateUrl: './staff.component.html',
+    styleUrl: './staff.component.css'
 })
 export class StaffComponent {
 

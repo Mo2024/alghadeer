@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-toast',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './toast.component.html',
-  styleUrl: './toast.component.css',
-  host: { 'class': 'my-toast' }
-
+    selector: 'app-toast',
+    imports: [CommonModule],
+    templateUrl: './toast.component.html',
+    styleUrl: './toast.component.css',
+    host: { 'class': 'my-toast' }
 })
 export class ToastComponent {
   @Input() message = '';

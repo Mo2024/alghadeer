@@ -6,11 +6,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-student',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './student.component.html',
-  styleUrl: './student.component.css'
+    selector: 'app-student',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './student.component.html',
+    styleUrl: './student.component.css'
 })
 export class StudentComponent {
 

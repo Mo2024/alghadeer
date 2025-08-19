@@ -8,11 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-session-details',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './session-details.component.html',
-  styleUrl: './session-details.component.css'
+    selector: 'app-session-details',
+    imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './session-details.component.html',
+    styleUrl: './session-details.component.css'
 })
 export class SessionDetailsComponent {
 

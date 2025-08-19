@@ -8,11 +8,10 @@ import { CommonModule } from '@angular/common';
 import { PermissionsService } from '../../services/auth/permissions.service';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
 export class RegisterComponent {
 
