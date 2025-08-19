@@ -1,5 +1,6 @@
 package com.mohamed.backend.model.announcement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.model.classinfo.assignment.Assignment;
 import com.mohamed.backend.model.enums.AnnouncementType;
 import com.mohamed.backend.model.semester.Semester;
@@ -43,6 +44,7 @@ public class Announcement {
 
     @ManyToOne
     @JoinColumn(name = "semester_id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Semester semester;
 
     @ManyToOne

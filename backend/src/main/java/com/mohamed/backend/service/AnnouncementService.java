@@ -147,4 +147,22 @@ public class AnnouncementService {
         return new Response("تم إلغاء الإعلان بنجاح");
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public List<Announcement> getAnnouncementsByActiveSemester() {
+        log.info("Calling [semesterRepository].[findByActive]");
+        Semester activeSemester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        log.info("Calling [announcementRepository].[findBySemesterActiveTrue]");
+        List<Announcement> announcements = announcementRepository.findBySemesterActiveTrue();
+        log.info("[announcementRepository].[findBySemesterActiveTrue] called successfully");
+
+        return announcements;
+    }
+
+
 }
