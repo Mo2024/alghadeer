@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -107,10 +110,11 @@ public class AnnouncementController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getAnnouncementsByActiveSemester() {
+    public ResponseEntity<?> getAnnouncementsByActiveSemester(@RequestParam int page, @RequestParam int size) {
         try {
+            Pageable pageable = PageRequest.of(page, size);
             log.info("executing method [announcementService].[getAnnouncementsByActiveSemester]");
-            List<Announcement> response = announcementService.getAnnouncementsByActiveSemester();
+            Page<Announcement> response = announcementService.getAnnouncementsByActiveSemester(pageable);
             log.info("[announcementService].[getAnnouncementsByActiveSemester] executed successfully");
             logger.logJsonObject("Response for [getAnnouncementsByActiveSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);

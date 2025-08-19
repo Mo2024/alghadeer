@@ -1,1 +1,111 @@
-<p>announcements works!</p>
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="color: #2c3e50;">
+            الإعلانات
+            <span style="
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 50%;
+                height: 3px;
+                background: linear-gradient(to right, #3498db, #2ecc71);
+                border-radius: 3px;
+            "></span>
+        </h4>
+        <button class="btn shadow-sm rounded-4 px-4 py-2" routerLink='/staff/supervisor/announcements/create'
+            style="background: linear-gradient(90deg, #3498db, #1abc9c); color: #fff; border: none;">
+            إنشاء إعلان
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div *ngFor="let announcement of announcements; let i = index" class="announcement-card">
+
+                <div class="announcement-field">
+                    <span class="label">النوع:</span>
+                    <span>{{ getAnnouncementTypeLabel(announcement.announcementType) }}</span>
+                </div>
+
+                <div class="announcement-field">
+                    <span class="label">المحتوى:</span>
+                    <span>{{ announcement.content }}</span>
+                </div>
+
+                <div class="announcement-field">
+                    <span class="label">تاريخ البدء:</span>
+                    <span>{{ formatArabicDateTime(announcement.startDate) }}</span>
+                </div>
+
+                <div class="announcement-field">
+                    <span class="label">تاريخ الانتهاء:</span>
+                    <span>{{ formatArabicDateTime(announcement.endDate) }}</span>
+                </div>
+
+                <div class="announcement-field">
+                    <span class="label">ملغى:</span>
+                    <span>{{ announcement.cancelled ? 'نعم' : 'لا' }}</span>
+                </div>
+
+                <!-- Show classes if not general -->
+                <div class="announcement-field" *ngIf="!announcement.general">
+                    <span class="label">الصفوف:</span>
+                    <ng-container *ngIf="announcement.announcementTargets?.length; else noClass">
+                        <span *ngFor="let target of announcement.announcementTargets; let last = last">
+                            {{ target.className }}<span *ngIf="!last">، </span>
+                        </span>
+                    </ng-container>
+                    <ng-template #noClass>لم يحدد</ng-template>
+                </div>
+
+                <!-- Show assignment if exists -->
+                <div class="announcement-field" *ngIf="announcement.assignment">
+                    <span class="label">الواجب:</span>
+                    <span>{{ announcement.assignment.name }}</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-0 align-items-center pb-4" dir="ltr">
+        <div class="col-12 text-center">
+
+            <ul class="pagination justify-content-center mb-0 flex-row">
+
+                <li class="page-item" [class.disabled]="page.first">
+                    <a class="page-link" (click)="goToPage(page.number - 1)" *ngIf="!page.first">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </a>
+                    <span class="page-link" *ngIf="page.first">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </span>
+                </li>
+
+                <ng-container *ngFor="let p of visiblePages.slice().reverse()">
+                    <li class="page-item" [class.active]="p === page.number" *ngIf="p >= 0">
+                        <a class="page-link" (click)="goToPage(p)">
+                            {{ toArabicNumeral(p + 1) }}
+                        </a>
+                    </li>
+
+                    <li class="page-item disabled" *ngIf="p === -1">
+                        <span class="page-link">...</span>
+                    </li>
+                </ng-container>
+
+
+
+                <li class="page-item" [class.disabled]="page.last">
+                    <a class="page-link" (click)="goToPage(page.number + 1)" *ngIf="!page.last">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </a>
+                    <span class="page-link" *ngIf="page.last">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </span>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>

@@ -16,6 +16,8 @@ import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -148,18 +150,18 @@ public class AnnouncementService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public List<Announcement> getAnnouncementsByActiveSemester() {
+    public Page<Announcement> getAnnouncementsByActiveSemester(Pageable pageable) {
         log.info("Calling [semesterRepository].[findByActive]");
-        Semester activeSemester = semesterRepository.findByActive(true)
+        semesterRepository.findByActive(true)
                 .orElseThrow(() -> {
                     log.error("No active semester found");
                     return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
                 });
         log.info("[semesterRepository].[findByActive] called successfully");
 
-        log.info("Calling [announcementRepository].[findBySemesterActiveTrue]");
-        List<Announcement> announcements = announcementRepository.findBySemesterActiveTrue();
-        log.info("[announcementRepository].[findBySemesterActiveTrue] called successfully");
+        log.info("Calling [announcementRepository].[findBySemesterActiveTrueOrderByCreatedAtDesc]");
+        Page<Announcement> announcements = announcementRepository.findBySemesterActiveTrueOrderByCreatedAtDesc(pageable);
+        log.info("[announcementRepository].[findBySemesterActiveTrueOrderByCreatedAtDesc] called successfully");
 
         return announcements;
     }

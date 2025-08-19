@@ -18,4 +18,8 @@ export class AnnouncementService {
   createAnnouncement(body: any): Observable<any> {
     return this.http.post(`${this.url}/supervisor/create-announcement`, body, { withCredentials: true });
   }
+
+  getAnnouncements(page: any): Observable<any> {
+    return this.http.get(`${this.url}/supervisor/get-announcements-active?page=${page}&size=${environment.pageSize}`, { withCredentials: true });
+  }
 }

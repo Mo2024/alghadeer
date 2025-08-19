@@ -33,6 +33,11 @@ public class AnnouncementTarget {
         return semesterClass != null ? semesterClass.getId() : null;
     }
 
+    @JsonProperty("className")
+    public String getClass_Name() {
+        return semesterClass != null ? semesterClass.getName() : null;
+    }
+
     @JsonProperty("announcementId")
     public Integer getAnnouncement_id() {
         return announcement != null ? announcement.getId() : null;
