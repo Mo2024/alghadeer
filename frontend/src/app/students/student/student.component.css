@@ -2,6 +2,9 @@
   background: linear-gradient(135deg, #ffffff, #f9f9f9);
   border: 1px solid #e6e6e6;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 350px;
+  /* optional max width */
 }
 
 .attendance-gauge:hover {
@@ -11,4 +14,11 @@
 
 .attendance-gauge h5 {
   letter-spacing: 0.5px;
+}
+
+/* Responsive gauge size */
+:host ::ng-deep ngx-gauge {
+  width: 100%;
+  height: auto;
+  max-width: 350px;
 }

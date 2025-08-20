@@ -19,10 +19,6 @@ export class SemesterService {
     return this.http.put(`${this.url}/admin/close-semester?page=${body.page}&size=${body.size}`, null, { withCredentials: true });
   }
 
-  isEnrolled(): Observable<any> {
-    return this.http.get(`${this.url}/student/is-enrolled`, { withCredentials: true });
-  }
-
   getSemesters(page: number): Observable<any> {
     return this.http.get(`${this.url}/admin/get-semesters?page=${page}&size=${this.pageSize}`, { withCredentials: true });
   }

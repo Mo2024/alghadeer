@@ -5,7 +5,10 @@ import com.mohamed.backend.dto.semester.SemesterEnrollmentView;
 
 import com.mohamed.backend.dto.topic.MainTopicView;
 import com.mohamed.backend.dto.user.StudentDetailsPageDTO;
+import com.mohamed.backend.model.announcement.Announcement;
+import com.mohamed.backend.model.classinfo.Attendance;
 import com.mohamed.backend.model.semester.Semester;
+import com.mohamed.backend.repository.announcement.AnnouncementRepository;
 import com.mohamed.backend.repository.classinfo.AttendanceRepository;
 import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
@@ -48,6 +51,7 @@ public class StudentService {
     private final SemesterRepository semesterRepository;
     private final SemesterEnrollmentRepository semesterEnrollmentRepository;
     private final AttendanceRepository attendanceRepository;
+    private final AnnouncementRepository announcementRepository;
     private final Logger logger;
 
     public Page<Student> getStudents(Pageable pageable) {
@@ -210,39 +214,65 @@ public class StudentService {
     @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
     public StudentDetailsPageDTO getStudentDetails() {
 
+        log.info("Calling [semesterRepository].[findByActive]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+
         log.info("Calling [attendanceService].[getStudentTopics]");
-        List<MainTopicView> missedTopics = getStudentTopics(getStudentId(), false);
+        List<MainTopicView> missedTopics = getStudentTopics(getStudentId(), false, semester.getId());
         log.info("[attendanceService].[getStudentTopics] called successfully");
 
         log.info("Calling [attendanceService].[getStudentTopics]");
-        List<MainTopicView> attendedTopics = getStudentTopics(getStudentId(), true);
+        List<MainTopicView> attendedTopics = getStudentTopics(getStudentId(), true, semester.getId());
         log.info("[attendanceService].[getStudentTopics] called successfully");
 
-        log.info("Calling [attendanceService].[getStudentTopics]");
-        Double attendancePercentage = getAttendancePercentage();
-        log.info("[attendanceService].[getStudentTopics] called successfully");
+        log.info("Calling [getStudentTopics]");
+        Double attendancePercentage = getAttendancePercentage(semester.getId());
+        log.info("[getStudentTopics] called successfully");
+
+
+        log.info("Calling [findActiveAnnouncements]");
+        List<Announcement> activeAnnouncements = findActiveAnnouncements(semester.getId());
+        log.info("[findActiveAnnouncements] called successfully");
+
+        boolean isEnrolled = isEnrolled(semester.getId());
 
         return StudentDetailsPageDTO.builder()
                 .missedTopics(missedTopics)
                 .attendedTopics(attendedTopics)
                 .attendancePercentage(attendancePercentage)
+                .isEnrolled(isEnrolled)
+                .announcements(activeAnnouncements)
                 .build();
 
     }
 
-    public List<MainTopicView> getStudentTopics(Integer studentId, boolean isPresent) {
+    public List<MainTopicView> getStudentTopics(Integer studentId, boolean isPresent, Integer semesterId) {
         log.info("Calling [attendanceRepository].[findStudentTopics]");
-        List<MainTopicView> mainTopicViews = attendanceRepository.findStudentTopics(studentId, isPresent);
+        List<MainTopicView> mainTopicViews = attendanceRepository.findStudentTopics(studentId, isPresent, semesterId);
         log.info("[attendanceRepository].[findStudentTopics] called successfully:\n{}", mainTopicViews);
 
         return mainTopicViews;
     }
 
-    public Double getAttendancePercentage() {
+    public Double getAttendancePercentage(Integer semesterId) {
         log.info("Calling [attendanceRepository].[getAttendancePercentageByStudentId]");
-        Double attendancePercentage = attendanceRepository.getAttendancePercentageByStudentId(getStudentId());
+        Double attendancePercentage = attendanceRepository.getAttendancePercentageByStudentId(getStudentId(), semesterId);
         log.info("[attendanceRepository].[getAttendancePercentageByStudentId] called successfully: {}", attendancePercentage);
 
         return attendancePercentage;
+    }
+
+    public boolean isEnrolled(Integer semesterId) {
+        return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(getStudentId(), semesterId);
+    }
+
+    public List<Announcement> findActiveAnnouncements(Integer semesterId) {
+        return announcementRepository.findActiveAnnouncements(getStudentId(), semesterId);
     }
 }

@@ -29,6 +29,10 @@ export class StudentService {
     return this.http.get(`${this.url}/supervisor/get-enrolled-students`, { withCredentials: true });
   }
 
+  getStudentPageDetails(): Observable<any> {
+    return this.http.get(`${this.url}/student/get-student-page-details`, { withCredentials: true });
+  }
+
   login(body: any): Observable<any> {
     return this.http.post(`${this.url}/login`, body, { withCredentials: true });
   }

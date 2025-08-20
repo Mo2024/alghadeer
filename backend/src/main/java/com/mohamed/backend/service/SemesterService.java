@@ -222,18 +222,4 @@ public class SemesterService {
         return semesterRepository.findAllByOrderByIdDesc(pageable);
     }
 
-    @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
-    @Transactional
-    public boolean isEnrolled() {
-
-        log.info("Calling [semesterRepository].[findByActive]");
-        Semester semester = semesterRepository.findByActive(true)
-                .orElseThrow(() -> {
-                    log.error("No active semester found");
-                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
-                });
-        log.info("[semesterRepository].[findByActive] called successfully");
-
-        return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentService.getStudentId(), semester.getId());
-    }
 }
