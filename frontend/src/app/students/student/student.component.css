@@ -1,0 +1,14 @@
+.attendance-gauge {
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  border: 1px solid #e6e6e6;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.attendance-gauge:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.attendance-gauge h5 {
+  letter-spacing: 0.5px;
+}

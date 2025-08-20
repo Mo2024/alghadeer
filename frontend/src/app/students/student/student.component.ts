@@ -4,18 +4,24 @@ import { environment } from '../../../environments/environment';
 import { ToastService } from '../../services/toast.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgxGaugeModule } from 'ngx-gauge';
 
 @Component({
-    selector: 'app-student',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './student.component.html',
-    styleUrl: './student.component.css'
+  selector: 'app-student',
+  imports: [CommonModule, FormsModule, NgxGaugeModule],
+  templateUrl: './student.component.html',
+  styleUrl: './student.component.css'
 })
 export class StudentComponent {
 
   displayedEnrollment: boolean = false;
   grade: string = '';
   isDisabled: boolean = false;
+
+
+  attendanceValue = 50; // 75% attendance
+  gaugeLabel = 'نسبة حضور الفصل';
+  gaugeAppendText = '%';
 
   constructor(private semesterService: SemesterService, private toastService: ToastService) { }
 
@@ -88,6 +94,23 @@ export class StudentComponent {
     })
 
 
+  }
+
+
+  // Function to convert Western digits to Arabic-Indic digits
+  getArabicNumber(num: number): string {
+    const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+    return num.toString().replace(/\d/g, d => arabicDigits[+d]);
+  }
+  // Use a getter for the gauge label with number
+  get attendanceLabel(): string {
+    return `${this.getArabicNumber(this.attendanceValue)}%`;
+  }
+
+  get attendanceColor(): string {
+    if (this.attendanceValue < 50) return '#e74c3c';   // red
+    if (this.attendanceValue < 75) return '#f39c12';   // amber
+    return '#1abc9c';                                  // green
   }
 
 }

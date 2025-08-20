@@ -1,10 +1,13 @@
 package com.mohamed.backend.controller;
 
+import com.mohamed.backend.dto.topic.MainTopicView;
 import com.mohamed.backend.dto.user.Login;
 import com.mohamed.backend.dto.Response;
 import com.mohamed.backend.dto.semester.SemesterEnrollmentView;
+import com.mohamed.backend.dto.user.StudentDetailsPageDTO;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Student;
+import com.mohamed.backend.service.AttendanceService;
 import com.mohamed.backend.service.StudentService;
 import com.mohamed.backend.utils.Logger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +34,7 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
+    private final AttendanceService attendanceService;
     private final Logger logger;
 
     @PostMapping("/register")
@@ -120,6 +124,41 @@ public class StudentController {
             List<SemesterEnrollmentView> response = studentService.getEnrolledStudents();
             log.info("[studentService].[getEnrolledStudents] executed successfully");
             logger.logJsonObject("Response for [getEnrolledStudents]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/student/get-student-page-details")
+    @Operation(
+            summary = "Fetches Student attendance/topics details for their main page",
+            description = "This request is only authorized for students."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> testApi() {
+        try {
+            log.info("executing method [studentService].[getStudentDetails]");
+            StudentDetailsPageDTO response = studentService.getStudentDetails();
+            log.info("[studentService].[getStudentDetails] executed successfully");
+            logger.logJsonObject("Response for [getStudentDetails]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

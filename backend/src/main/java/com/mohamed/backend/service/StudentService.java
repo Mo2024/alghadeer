@@ -3,7 +3,10 @@ package com.mohamed.backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.semester.SemesterEnrollmentView;
 
+import com.mohamed.backend.dto.topic.MainTopicView;
+import com.mohamed.backend.dto.user.StudentDetailsPageDTO;
 import com.mohamed.backend.model.semester.Semester;
+import com.mohamed.backend.repository.classinfo.AttendanceRepository;
 import com.mohamed.backend.repository.semester.SemesterEnrollmentRepository;
 import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.security.StudentDetails;
@@ -44,6 +47,7 @@ public class StudentService {
     private final ImageUtils imageUtils;
     private final SemesterRepository semesterRepository;
     private final SemesterEnrollmentRepository semesterEnrollmentRepository;
+    private final AttendanceRepository attendanceRepository;
     private final Logger logger;
 
     public Page<Student> getStudents(Pageable pageable) {
@@ -166,7 +170,7 @@ public class StudentService {
         logger.logJsonObject("Student info:\n{}", student);
 
         if (login.getUsername() == null || login.getPassword() == null ||
-            login.getUsername().isBlank() || login.getPassword().isBlank()) {
+                login.getUsername().isBlank() || login.getPassword().isBlank()) {
             log.error("Invalid login input");
             throw new HandledRejection("الرجاء إدخال اسم المستخدم وكلمة المرور");
         } else if (!student.getHash().equals(HashUtils.sha256(login.getPassword()))) {
@@ -202,4 +206,43 @@ public class StudentService {
         return semesterEnrollmentRepository.findAllBySemesterId(semester.getId());
     }
 
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
+    public StudentDetailsPageDTO getStudentDetails() {
+
+        log.info("Calling [attendanceService].[getStudentTopics]");
+        List<MainTopicView> missedTopics = getStudentTopics(getStudentId(), false);
+        log.info("[attendanceService].[getStudentTopics] called successfully");
+
+        log.info("Calling [attendanceService].[getStudentTopics]");
+        List<MainTopicView> attendedTopics = getStudentTopics(getStudentId(), true);
+        log.info("[attendanceService].[getStudentTopics] called successfully");
+
+        log.info("Calling [attendanceService].[getStudentTopics]");
+        Double attendancePercentage = getAttendancePercentage();
+        log.info("[attendanceService].[getStudentTopics] called successfully");
+
+        return StudentDetailsPageDTO.builder()
+                .missedTopics(missedTopics)
+                .attendedTopics(attendedTopics)
+                .attendancePercentage(attendancePercentage)
+                .build();
+
+    }
+
+    public List<MainTopicView> getStudentTopics(Integer studentId, boolean isPresent) {
+        log.info("Calling [attendanceRepository].[findStudentTopics]");
+        List<MainTopicView> mainTopicViews = attendanceRepository.findStudentTopics(studentId, isPresent);
+        log.info("[attendanceRepository].[findStudentTopics] called successfully:\n{}", mainTopicViews);
+
+        return mainTopicViews;
+    }
+
+    public Double getAttendancePercentage() {
+        log.info("Calling [attendanceRepository].[getAttendancePercentageByStudentId]");
+        Double attendancePercentage = attendanceRepository.getAttendancePercentageByStudentId(getStudentId());
+        log.info("[attendanceRepository].[getAttendancePercentageByStudentId] called successfully: {}", attendancePercentage);
+
+        return attendancePercentage;
+    }
 }
