@@ -2,6 +2,7 @@ package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.Response;
+import com.mohamed.backend.dto.semester.AnnouncementView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.announcement.Announcement;
 import com.mohamed.backend.model.announcement.AnnouncementTarget;
@@ -164,6 +165,10 @@ public class AnnouncementService {
         log.info("[announcementRepository].[findBySemesterActiveTrueOrderByCreatedAtDesc] called successfully");
 
         return announcements;
+    }
+
+    public List<AnnouncementView> findActiveAnnouncements(Integer studentId, Integer semesterId) {
+        return announcementRepository.findActiveAnnouncements(studentId, semesterId);
     }
 
 

@@ -1,5 +1,6 @@
 package com.mohamed.backend.dto.user;
 
+import com.mohamed.backend.dto.semester.AnnouncementView;
 import com.mohamed.backend.dto.topic.MainTopicView;
 import com.mohamed.backend.model.announcement.Announcement;
 import lombok.AllArgsConstructor;
@@ -18,5 +19,5 @@ public class StudentDetailsPageDTO {
     private List<MainTopicView> attendedTopics;
     private Double attendancePercentage;
     private boolean isEnrolled;
-    private List<Announcement> announcements;
+    private List<AnnouncementView> announcements;
 }

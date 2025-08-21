@@ -34,7 +34,6 @@ import java.time.LocalDate;
 public class SemesterService {
 
     private final SemesterRepository semesterRepository;
-    private final StudentService studentService;
     private final SemesterEnrollmentRepository semesterEnrollmentRepository;
     private final StudentRepository studentRepository;
     private final GradeClassAssignmentRepository gradeClassAssignmentRepository;
@@ -220,6 +219,10 @@ public class SemesterService {
         log.info("Semester ID={} closed successfully", semester.getId());
 
         return semesterRepository.findAllByOrderByIdDesc(pageable);
+    }
+
+    public boolean isEnrolled(Integer studentId, Integer semesterId) {
+        return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentId, semesterId);
     }
 
 }

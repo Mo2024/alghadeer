@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.dto.class_.AttendanceRequestDTO;
 import com.mohamed.backend.dto.class_.AttendanceView;
 import com.mohamed.backend.dto.class_.GetAttendanceStatusDto;
+import com.mohamed.backend.dto.topic.MainTopicView;
 import com.mohamed.backend.dto.user.StudentAttendanceView;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.classinfo.Attendance;
@@ -159,5 +160,21 @@ public class AttendanceService {
         }
 
         return response;
+    }
+
+    public Double getAttendancePercentage(Integer studentId, Integer semesterId) {
+        log.info("Calling [attendanceRepository].[getAttendancePercentageByStudentId]");
+        Double attendancePercentage = attendanceRepository.getAttendancePercentageByStudentId(studentId, semesterId);
+        log.info("[attendanceRepository].[getAttendancePercentageByStudentId] called successfully: {}", attendancePercentage);
+
+        return attendancePercentage;
+    }
+
+    public List<MainTopicView> getStudentTopics(Integer studentId, boolean isPresent, Integer semesterId) {
+        log.info("Calling [attendanceRepository].[findStudentTopics]");
+        List<MainTopicView> mainTopicViews = attendanceRepository.findStudentTopics(studentId, isPresent, semesterId);
+        log.info("[attendanceRepository].[findStudentTopics] called successfully:\n{}", mainTopicViews);
+
+        return mainTopicViews;
     }
 }

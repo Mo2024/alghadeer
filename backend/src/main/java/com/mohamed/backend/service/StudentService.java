@@ -1,6 +1,7 @@
 package com.mohamed.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.dto.semester.AnnouncementView;
 import com.mohamed.backend.dto.semester.SemesterEnrollmentView;
 
 import com.mohamed.backend.dto.topic.MainTopicView;
@@ -50,8 +51,9 @@ public class StudentService {
     private final ImageUtils imageUtils;
     private final SemesterRepository semesterRepository;
     private final SemesterEnrollmentRepository semesterEnrollmentRepository;
-    private final AttendanceRepository attendanceRepository;
-    private final AnnouncementRepository announcementRepository;
+    private final AttendanceService attendanceService;
+    private final AnnouncementService announcementService;
+    private final SemesterService semesterService;
     private final Logger logger;
 
     public Page<Student> getStudents(Pageable pageable) {
@@ -222,25 +224,13 @@ public class StudentService {
                 });
         log.info("[semesterRepository].[findByActive] called successfully");
 
+        Integer studentId = getStudentId();
 
-        log.info("Calling [attendanceService].[getStudentTopics]");
-        List<MainTopicView> missedTopics = getStudentTopics(getStudentId(), false, semester.getId());
-        log.info("[attendanceService].[getStudentTopics] called successfully");
-
-        log.info("Calling [attendanceService].[getStudentTopics]");
-        List<MainTopicView> attendedTopics = getStudentTopics(getStudentId(), true, semester.getId());
-        log.info("[attendanceService].[getStudentTopics] called successfully");
-
-        log.info("Calling [getStudentTopics]");
-        Double attendancePercentage = getAttendancePercentage(semester.getId());
-        log.info("[getStudentTopics] called successfully");
-
-
-        log.info("Calling [findActiveAnnouncements]");
-        List<Announcement> activeAnnouncements = findActiveAnnouncements(semester.getId());
-        log.info("[findActiveAnnouncements] called successfully");
-
-        boolean isEnrolled = isEnrolled(semester.getId());
+        List<MainTopicView> missedTopics = attendanceService.getStudentTopics(studentId, false, semester.getId());
+        List<MainTopicView> attendedTopics = attendanceService.getStudentTopics(studentId, true, semester.getId());
+        Double attendancePercentage = attendanceService.getAttendancePercentage(studentId, semester.getId());
+        List<AnnouncementView> activeAnnouncements = announcementService.findActiveAnnouncements(studentId, semester.getId());
+        boolean isEnrolled = semesterService.isEnrolled(studentId, semester.getId());
 
         return StudentDetailsPageDTO.builder()
                 .missedTopics(missedTopics)
@@ -252,27 +242,4 @@ public class StudentService {
 
     }
 
-    public List<MainTopicView> getStudentTopics(Integer studentId, boolean isPresent, Integer semesterId) {
-        log.info("Calling [attendanceRepository].[findStudentTopics]");
-        List<MainTopicView> mainTopicViews = attendanceRepository.findStudentTopics(studentId, isPresent, semesterId);
-        log.info("[attendanceRepository].[findStudentTopics] called successfully:\n{}", mainTopicViews);
-
-        return mainTopicViews;
-    }
-
-    public Double getAttendancePercentage(Integer semesterId) {
-        log.info("Calling [attendanceRepository].[getAttendancePercentageByStudentId]");
-        Double attendancePercentage = attendanceRepository.getAttendancePercentageByStudentId(getStudentId(), semesterId);
-        log.info("[attendanceRepository].[getAttendancePercentageByStudentId] called successfully: {}", attendancePercentage);
-
-        return attendancePercentage;
-    }
-
-    public boolean isEnrolled(Integer semesterId) {
-        return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(getStudentId(), semesterId);
-    }
-
-    public List<Announcement> findActiveAnnouncements(Integer semesterId) {
-        return announcementRepository.findActiveAnnouncements(getStudentId(), semesterId);
-    }
 }

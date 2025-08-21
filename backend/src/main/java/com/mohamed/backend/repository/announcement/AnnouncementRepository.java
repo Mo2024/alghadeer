@@ -1,5 +1,6 @@
 package com.mohamed.backend.repository.announcement;
 
+import com.mohamed.backend.dto.semester.AnnouncementView;
 import com.mohamed.backend.model.announcement.Announcement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +41,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
             WHERE start_date_time < NOW() AND end_date_time > NOW()
             ORDER BY id, created_at DESC
             """, nativeQuery = true)
-    List<Announcement> findActiveAnnouncements(
+    List<AnnouncementView> findActiveAnnouncements(
             @Param("studentId") Integer studentId,
             @Param("semesterId") Integer semesterId
     );
