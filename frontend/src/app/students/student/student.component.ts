@@ -105,16 +105,16 @@ export class StudentComponent {
   // Function to convert Western digits to Arabic-Indic digits
   getArabicNumber(num: number): string {
     const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
-    return num.toString().replace(/\d/g, d => arabicDigits[+d]);
+    return num?.toString().replace(/\d/g, d => arabicDigits[+d]);
   }
   // Use a getter for the gauge label with number
   get attendanceLabel(): string {
-    return `${this.getArabicNumber(this.studentPageDetails.attendancePercentage)}%`;
+    return `${this.getArabicNumber(this.studentPageDetails?.attendancePercentage)}%`;
   }
 
   get attendanceColor(): string {
-    if (this.studentPageDetails.attendancePercentage < 50) return '#e74c3c';   // red
-    if (this.studentPageDetails.attendancePercentage < 75) return '#f39c12';   // amber
+    if (this.studentPageDetails?.attendancePercentage < 50) return '#e74c3c';   // red
+    if (this.studentPageDetails?.attendancePercentage < 75) return '#f39c12';   // amber
     return '#1abc9c';                                  // green
   }
 
@@ -140,7 +140,7 @@ export class StudentComponent {
   }
 
   isActiveAnnouncement(ann: any): boolean {
-    return new Date(ann.endDate) > new Date();
+    return new Date(ann.endDateTime) > new Date();
   }
 
   toArabicNumbers(str: string | number): string {

@@ -9,9 +9,9 @@ public interface AnnouncementView {
 
     String getAnnouncementType();
 
-    LocalDateTime getStartDate();
+    LocalDateTime getStartDateTime();
 
-    LocalDateTime getEndDate();
+    LocalDateTime getEndDateTime();
 
     LocalDateTime getCreatedAt();
 
