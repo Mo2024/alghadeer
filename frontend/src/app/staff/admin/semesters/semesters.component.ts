@@ -7,10 +7,10 @@ import { environment } from '../../../../environments/environment';
 import { ConfirmCloseComponent } from './confirm-close/confirm-close.component';
 
 @Component({
-    selector: 'app-semesters',
-    imports: [CommonModule, RouterModule, ConfirmCloseComponent],
-    templateUrl: './semesters.component.html',
-    styleUrl: './semesters.component.css'
+  selector: 'app-semesters',
+  imports: [CommonModule, RouterModule, ConfirmCloseComponent],
+  templateUrl: './semesters.component.html',
+  styleUrl: './semesters.component.css'
 })
 export class SemestersComponent {
 

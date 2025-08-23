@@ -1,151 +1,146 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './staff/login/login.component';
-import { LoginComponent as StudentLoginComponent } from './students/login/login.component';
-import { RegisterComponent as StudentRegisterComponent } from './students/register/register.component';
-import { RegisterComponent as StaffRegisterComponent } from './staff/admin/staff/register/register.component';
-import { StudentComponent } from './students/student/student.component';
-import { authGuard } from './guards/auth.guard';
 import { MainPageComponent } from './main-page/main-page.component';
-import { StaffComponent } from './staff/admin/staff/staff.component';
-import { SemestersComponent } from './staff/admin/semesters/semesters.component';
-import { CreateComponent } from './staff/admin/semesters/create/create.component';
-import { CreateComponent as CreateAnnonucementComponent } from './staff/supervisor/announcements/create/create.component';
-import { TopicsComponent } from './staff/instructor/topics/topics.component';
-import { TransferStudentComponent } from './staff/supervisor/transfer-student/transfer-student.component';
-import { UpcomingSessionsComponent } from './staff/instructor/upcoming-sessions/upcoming-sessions.component';
-import { AssignedClassesComponent } from './staff/instructor/assigned-classes/assigned-classes.component';
-import { AttendanceComponent } from './staff/instructor/upcoming-sessions/attendance/attendance.component';
-import { CancelSessionsComponent } from './staff/supervisor/cancel-sessions/cancel-sessions.component';
-import { ClassesComponent } from './staff/supervisor/classes/classes.component';
-import { SubmitAssignmentComponent } from './staff/instructor/assigned-classes/assignments/submit-assignment/submit-assignment.component';
-import { CreateAssignmentComponent } from './staff/instructor/assigned-classes/assignments/create-assignment/create-assignment.component';
-import { CreateAssignmentComponent as CreateAssignmentSupervisorComponent } from './staff/supervisor/classes/create-assignment/create-assignment.component';
-import { AnnouncementsComponent } from './staff/supervisor/announcements/announcements.component';
+import { authGuard } from './guards/auth.guard';
+import { NgxGaugeModule } from 'ngx-gauge';
+import { importProvidersFrom } from '@angular/core';
 
 export const routes: Routes = [
-    { path: '', component: MainPageComponent, canActivate: [authGuard], data: { accessControlled: false } },
+    // Main Page
+    {
+        path: '',
+        component: MainPageComponent,
+        canActivate: [authGuard],
+        data: { accessControlled: false }
+    },
 
-    // Staff Components
-    { path: 'staff/login', component: LoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
+    // Student Routes
+    {
+        path: 'login',
+        loadComponent: () => import('./students/login/login.component').then(c => c.LoginComponent)
+    },
+    {
+        path: 'register',
+        loadComponent: () => import('./students/register/register.component').then(c => c.RegisterComponent)
+    },
+    {
+        path: 'student',
+        loadComponent: () => import('./students/student/student.component').then(c => c.StudentComponent),
+        canActivate: [authGuard],
+        data: { role: 'STUDENT', accessControlled: true }
+    },
 
-    // Admin Components
+    // Staff Login
+    {
+        path: 'staff/login',
+        loadComponent: () => import('./staff/login/login.component').then(c => c.LoginComponent)
+    },
+
+    // Admin Routes
     {
         path: 'staff/admin/register',
-        component: StaffRegisterComponent,
+        loadComponent: () => import('./staff/admin/staff/register/register.component').then(c => c.RegisterComponent),
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },
     {
         path: 'staff/admin/staff',
-        component: StaffComponent,
+        loadComponent: () => import('./staff/admin/staff/staff.component').then(c => c.StaffComponent),
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },
     {
         path: 'staff/admin/semesters',
-        component: SemestersComponent,
+        loadComponent: () => import('./staff/admin/semesters/semesters.component').then(c => c.SemestersComponent),
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },
     {
         path: 'staff/admin/semesters/create',
-        component: CreateComponent,
+        loadComponent: () => import('./staff/admin/semesters/create/create.component').then(c => c.CreateComponent),
         canActivate: [authGuard],
         data: { role: 'ADMIN', accessControlled: true }
     },
 
-    // Instructor Components
+    // Instructor Routes
     {
         path: 'staff/instructor/topics',
-        component: TopicsComponent,
+        loadComponent: () => import('./staff/instructor/topics/topics.component').then(c => c.TopicsComponent),
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
     {
         path: 'staff/instructor/upcoming-sessions',
-        component: UpcomingSessionsComponent,
+        loadComponent: () => import('./staff/instructor/upcoming-sessions/upcoming-sessions.component').then(c => c.UpcomingSessionsComponent),
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
     {
         path: 'staff/instructor/assigned-classes',
-        component: AssignedClassesComponent,
-        canActivate: [authGuard],
-        data: { role: 'INSTRUCTOR', accessControlled: true }
-    },
-    {
-        path: 'staff/instructor/assigned-classes/assignments/submit',
-        component: SubmitAssignmentComponent,
+        loadComponent: () => import('./staff/instructor/assigned-classes/assigned-classes.component').then(c => c.AssignedClassesComponent),
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
     {
         path: 'staff/instructor/assigned-classes/assignments/create',
-        component: CreateAssignmentComponent,
+        loadComponent: () => import('./staff/instructor/assigned-classes/assignments/create-assignment/create-assignment.component').then(c => c.CreateAssignmentComponent),
+        canActivate: [authGuard],
+        data: { role: 'INSTRUCTOR', accessControlled: true }
+    },
+    {
+        path: 'staff/instructor/assigned-classes/assignments/submit',
+        loadComponent: () => import('./staff/instructor/assigned-classes/assignments/submit-assignment/submit-assignment.component').then(c => c.SubmitAssignmentComponent),
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
     {
         path: 'staff/instructor/assigned-classes/attendance',
-        component: AttendanceComponent,
+        loadComponent: () => import('./staff/instructor/upcoming-sessions/attendance/attendance.component').then(c => c.AttendanceComponent),
         canActivate: [authGuard],
         data: { role: 'INSTRUCTOR', accessControlled: true }
     },
 
-    // Supervisor Components
+    // Supervisor Routes
     {
         path: 'staff/supervisor/transfer-student',
-        component: TransferStudentComponent,
+        loadComponent: () => import('./staff/supervisor/transfer-student/transfer-student.component').then(c => c.TransferStudentComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
         path: 'staff/supervisor/cancel-sessions',
-        component: CancelSessionsComponent,
+        loadComponent: () => import('./staff/supervisor/cancel-sessions/cancel-sessions.component').then(c => c.CancelSessionsComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
         path: 'staff/supervisor/classes',
-        component: ClassesComponent,
+        loadComponent: () => import('./staff/supervisor/classes/classes.component').then(c => c.ClassesComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
         path: 'staff/supervisor/classes/assignments/create',
-        component: CreateAssignmentSupervisorComponent,
+        loadComponent: () => import('./staff/supervisor/classes/create-assignment/create-assignment.component').then(c => c.CreateAssignmentComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
         path: 'staff/supervisor/classes/assignments/submit',
-        component: SubmitAssignmentComponent,
+        loadComponent: () => import('./staff/instructor/assigned-classes/assignments/submit-assignment/submit-assignment.component').then(c => c.SubmitAssignmentComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
         path: 'staff/supervisor/announcements',
-        component: AnnouncementsComponent,
+        loadComponent: () => import('./staff/supervisor/announcements/announcements.component').then(c => c.AnnouncementsComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
     },
     {
         path: 'staff/supervisor/announcements/create',
-        component: CreateAnnonucementComponent,
+        loadComponent: () => import('./staff/supervisor/announcements/create/create.component').then(c => c.CreateComponent),
         canActivate: [authGuard],
         data: { role: 'SUPERVISOR', accessControlled: true }
-    },
-
-    // Student Components
-    { path: 'login', component: StudentLoginComponent, canActivate: [authGuard], data: { accessControlled: false } },
-    { path: 'register', component: StudentRegisterComponent, canActivate: [authGuard], data: { accessControlled: false } },
-    {
-        path: 'student',
-        component: StudentComponent,
-        canActivate: [authGuard],
-        data: { role: "STUDENT", accessControlled: true }
-    },
+    }
 
 ];
-
-
