@@ -25,11 +25,11 @@
 
 
 .toast.success {
-    background-color: #28a745;
+    background-color: #5AA469;
 }
 
 .toast.error {
-    background-color: #dc3545;
+    background-color: #D46A6A;
 }
 
 .toast .close-btn {
