@@ -14,8 +14,19 @@ fi
 read -p "Do you want to build and push the alghadeer-frontend Docker image? (y/N): " build_docker
 
 if [[ "$build_docker" =~ ^[Yy]$ ]]; then
-    echo "Building and pushing alghadeer-frontend Docker image..."
-    sudo docker build -f Dockerfile.test --push --platform linux/amd64 -t mohdosama2002/alghadeer-frontend:preprod-1.0.0 .
+    # Ask for version number
+    read -p "Enter the version number (e.g., 1.1.3): " version
+
+    echo "Building and pushing alghadeer-frontend Docker image with tags:"
+    echo " - preprod-$version"
+    echo " - latest"
+
+    docker buildx build -f Dockerfile.test \
+      --push \
+      --platform linux/amd64 \
+      -t mohdosama2002/alghadeer-frontend:preprod-$version \
+      -t mohdosama2002/alghadeer-frontend:latest \
+      .
 else
     echo "Skipping Docker build."
 fi
