@@ -1,79 +1,80 @@
-<nav class="navbar navbar-expand-lg bg-ahlulbayt-green rounded-bottom-4">
+<nav class="navbar bg-ahlulbayt-green" aria-label="Offcanvas navbar">
     <div class="container-fluid">
-        <img src="assets/alghadeer.png" alt="Logo" width="50" height="40" class="d-inline-block align-top me-2" />
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <img src="assets/alghadeer.png" alt="Logo" width="70" height="70" class="d-inline-block align-top me-2" />
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="w-100 d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
-                <!-- Main Menu (e.g. الصفوف, المواضيع) -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
 
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <!-- Close button at far left -->
+                <button type="button" class="navbar-toggler" data-bs-dismiss="offcanvas" aria-label="Close">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Logo at far right -->
+                <img src="assets/alghadeer.png" alt="Logo" width="120" class="img-fluid ms-auto" />
+            </div>
+
+
+
+            <div class="offcanvas-body text-end" style="direction: rtl;">
+                <ul class="navbar-nav flex-grow-1 pe-3">
+
+                    <!-- المعلم Dropdown -->
                     <li class="nav-item dropdown"
                         *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR') || hasPermission('SUPERVISOR')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             المعلم
                         </a>
-                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
-                            <li>
-                                <a class="dropdown-item" routerLink="/staff/instructor/upcoming-sessions">الحصص
-                                    القادمة</a>
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item" routerLink="/staff/instructor/assigned-classes">الصفوف</a>
-                            </li>
-
+                        <ul class="dropdown-menu text-end">
+                            <li><a class="dropdown-item" routerLink="/staff/instructor/upcoming-sessions">الحصص
+                                    القادمة</a></li>
+                            <li><a class="dropdown-item" routerLink="/staff/instructor/assigned-classes">الصفوف</a></li>
                         </ul>
                     </li>
 
+                    <!-- المشرف Dropdown -->
                     <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             المشرف
                         </a>
-                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
-                            <li><a class="dropdown-item" routerLink="/staff/supervisor/classes">الصفوف</a>
-                            </li>
+                        <ul class="dropdown-menu text-end">
+                            <li><a class="dropdown-item" routerLink="/staff/supervisor/classes">الصفوف</a></li>
                             <li><a class="dropdown-item" routerLink="/staff/supervisor/transfer-student">تحويل
-                                    الطالب</a>
-                            </li>
+                                    الطالب</a></li>
                             <li><a class="dropdown-item" [routerLink]="['/staff/supervisor/cancel-sessions']"
-                                    [queryParams]="{ type: 'byDate' }">إلغاء
-                                    الحصة بالتاريخ</a>
-                            </li>
+                                    [queryParams]="{ type: 'byDate' }">إلغاء الحصة بالتاريخ</a></li>
                             <li><a class="dropdown-item" [routerLink]="['/staff/supervisor/cancel-sessions']"
-                                    [queryParams]="{ type: 'bySession' }">إلغاء الحصة بالحصص</a>
-                            </li>
+                                    [queryParams]="{ type: 'bySession' }">إلغاء الحصة بالحصص</a></li>
                             <li><a class="dropdown-item"
-                                    [routerLink]="['/staff/supervisor/announcements']">الإعلانات</a>
-                            </li>
+                                    [routerLink]="['/staff/supervisor/announcements']">الإعلانات</a></li>
                         </ul>
                     </li>
 
+                    <!-- المدير Dropdown -->
                     <li class="nav-item dropdown" *ngIf="hasPermission('ADMIN')">
                         <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             المدير
                         </a>
-                        <ul class="dropdown-menu" style="direction: rtl; text-align: right;">
-                            <li><a class="dropdown-item" routerLink="/staff/admin/staff">الطاقم</a>
-                            </li>
-                            <li><a class="dropdown-item" routerLink="/staff/admin/semesters">الفصول</a>
-                            </li>
+                        <ul class="dropdown-menu text-end">
+                            <li><a class="dropdown-item" routerLink="/staff/admin/staff">الطاقم</a></li>
+                            <li><a class="dropdown-item" routerLink="/staff/admin/semesters">الفصول</a></li>
                         </ul>
                     </li>
 
+                    <!-- المواضيع -->
                     <li class="nav-item"
                         *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
                         <a class="nav-link nav-font" href="/staff/instructor/topics">المواضيع</a>
                     </li>
 
-                </ul>
-
-                <ul class="navbar-nav">
+                    <!-- Login / Logout -->
                     <li class="nav-item" *ngIf="isPermissionsEmpty() && isStaffRoute()">
                         <a class="nav-link nav-font" href="/staff/login">تسجيل الدخول</a>
                     </li>
@@ -90,9 +91,9 @@
                     <li class="nav-item" *ngIf="!isStaffRoute() && isPermissionsEmpty()">
                         <a class="nav-link nav-font" href="/register">إنشاء حساب</a>
                     </li>
+
                 </ul>
             </div>
         </div>
-
     </div>
 </nav>
