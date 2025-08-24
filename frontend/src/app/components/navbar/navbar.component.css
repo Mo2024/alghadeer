@@ -125,7 +125,6 @@ button:focus {
 .navbar,
 .nav-link,
 .dropdown-item {
-    font-family: 'Inter', sans-serif;
     font-size: 1.1rem;
     font-weight: 500;
 }

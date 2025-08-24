@@ -1,17 +1,17 @@
 import { Component } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
 import { StudentService } from '../../services/user/student.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PermissionsService } from '../../services/auth/permissions.service';
 
 @Component({
-    selector: 'app-login',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './login.component.html',
-    styleUrl: './login.component.css'
+  selector: 'app-login',
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
 

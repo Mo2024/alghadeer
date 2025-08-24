@@ -1,5 +1,16 @@
+@font-face {
+    font-family: 'Alexandria';
+    src: url('/assets/fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     direction: rtl;
     text-align: right;
-    font-family: 'Cairo', 'Noto Kufi Arabic', sans-serif;
+}
+
+body,
+html {
+    font-family: "Alexandria", sans-serif;
 }
