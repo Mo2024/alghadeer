@@ -75,3 +75,16 @@
     font-size: 0.9rem;
     color: #555;
 }
+
+.minimalist-date {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.minimalist-date .mat-mdc-icon-button {
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    /* adjust so it lines up with underline */
+}

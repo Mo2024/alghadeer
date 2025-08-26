@@ -18,6 +18,7 @@ export class NavbarComponent {
 
   permissions = new Map<string, boolean>();
   private subscription!: Subscription;
+  private hostname = window.location.hostname
 
   constructor(public toastService: ToastService, public permissionsService: PermissionsService, public router: Router, private authService: AuthService) { }
 
@@ -40,8 +41,12 @@ export class NavbarComponent {
     return this.permissions.size === 0;
   }
 
-  isStaffRoute(): boolean {
-    return this.router.url.includes('/staff/');
+  isStaffDomain(): boolean {
+    return this.hostname.startsWith('staff.');
+  }
+
+  isStudentDomain(): boolean {
+    return this.hostname.startsWith('stu.');
   }
 
 

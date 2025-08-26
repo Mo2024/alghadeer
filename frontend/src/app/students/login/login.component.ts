@@ -43,7 +43,8 @@ export class LoginComponent {
 
 
         this.toastService.clear()
-        this.router.navigate(['/student']);
+        console.log('Router config:', this.router.config);
+        this.router.navigate(['/student']).then(success => console.log('Navigation success:', success));
       },
       error: (error) => {
         if (!environment.production) {

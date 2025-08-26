@@ -12,7 +12,13 @@
                     class="minimalist-input" placeholder="رقم الهاتف">
                 <input type="text" [(ngModel)]="email" name="email" class="minimalist-input"
                     placeholder="البريد الإلكتروني">
-                <input type="date" [(ngModel)]="dateOfBirth" name="dateOfBirth" class="minimalist-input">
+                <div class="minimalist-date">
+                    <input type="text" [(ngModel)]="dateOfBirth" name="dateOfBirth" class="minimalist-input"
+                        placeholder="تاريخ الميلاد" [matDatepicker]="picker" (click)="picker.open()" readonly>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </div>
+
 
                 <div style="margin-bottom:1rem; display:flex; align-items:center;">
                     <button type="button" (click)="fileInput.click()" class="custom-upload-btn">اختر ملف</button>

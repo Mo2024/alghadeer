@@ -75,20 +75,20 @@
                     </li>
 
                     <!-- Login / Logout -->
-                    <li class="nav-item" *ngIf="isPermissionsEmpty() && isStaffRoute()">
+                    <li class="nav-item" *ngIf="isPermissionsEmpty() && isStaffDomain()">
                         <a class="nav-link nav-font" href="/staff/login">تسجيل الدخول</a>
                     </li>
 
                     <li class="nav-item"
-                        *ngIf="(!isPermissionsEmpty() && isStaffRoute()) || (!isStaffRoute() && !isPermissionsEmpty())">
+                        *ngIf="(!isPermissionsEmpty() && isStaffDomain()) || (isStudentDomain() && !isPermissionsEmpty())">
                         <a class="nav-link nav-font" href="javascript:void(0)" (click)="logout()">تسجيل الخروج</a>
                     </li>
 
-                    <li class="nav-item" *ngIf="!isStaffRoute() && isPermissionsEmpty()">
+                    <li class="nav-item" *ngIf="isStudentDomain() && isPermissionsEmpty()">
                         <a class="nav-link nav-font" href="/login">تسجيل الدخول</a>
                     </li>
 
-                    <li class="nav-item" *ngIf="!isStaffRoute() && isPermissionsEmpty()">
+                    <li class="nav-item" *ngIf="isStudentDomain() && isPermissionsEmpty()">
                         <a class="nav-link nav-font" href="/register">إنشاء حساب</a>
                     </li>
 

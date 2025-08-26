@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { PermissionsService } from '../services/auth/permissions.service';
 import { AuthService } from '../services/auth/auth.service';
 
@@ -12,9 +11,12 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const authService = inject(AuthService)
   const permissionService = inject(PermissionsService)
+  const hostname = window.location.hostname;
+
 
   return authService.getAuth().pipe(
     map((res: any) => {
+      console.log('123456777')
       if (accessControlled) {
         if (res) {
           permissionService.setPermissions(res);
@@ -62,6 +64,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
     }),
     catchError((error) => {
+      console.log(hostname)
       permissionService.setPermissions(new Map());
 
       if (!['/staff/login', '/login'].includes(state.url) && accessControlled) {

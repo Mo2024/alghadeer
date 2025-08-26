@@ -8,7 +8,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class StudentService {
 
-  private apiUrl = environment.apiUrl;
+
+  private apiUrl = this.setApiUrl(window.location.hostname);
+
+
+  setApiUrl(hostname: string) {
+
+    if (!environment.production && hostname.startsWith('stu.')) {
+      return environment.studentApiUrl
+    } else {
+      return environment.apiUrl
+    }
+  }
 
   url = `${this.apiUrl}/api/students`;
 
