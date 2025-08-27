@@ -86,10 +86,6 @@ public class StudentController {
     })
     public ResponseEntity<?> login(@RequestBody Login login, HttpSession session, HttpServletRequest request) {
         try {
-            String ipAddress = request.getRemoteAddr();
-            String hostName = request.getRemoteHost(); // May resolve to hostname if DNS is available
-            log.info(ipAddress);
-            log.info(hostName);
             log.info("executing method [studentService].[login]");
             Response response = studentService.login(login, session);
             log.info("[studentService].[login] executed successfully");
@@ -158,7 +154,7 @@ public class StudentController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> testApi() {
+    public ResponseEntity<?> getStudentPageDetails() {
         try {
             log.info("executing method [studentService].[getStudentDetails]");
             StudentDetailsPageDTO response = studentService.getStudentDetails();
