@@ -87,8 +87,11 @@ public class ClassService {
                     });
             log.info("[staffRepository].[findByIdAndArchived] called successfully");
 
+            if (class_.getClassSchedules().isEmpty()) {
+                throw new HandledRejection("يجب أن يكون هناك جدول واحد على الأقل");
+            }
 
-            if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
+            if (class_.getClassSchedules().stream()
                     .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
                             classSchedule.getDayOfWeek(), classSchedule.getStartTime(), classSchedule.getEndTime()))) {
                 log.error("Invalid schedules:\n{}", class_.getClassSchedules());
@@ -164,8 +167,11 @@ public class ClassService {
                     });
             log.info("[staffRepository].[findByIdAndArchived] called successfully");
 
+            if (class_.getClassSchedules().isEmpty()) {
+                throw new HandledRejection("يجب أن يكون هناك جدول واحد على الأقل");
+            }
 
-            if (class_.getClassSchedules() == null || class_.getClassSchedules().stream()
+            if (class_.getClassSchedules().stream()
                     .anyMatch(classSchedule -> ValidationUtils.validateSchedule(
                             classSchedule.getDayOfWeek(), classSchedule.getStartTime(), classSchedule.getEndTime()))) {
                 log.error("Invalid schedules:\n{}", class_.getClassSchedules());
@@ -183,6 +189,10 @@ public class ClassService {
             log.info("Calling [classScheduleRepository].[saveAll]");
             classScheduleRepository.saveAll(class_.getClassSchedules());
             log.info("[classScheduleRepository].[saveAll] called successfully");
+
+            if (class_.getGradeClassAssignments().isEmpty()) {
+                throw new HandledRejection("يجب أن يكون هناك صف مدرسي واحد على الأقل");
+            }
 
             class_.getGradeClassAssignments().forEach(gradeClassAssignment -> {
                 if (gradeClassAssignment.getGrade() == null) {

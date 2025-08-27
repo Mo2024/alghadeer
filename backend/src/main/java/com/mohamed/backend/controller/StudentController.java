@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,8 +84,12 @@ public class StudentController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session) {
+    public ResponseEntity<?> login(@RequestBody Login login, HttpSession session, HttpServletRequest request) {
         try {
+            String ipAddress = request.getRemoteAddr();
+            String hostName = request.getRemoteHost(); // May resolve to hostname if DNS is available
+            log.info(ipAddress);
+            log.info(hostName);
             log.info("executing method [studentService].[login]");
             Response response = studentService.login(login, session);
             log.info("[studentService].[login] executed successfully");
