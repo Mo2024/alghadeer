@@ -22,14 +22,38 @@ export class LoginComponent {
 
   constructor(private permissionService: PermissionsService, private toastService: ToastService, private studentService: StudentService, private router: Router) { }
 
+  normalizeNumber(
+    input: string | number | undefined,
+    requiredLength: number
+  ): string | undefined {
+    if (input === undefined || input === null) return undefined;
+
+    let str = String(input);
+
+    const arabicToEnglishMap: Record<string, string> = {
+      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+    };
+
+    str = str.replace(/[٠-٩]/g, d => arabicToEnglishMap[d]);
+
+    const regex = new RegExp(`^\\d{${requiredLength}}$`);
+    if (regex.test(str)) {
+      return str;
+    }
+
+    return undefined;
+  }
 
   onSubmit() {
+    const normalizedUsername = this.normalizeNumber(this.cpr, 9)
+    const normalizedPassword = this.normalizeNumber(this.password, 9)
     if (!this.cpr.trim() || !this.password.trim()) {
       this.toastService.show('يرجى التأكد من تعبئة جميع الحقول', 'error');
       return;
     }
     this.isDisabled = true;
-    const body = { username: this.cpr, password: this.password }
+    const body = { username: normalizedUsername, password: normalizedPassword || this.password }
     this.studentService.login(body).subscribe({
       next: async (res) => {
         this.isDisabled = false;

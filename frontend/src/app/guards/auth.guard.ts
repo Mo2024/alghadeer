@@ -16,7 +16,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return authService.getAuth().pipe(
     map((res: any) => {
-      console.log('123456777')
       if (accessControlled) {
         if (res) {
           permissionService.setPermissions(res);

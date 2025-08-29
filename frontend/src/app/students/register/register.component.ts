@@ -26,10 +26,10 @@ export class RegisterComponent {
 
   name: string = '';
   area: string = '';
-  cpr: number | undefined;
-  telephone: number | undefined;
+  cpr: string = '';
+  telephone: string = '';
   email: string = '';
-  dateOfBirth: string = '';
+  dateOfBirth: Date | null = null;
   image: File | null = null;
   isDisabled: boolean = false;
 
@@ -50,30 +50,47 @@ export class RegisterComponent {
     }
   }
 
+  normalizeNumber(
+    input: string | number | undefined,
+    requiredLength: number
+  ): string | undefined {
+    if (input === undefined || input === null) return undefined;
+
+    let str = String(input);
+
+    const arabicToEnglishMap: Record<string, string> = {
+      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+    };
+
+    str = str.replace(/[٠-٩]/g, d => arabicToEnglishMap[d]);
+
+    const regex = new RegExp(`^\\d{${requiredLength}}$`);
+    if (regex.test(str)) {
+      return str;
+    }
+
+    return undefined;
+  }
 
   onSubmit() {
+    const normalizedCPR = this.normalizeNumber(this.cpr, 9)
+    const normalizedTelephone = this.normalizeNumber(this.telephone, 8)
     if (
       !this.name.trim() || !this.area.trim() ||
-      !this.email.trim() || !this.dateOfBirth.trim() ||
-      this.cpr === undefined || this.telephone === undefined) {
-
-      console.log(this.name)
-      console.log(this.area)
-      console.log(this.email)
-      console.log(this.dateOfBirth)
-      console.log(this.cpr)
-      console.log(this.telephone)
-
+      !this.email.trim() || !this.dateOfBirth) {
       this.toastService.show('يرجى التأكد من تعبئة جميع الحقول', 'error');
       return;
     }
 
-    if (this.cpr.toString().length !== 9) {
+
+    if (normalizedCPR === undefined) {
       this.toastService.show('الرقم الشخصي يجب أن يكون مكونًا من 9 أرقام', "error");
       return;
     }
 
-    if (this.telephone.toString().length !== 8) {
+
+    if (normalizedTelephone === undefined) {
       this.toastService.show('رقم الهاتف يجب أن يكون مكونًا من 8 أرقام', "error");
       return;
     }
@@ -91,10 +108,10 @@ export class RegisterComponent {
     const formData = new FormData();
     formData.append('name', this.name);
     formData.append('area', this.area);
-    formData.append('cpr', String(this.cpr));
-    formData.append('telephone', String(this.telephone));
+    formData.append('cpr', normalizedCPR);
+    formData.append('telephone', normalizedTelephone);
     formData.append('email', this.email);
-    formData.append('dateOfBirth', this.dateOfBirth);
+    formData.append('dateOfBirth', this.dateOfBirth.toISOString().split('T')[0]);
 
     if (this.image) {
       formData.append('image', this.image);
