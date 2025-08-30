@@ -4,6 +4,7 @@ import { authGuard } from './guards/auth.guard';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { importProvidersFrom } from '@angular/core';
 import { domainGuard } from './guards/domain.guard';
+import { mainPageGuardGuard } from './guards/main-page-guard.guard';
 
 export const routes: Routes = [
     {
@@ -13,10 +14,17 @@ export const routes: Routes = [
             // Main Page
             {
                 path: '',
-                component: MainPageComponent,
-                canActivate: [authGuard],
-                data: { accessControlled: false }
+                loadComponent: () => import('./main-page/main-page.component').then(c => c.MainPageComponent),
+                canActivate: [mainPageGuardGuard]
             },
+
+            // {
+            //     path: '',
+            //     redirectTo: 'student',
+            //     pathMatch: 'full' // important to match the full empty path
+            // },
+
+
 
             // Student Routes
             {
@@ -146,7 +154,14 @@ export const routes: Routes = [
                 loadComponent: () => import('./staff/supervisor/announcements/create/create.component').then(c => c.CreateComponent),
                 canActivate: [authGuard],
                 data: { role: 'SUPERVISOR', accessControlled: true }
-            }
+            },
+
+            // any other path
+            {
+                path: '**',
+                redirectTo: '',
+
+            },
         ]
     }
 

@@ -11,7 +11,7 @@ export const domainGuard: CanActivateFn = (route, state) => {
     router.navigate(['/']);
     return false;
   }
-  if (!hostname.startsWith('stu.') && (state.url.startsWith('/students') || state.url.startsWith('/login') || state.url.startsWith('/register'))) {
+  if (!hostname.startsWith('stu.') && (state.url.startsWith('/student') || state.url.startsWith('/login') || state.url.startsWith('/register'))) {
     router.navigate(['/']);
     return false;
   }
