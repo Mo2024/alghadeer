@@ -42,34 +42,40 @@
         </div>
 
         <!-- 2. Announcements -->
-        <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4" *ngIf="studentPageDetails?.announcements?.length">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4">
             <div class="card border-0 shadow-sm rounded-3 w-100">
                 <div class="card-header fw-bold text-white py-2 text-center"
                     style="background: linear-gradient(135deg, #009ffd, #2a2a72); font-size: 1rem;">
                     الإعلانات
                 </div>
                 <div class="card-body">
-                    <ng-container *ngFor="let ann of studentPageDetails?.announcements">
-                        <div *ngIf="isActiveAnnouncement(ann)" class="mb-3 p-3 border rounded-3 shadow-sm">
-                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
-                                <span class="badge"
-                                    [ngStyle]="{'background': getAnnouncementGradient(ann.announcementType), 'color':'white', 'font-weight':'500'}">
-                                    {{ getAnnouncementTypeLabel(ann.announcementType) }}
-                                </span>
-                                <small class="text-muted">{{ formatArabicDateTime(ann.endDateTime) }}</small>
+                    <ng-container *ngIf="studentPageDetails?.announcements?.length; else noAnnouncements">
+                        <ng-container *ngFor="let ann of studentPageDetails.announcements">
+                            <div *ngIf="isActiveAnnouncement(ann)" class="mb-3 p-3 border rounded-3 shadow-sm">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+                                    <span class="badge"
+                                        [ngStyle]="{'background': getAnnouncementGradient(ann.announcementType), 'color':'white', 'font-weight':'500'}">
+                                        {{ getAnnouncementTypeLabel(ann.announcementType) }}
+                                    </span>
+                                    <small class="text-muted">{{ formatArabicDateTime(ann.endDateTime) }}</small>
+                                </div>
+                                <p class="mb-2">{{ ann.content }}</p>
+                                <p *ngIf="ann.assignment?.name" class="mb-0">
+                                    مهمة: <span class="fw-semibold">{{ ann.assignment.name }}</span>
+                                </p>
                             </div>
-                            <p class="mb-2">{{ ann.content }}</p>
-                            <p *ngIf="ann.assignment?.name" class="mb-0">
-                                مهمة: <span class="fw-semibold">{{ ann.assignment.name }}</span>
-                            </p>
-                        </div>
+                        </ng-container>
                     </ng-container>
+                    <ng-template #noAnnouncements>
+                        <p class="text-muted m-0">لا توجد إعلانات متاحة حالياً</p>
+                    </ng-template>
                 </div>
             </div>
         </div>
 
+
         <!-- 3. Attendance Gauge -->
-        <div *ngIf="studentPageDetails?.attendancePercentage"
+        <div *ngIf="studentPageDetails?.attendancePercentage && studentPageDetails?.enrolled"
             class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4 d-flex justify-content-center">
             <div class="attendance-gauge text-center rounded-4 shadow-lg p-4">
                 <h5 class="fw-bold mb-4 text-dark">نسبة حضور الطالب 📊</h5>
@@ -89,48 +95,59 @@
         </div>
 
         <!-- 4. Attended Topics -->
-        <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4" *ngIf="studentPageDetails?.attendedTopics?.length">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4">
             <div class="card border-0 shadow-sm rounded-3 w-100">
                 <div class="card-header fw-bold text-white py-2"
                     style="background: linear-gradient(135deg, #28a745, #20c997);">
                     المواضيع التي تم حضورها
                 </div>
                 <div class="card-body">
-                    <div *ngFor="let topic of studentPageDetails.attendedTopics" class="mb-3">
-                        <h6 class="fw-bold mb-2" style="color:#1e7e34;">{{ topic.name }}</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span *ngFor="let sub of (topic.subTopics | jsonParse)"
-                                class="badge rounded-pill px-3 py-2 text-white shadow-sm"
-                                style="background: linear-gradient(135deg, #43e97b, #38f9d7); font-size: 0.85rem;">
-                                {{ sub.name }}
-                            </span>
+                    <ng-container *ngIf="studentPageDetails?.attendedTopics?.length; else noAttended">
+                        <div *ngFor="let topic of studentPageDetails.attendedTopics" class="mb-3">
+                            <h6 class="fw-bold mb-2" style="color:#1e7e34;">{{ topic.name }}</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span *ngFor="let sub of (topic.subTopics | jsonParse)"
+                                    class="badge rounded-pill px-3 py-2 text-white shadow-sm"
+                                    style="background: linear-gradient(135deg, #43e97b, #38f9d7); font-size: 0.85rem;">
+                                    {{ sub.name }}
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </ng-container>
+                    <ng-template #noAttended>
+                        <p class="text-muted m-0">لا توجد مواضيع تم حضورها للطالب</p>
+                    </ng-template>
                 </div>
             </div>
         </div>
 
         <!-- 5. Missed Topics -->
-        <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4" *ngIf="studentPageDetails?.missedTopics?.length">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4">
             <div class="card border-0 shadow-sm rounded-3 w-100">
                 <div class="card-header fw-bold text-white py-2"
                     style="background: linear-gradient(135deg, #dc3545, #e4606d);">
                     المواضيع التي لم يتم حضورها
                 </div>
                 <div class="card-body">
-                    <div *ngFor="let topic of studentPageDetails.missedTopics" class="mb-3">
-                        <h6 class="fw-bold mb-2" style="color:#b02a37;">{{ topic.name }}</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span *ngFor="let sub of (topic.subTopics | jsonParse)"
-                                class="badge rounded-pill px-3 py-2 text-white shadow-sm"
-                                style="background: linear-gradient(135deg, #ff6a6a, #ff4b5c); font-size: 0.85rem;">
-                                {{ sub.name }}
-                            </span>
+                    <ng-container *ngIf="studentPageDetails?.missedTopics?.length; else noMissed">
+                        <div *ngFor="let topic of studentPageDetails.missedTopics" class="mb-3">
+                            <h6 class="fw-bold mb-2" style="color:#b02a37;">{{ topic.name }}</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span *ngFor="let sub of (topic.subTopics | jsonParse)"
+                                    class="badge rounded-pill px-3 py-2 text-white shadow-sm"
+                                    style="background: linear-gradient(135deg, #ff6a6a, #ff4b5c); font-size: 0.85rem;">
+                                    {{ sub.name }}
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </ng-container>
+                    <ng-template #noMissed>
+                        <p class="text-muted m-0">لا توجد مواضيع فائتة للطالب</p>
+                    </ng-template>
                 </div>
             </div>
         </div>
+
 
     </div>
 </div>

@@ -36,8 +36,11 @@ public class Student {
     @Column(name = "hash")
     private String hash;
 
-    @Column(name = "telephone")
-    private String telephone;
+    @Column(name = "telephone_1")
+    private String firstTelephone;
+
+    @Column(name = "telephone_2")
+    private String secondTelephone;
 
     @Column(name = "email")
     private String email;

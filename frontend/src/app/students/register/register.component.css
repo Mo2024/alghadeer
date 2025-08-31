@@ -70,6 +70,24 @@
     background-color: #5FC0C0;
 }
 
+.btn-file {
+    background-color: #4EA8A8;
+    border: none;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    color: #fff;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: auto;
+    margin-top: 0;
+}
+
+.btn-file:hover {
+    background-color: #5FC0C0;
+}
+
+
 .file-info {
     margin-inline-start: 8px;
     font-size: 0.9rem;

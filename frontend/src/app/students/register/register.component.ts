@@ -27,7 +27,8 @@ export class RegisterComponent {
   name: string = '';
   area: string = '';
   cpr: string = '';
-  telephone: string = '';
+  firstTelephone: string = '';
+  secondTelephone: string = '';
   email: string = '';
   dateOfBirth: Date | null = null;
   image: File | null = null;
@@ -75,7 +76,8 @@ export class RegisterComponent {
 
   onSubmit() {
     const normalizedCPR = this.normalizeNumber(this.cpr, 9)
-    const normalizedTelephone = this.normalizeNumber(this.telephone, 8)
+    const normalizedFirstTelephone = this.normalizeNumber(this.firstTelephone, 8)
+    const normalizedSecondTelephone = this.normalizeNumber(this.secondTelephone, 8)
     if (
       !this.name.trim() || !this.area.trim() ||
       !this.email.trim() || !this.dateOfBirth) {
@@ -90,8 +92,8 @@ export class RegisterComponent {
     }
 
 
-    if (normalizedTelephone === undefined) {
-      this.toastService.show('رقم الهاتف يجب أن يكون مكونًا من 8 أرقام', "error");
+    if (normalizedFirstTelephone === undefined) {
+      this.toastService.show('رقم الهاتف الأول يجب أن يكون مكونًا من 8 أرقام', "error");
       return;
     }
 
@@ -109,7 +111,8 @@ export class RegisterComponent {
     formData.append('name', this.name);
     formData.append('area', this.area);
     formData.append('cpr', normalizedCPR);
-    formData.append('telephone', normalizedTelephone);
+    formData.append('firstTelephone', normalizedFirstTelephone);
+    formData.append('secondTelephone', normalizedSecondTelephone || this.secondTelephone);
     formData.append('email', this.email);
     formData.append('dateOfBirth', this.dateOfBirth.toISOString().split('T')[0]);
 

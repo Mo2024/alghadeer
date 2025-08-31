@@ -8,7 +8,17 @@ import { Observable } from 'rxjs';
 })
 export class SemesterService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = this.setApiUrl(window.location.hostname);
+
+
+  setApiUrl(hostname: string) {
+
+    if (!environment.production && hostname.startsWith('stu.')) {
+      return environment.studentApiUrl
+    } else {
+      return environment.apiUrl
+    }
+  }
   private pageSize = environment.pageSize;
 
   url = `${this.apiUrl}/api/semester`;

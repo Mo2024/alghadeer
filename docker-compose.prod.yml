@@ -1,12 +1,11 @@
 services:
   frontend:
-    image: mohdosama2002/alghadeer-frontend:preprod-1.0.0
+    image: mohdosama2002/alghadeer-frontend:latest
     container_name: frontend
     restart: always
     depends_on:
       - backend
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
@@ -14,7 +13,7 @@ services:
       - alghadeer-network
 
   backend:
-    image: mohdosama2002/alghadeer-backend:preprod-1.0.0
+    image: mohdosama2002/alghadeer-backend:latest
     container_name: backend
     restart: always
     ports:
@@ -49,6 +48,9 @@ services:
       DDL_GENERATION: "${DDL_GENERATION}"
       DDL_STATUS: "${DDL_STATUS}"
       FLYWAY_STATUS: "${FLYWAY_STATUS}"
+    volumes:
+      - /opt/students-images:/tmp/students-images
+      - /opt/logs:/tmp/logs
     networks:
       - alghadeer-network
   postgres:
@@ -56,14 +58,14 @@ services:
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: alghadeer_test
+      POSTGRES_USER: spring_user
+      POSTGRES_PASSWORD: "a1ghadeer_spr1ng_pa55w0rd_pg"
+      POSTGRES_DB: alghadeer
       TZ: Asia/Bahrain
     ports:
       - "5433:5432"
     volumes:
-      - /opt/postgres-data-test:/var/lib/postgresql/data
+      - /opt/postgres-data:/var/lib/postgresql/data
     networks:
       - alghadeer-network
 networks:

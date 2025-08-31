@@ -8,8 +8,13 @@
                 <input type="text" [(ngModel)]="area" name="area" class="minimalist-input" placeholder="المنطقة">
                 <input type="text" pattern="^\d{9}$" maxlength="9" [(ngModel)]="cpr" name="cpr" class="minimalist-input"
                     placeholder="الرقم الشخصي">
-                <input type="text" pattern="^\d{8}$" maxlength="8" [(ngModel)]="telephone" name="telephone"
-                    class="minimalist-input" placeholder="رقم الهاتف">
+                <input type="text" pattern="^\d{8}$" maxlength="8" [(ngModel)]="firstTelephone" name="firstTelephone"
+                    class="minimalist-input" placeholder="رقم الهاتف الأول">
+
+                <input type="text" pattern="^\d{8}$" maxlength="8" [(ngModel)]="secondTelephone" name="secondTelephone"
+                    class="minimalist-input" placeholder="رقم الهاتف الثاني (اختياري)">
+
+
                 <input type="text" [(ngModel)]="email" name="email" class="minimalist-input"
                     placeholder="البريد الإلكتروني">
                 <div class="minimalist-date">
@@ -20,12 +25,15 @@
                 </div>
 
 
-                <div style="margin-bottom:1rem; display:flex; align-items:center;">
-                    <button type="button" (click)="fileInput.click()" class="custom-upload-btn">اختر ملف</button>
+                <div style="margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                    <button type="button" (click)="fileInput.click()" class="btn-file rounded-pill">
+                        الصورة الشخصية (اختياري)
+                    </button>
                     <input type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)" id="image"
                         style="display:none" #fileInput>
                     <span class="file-info">{{ selectedFileName || 'لم يتم اختيار ملف' }}</span>
                 </div>
+
 
                 <button [disabled]="isDisabled" type="submit" class="btn-submit w-75 rounded-pill mx-auto d-block">
                     تسجيل الدخول

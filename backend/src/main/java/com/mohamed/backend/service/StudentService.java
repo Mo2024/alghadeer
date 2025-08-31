@@ -85,9 +85,14 @@ public class StudentService {
             throw new HandledRejection("يرجى التأكد من إدخال الرقم الشخصي بشكل صحيح");
         }
 
-        if (student.getTelephone() == null || !ValidationUtils.isValidTelephone(student.getTelephone())) {
-            log.error("Invalid telephone:\n{}", student.getTelephone());
-            throw new HandledRejection("يرجى التأكد من إدخال رقم الهاتف بشكل صحيح");
+        if (student.getFirstTelephone() == null || !ValidationUtils.isValidTelephone(student.getFirstTelephone())) {
+            log.error("Invalid telephone:\n{}", student.getFirstTelephone());
+            throw new HandledRejection("يرجى التأكد من إدخال رقم الهاتف الأول بشكل صحيح");
+        }
+
+        if (!student.getSecondTelephone().isEmpty() && !ValidationUtils.isValidTelephone(student.getSecondTelephone())) {
+            log.error("Invalid telephone:\n{}", student.getSecondTelephone());
+            throw new HandledRejection("يرجى التأكد من إدخال رقم الهاتف الثاني بشكل صحيح");
         }
 
         if (student.getEmail() == null || student.getEmail().trim().isEmpty() || !ValidationUtils.isValidEmail(student.getEmail())) {
@@ -133,7 +138,8 @@ public class StudentService {
                 .email(cleanEmail)
                 .hash(HashUtils.sha256(student.getCpr()))
                 .dateOfBirth(student.getDateOfBirth())
-                .telephone(student.getTelephone())
+                .firstTelephone(student.getFirstTelephone())
+                .secondTelephone(student.getSecondTelephone())
                 .build();
 
         log.info("Calling [studentRepository].[save]");

@@ -167,7 +167,8 @@ public class AttendanceService {
         Double attendancePercentage = attendanceRepository.getAttendancePercentageByStudentId(studentId, semesterId);
         log.info("[attendanceRepository].[getAttendancePercentageByStudentId] called successfully: {}", attendancePercentage);
 
-        return attendancePercentage;
+
+        return attendancePercentage != null ? attendancePercentage : 100;
     }
 
     public List<MainTopicView> getStudentTopics(Integer studentId, boolean isPresent, Integer semesterId) {

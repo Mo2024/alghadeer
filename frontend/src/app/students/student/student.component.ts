@@ -30,6 +30,50 @@ export class StudentComponent {
 
   ngOnInit() {
     this.updateGaugeSize();
+    this.getStudentPageDetails();
+  }
+
+  enrollToSemester() {
+    if (!this.grade.trim()) {
+      this.toastService.show('يرجى التأكد من تعبئة جميع الحقول', 'error');
+      return;
+    }
+    this.isDisabled = true;
+    this.semesterService.enrollStudent(this.grade).subscribe({
+      next: async (res) => {
+        this.displayedEnrollment = false;
+        this.isDisabled = false;
+        if (!environment.production) {
+          console.log(res)
+        }
+
+        this.getStudentPageDetails();
+        this.toastService.show('تم التسجيل في الفصل الدراسي بنجاح', 'success');
+
+        this.toastService.clear()
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+        this.isDisabled = false;
+      }
+    })
+
+
+  }
+
+  getStudentPageDetails() {
     this.studentService.getStudentPageDetails().subscribe({
       next: async (res) => {
         if (!environment.production) {
@@ -60,45 +104,6 @@ export class StudentComponent {
         }
       }
     })
-  }
-
-  enrollToSemester() {
-    if (!this.grade.trim()) {
-      this.toastService.show('يرجى التأكد من تعبئة جميع الحقول', 'error');
-      return;
-    }
-    this.isDisabled = true;
-    this.semesterService.enrollStudent(this.grade).subscribe({
-      next: async (res) => {
-        this.displayedEnrollment = false;
-        this.isDisabled = false;
-        if (!environment.production) {
-          console.log(res)
-        }
-
-        this.toastService.show('تم التسجيل في الفصل الدراسي بنجاح', 'success');
-
-        this.toastService.clear()
-      },
-      error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
-
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-        this.isDisabled = false;
-      }
-    })
-
-
   }
 
 
