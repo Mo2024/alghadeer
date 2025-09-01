@@ -56,7 +56,12 @@ export class NavbarComponent {
         if (res) {
           this.permissionsService.setPermissions(new Map());
           this.toastService.show(res.message, 'success');
-          this.router.navigate(['/']);
+
+          if (this.isStaffDomain()) {
+            this.router.navigate(['/staff/login']);
+          } else {
+            this.router.navigate(['/login']);
+          }
         }
       },
       error: (error) => {
