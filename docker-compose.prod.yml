@@ -63,9 +63,10 @@ services:
       POSTGRES_DB: alghadeer
       TZ: Asia/Bahrain
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - /opt/postgres-data:/var/lib/postgresql/data
+      - /opt/backups:/var/lib/postgresql/backups
     networks:
       - alghadeer-network
 networks:
