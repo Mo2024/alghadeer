@@ -1,43 +1,25 @@
-<div class="container" style="padding-top: 1.5rem;">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    تسجيل الدخول
-                </div>
-                <div class="card-body">
-                    <form (ngSubmit)="onSubmit()">
+<div class="login-wrapper">
+    <form (ngSubmit)="onSubmit()" class="login-form text-center">
+        <h2 class="login-title mb-4">إنشاء الحساب</h2>
 
-                        <div class="form-group mb-1">
-                            <label for="email" class="mb-1">البريد الإلكتروني</label>
-                            <input type="text" [(ngModel)]="email" name="email" class="form-control" id="email"
-                                placeholder="يرجى إدخال بريدك الإلكتروني">
-                        </div>
-
-                        <div class="form-group mb-1">
-                            <label for="name" class="mb-1">إسم الطاقم</label>
-                            <input type="name" [(ngModel)]="name" name="name" class="form-control" id="name"
-                                placeholder="يرجى إدخال إسم الطاقم">
-                        </div>
-
-                        <div class="form-group mb-1">
-                            <label for="role" class="form-label">الصلاحية</label>
-                            <select class="form-select" [(ngModel)]="role" name="role">
-                                <option [value]="''">اختر الصلاحية</option>
-                                <option value="ADMIN">مدير</option>
-                                <option value="SUPERVISOR">مشرف</option>
-                                <option value="INSTRUCTOR">معلم</option>
-                            </select>
-                        </div>
-
-                        <div class="text-start mt-2">
-                            <button [disabled]="isDisabled" class="btn btn-primary" type="submit">إنشاء الحساب</button>
-                        </div>
-
-                    </form>
-
-                </div>
-            </div>
+        <div class="form-group mb-3">
+            <input type="text" [(ngModel)]="email" name="email" class="minimalist-input"
+                placeholder="البريد الإلكتروني">
         </div>
-    </div>
+
+        <div class="form-group mb-3">
+            <input type="text" [(ngModel)]="name" name="name" class="minimalist-input" placeholder="إسم الطاقم">
+        </div>
+
+        <div class="form-group mb-4">
+            <select class="minimalist-input" [(ngModel)]="role" name="role">
+                <option [value]="''">اختر الصلاحية</option>
+                <option value="ADMIN">مدير</option>
+                <option value="SUPERVISOR">مشرف</option>
+                <option value="INSTRUCTOR">معلم</option>
+            </select>
+        </div>
+
+        <button [disabled]="isDisabled" type="submit" class="btn-login w-75 rounded-pill">إنشاء الحساب</button>
+    </form>
 </div>
