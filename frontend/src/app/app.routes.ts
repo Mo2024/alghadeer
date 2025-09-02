@@ -155,6 +155,12 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'SUPERVISOR', accessControlled: true }
             },
+            {
+                path: 'staff/supervisor/reports',
+                loadComponent: () => import('./staff/supervisor/reports/reports.component').then(c => c.ReportsComponent),
+                canActivate: [authGuard],
+                data: { role: 'SUPERVISOR', accessControlled: true }
+            },
 
             // any other path
             {

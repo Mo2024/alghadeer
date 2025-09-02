@@ -232,38 +232,4 @@ public class SemesterService {
         return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentId, semesterId);
     }
 
-    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR')")
-    @Transactional
-    public byte[] getEnrolledStudentsTelephoneExcel() throws Exception {
-
-        log.info("Calling [semesterRepository].[getEnrolledStudentsTelephone]");
-        List<StudentExportDto> students = semesterRepository.getEnrolledStudentsTelephone();
-        log.info("[semesterRepository].[getEnrolledStudentsTelephone] called successfully");
-
-        logger.logJsonObject("Enrolled students numbers:\n", students);
-
-        try (Workbook workbook = new XSSFWorkbook();
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-
-            Sheet sheet = workbook.createSheet("Students");
-            Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("Student Name");
-            header.createCell(1).setCellValue("Telephone 1");
-            header.createCell(2).setCellValue("Telephone 2");
-            header.createCell(3).setCellValue("Class");
-
-            int rowIdx = 1;
-            for (StudentExportDto s : students) {
-                Row row = sheet.createRow(rowIdx++);
-                row.createCell(0).setCellValue(s.getName());
-                row.createCell(1).setCellValue(s.getTelephone1());
-                row.createCell(2).setCellValue(s.getTelephone2());
-                row.createCell(3).setCellValue(s.getClassName());
-            }
-
-            workbook.write(out);
-            return out.toByteArray();
-        }
-    }
-
 }
