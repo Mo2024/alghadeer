@@ -1,0 +1,1 @@
+ALTER TABLE students_assignments ADD COLUMN instructor_comments TEXT;

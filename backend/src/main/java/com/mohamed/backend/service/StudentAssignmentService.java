@@ -11,6 +11,7 @@ import com.mohamed.backend.repository.classinfo.assignment.StudentsAssignmentRep
 import com.mohamed.backend.repository.semester.SemesterRepository;
 import com.mohamed.backend.repository.user.StaffRepository;
 import com.mohamed.backend.utils.Logger;
+import com.mohamed.backend.utils.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +74,11 @@ public class StudentAssignmentService {
             throw new HandledRejection("تم تسليم النشاط لهذا الطالب من قبل");
         }
 
+        if (!studentsAssignmentReq.getInstructorComments().isEmpty() && !ValidationUtils.isArabic(studentsAssignmentReq.getInstructorComments())) {
+            log.error("Instructor comments must be written in Arabic only");
+            throw new HandledRejection("تعليقات المعلم يجب أن تكون باللغة العربية فقط");
+        }
+
         log.info("Calling [classRepository].[isAuthorizedToTakeAttendanceForClass]");
         boolean isAssignedToClass = classRepository.isAuthorizedToTakeAttendanceForClass(staffService.getStaffId(), studentsAssignment.getAssignment().getClass_().getId());
         log.info("[classRepository].[isAuthorizedToTakeAttendanceForClass] called successfully");
@@ -98,6 +104,7 @@ public class StudentAssignmentService {
         studentsAssignment.setSubmissionDate(LocalDateTime.now());
         studentsAssignment.setAssignmentDone(true);
         studentsAssignment.setGrade(grade);
+        studentsAssignment.setInstructorComments(studentsAssignmentReq.getInstructorComments());
 
         log.info("Calling [studentsAssignmentRepository].[save]");
         studentsAssignmentRepository.save(studentsAssignment);

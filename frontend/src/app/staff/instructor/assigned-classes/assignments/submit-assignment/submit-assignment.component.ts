@@ -7,10 +7,10 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../../environments/environment';
 
 @Component({
-    selector: 'app-submit-assignment',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './submit-assignment.component.html',
-    styleUrl: './submit-assignment.component.css'
+  selector: 'app-submit-assignment',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './submit-assignment.component.html',
+  styleUrl: './submit-assignment.component.css'
 })
 export class SubmitAssignmentComponent {
 
@@ -20,6 +20,7 @@ export class SubmitAssignmentComponent {
   assignmentIndex: any = '';
   studentAssignmentIndex: any = '';
   grade: any = ''
+  comments: any = ''
 
 
   constructor(private assignmentService: AssignmentService, private toastService: ToastService, private route: ActivatedRoute) { }
@@ -82,6 +83,7 @@ export class SubmitAssignmentComponent {
       student: {
         id: studentId
       },
+      instructorComments: this.comments
     }
 
     this.assignmentService.submitAssignment(body).subscribe({
@@ -93,6 +95,7 @@ export class SubmitAssignmentComponent {
         if (res) {
           this.assignments[this.assignmentIndex].studentsAssignments.splice(this.studentAssignmentIndex, 1);
           this.grade = ''
+          this.comments = ''
           this.studentAssignmentIndex = ''
           this.toastService.show(res.message, 'success')
         } else {

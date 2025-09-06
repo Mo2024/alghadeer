@@ -40,6 +40,9 @@ public class StudentsAssignment {
     @Column(name = "assignment_done")
     private boolean assignmentDone;
 
+    @Column(name = "instructor_comments")
+    private String instructorComments;
+
     @JsonProperty("totalGrade")
     public Integer getTotalGrade() {
         return assignment != null ? assignment.getTotalGrade() : null;
