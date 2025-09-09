@@ -35,6 +35,7 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
 
     @Query(value = """
         select s2.name as name,
+               s2.cpr,
                s2.telephone_1 as telephone1, 
                s2.telephone_2 as telephone2, 
                c.name as className
