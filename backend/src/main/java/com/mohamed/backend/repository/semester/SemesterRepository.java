@@ -38,13 +38,15 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
                s2.cpr,
                s2.telephone_1 as telephone1, 
                s2.telephone_2 as telephone2, 
-               c.name as className
+               c.name as className,
+               se.enrollment_date as enrollmentDate
         from semesters s
         inner join classes c on c.semester_id = s.id
         inner join student_class sc on sc.class_id = c.id
         inner join students s2 on s2.id = sc.student_id
+        inner join student_enrollments se on se.student_id = s2.id and se.semester_id = s.id
         where s.active = true
-        order by c.name asc
+        order by enrollmentDate asc
         """, nativeQuery = true)
     List<StudentExportDto> getEnrolledStudentsTelephone();
 

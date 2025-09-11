@@ -31,9 +31,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -192,7 +190,7 @@ public class SemesterService {
         SemesterEnrollment semesterEnrollment = SemesterEnrollment.builder()
                 .student(student)
                 .semester(semester)
-                .enrollmentDate(LocalDate.now())
+                .enrollmentDate(LocalDateTime.now())
                 .build();
 
         log.info("Calling [semesterEnrollmentRepository].[save]");
