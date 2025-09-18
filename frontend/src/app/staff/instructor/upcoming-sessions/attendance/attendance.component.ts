@@ -7,10 +7,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'app-attendance',
-    imports: [CommonModule, FormsModule],
-    templateUrl: './attendance.component.html',
-    styleUrl: './attendance.component.css'
+  selector: 'app-attendance',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './attendance.component.html',
+  styleUrl: './attendance.component.css'
 })
 export class AttendanceComponent {
 
@@ -20,6 +20,9 @@ export class AttendanceComponent {
   sessionId!: number;
   classId!: number;
   statusObject: any;
+
+  isEditing: boolean = false;
+  originalAttendanceList: any
 
   ngOnInit(): void {
 
@@ -108,6 +111,66 @@ export class AttendanceComponent {
       }
     })
 
+  }
+
+  toggleEditAttendance() {
+    this.isEditing = !this.isEditing
+  }
+
+  enableEditAttendance() {
+    this.originalAttendanceList = structuredClone(this.statusObject.attendanceList);
+    this.toggleEditAttendance();
+  }
+
+  discardEditAttendance() {
+    this.statusObject.attendanceList = structuredClone(this.originalAttendanceList);
+    this.toggleEditAttendance();
+  }
+
+  saveEditAttendance() {
+    const body = {
+      attendances: this.statusObject.attendanceList,
+      session: {
+        id: this.sessionId,
+        class: {
+          id: this.classId
+        }
+      }
+    }
+
+    this.sessionService.editAttendance(body).subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+
+        if (res) {
+          this.statusObject = res;
+          this.toastService.show("تم تحديث الحضور بنجاح", 'success');
+          this.toggleEditAttendance();
+
+
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
   }
 
 

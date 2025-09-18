@@ -12,10 +12,26 @@
         border-radius: 3px;
       "></span>
         </h4>
+        <!-- <button class="btn shadow-sm rounded-4 px-4 py-2"
+            style="background: linear-gradient(90deg, #3498db, #1abc9c); color: #fff; border: none;">
+            إنشاء نشاط
+        </button> -->
+
+        <div *ngIf="statusObject?.attendanceTaken === false" class="d-flex align-items-center gap-2">
+            <i (click)="submitAttendance()" class="bx bx-save text-success fs-2"></i>
+        </div>
+
+        <div *ngIf="statusObject?.attendanceTaken === true" class="d-flex align-items-center gap-2">
+            <i *ngIf="isEditing" (click)="discardEditAttendance()" class="bx bx-x text-danger fs-2"></i>
+            <i *ngIf="isEditing" (click)="saveEditAttendance()" class="bx bx-save text-success fs-2"></i>
+
+            <i *ngIf="!isEditing" (click)="enableEditAttendance()" class="bx bx-edit-alt text-warning fs-2"></i>
+        </div>
+
     </div>
 
     <!-- Attendance form when not taken -->
-    <div *ngIf="statusObject?.attendanceTaken === false  && statusObject.students.length > 0"
+    <div *ngIf="(statusObject?.attendanceTaken === false  && statusObject.students.length > 0) || isEditing"
         class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
@@ -23,9 +39,10 @@
                     تسجيل الحضور
                 </div>
                 <div class="card-body">
-                    <form (ngSubmit)="submitAttendance()">
+                    <form>
                         <div class="form-check d-flex justify-content-between align-items-center mb-3 p-3 rounded border student-row"
-                            *ngFor="let student of statusObject?.students" style="cursor: pointer;">
+                            *ngFor="let student of (statusObject?.students || statusObject?.attendanceList)"
+                            style="cursor: pointer;">
                             <label
                                 class="form-check-label flex-grow-1 text-end m-0 d-flex justify-content-between align-items-center"
                                 style="user-select: none;">
@@ -35,9 +52,6 @@
                                     [name]="'student_' + student.student.id" style="width: 1.25rem; height: 1.25rem;" />
                             </label>
                         </div>
-                        <div class="text-start mt-3">
-                            <button class="btn btn-primary" type="submit">حفظ الحضور</button>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -45,7 +59,7 @@
     </div>
 
     <!-- Attendance list when taken -->
-    <div *ngIf="statusObject?.attendanceTaken === true" class="row">
+    <div *ngIf="statusObject?.attendanceTaken === true && !isEditing" class="row">
         <div class="col-lg-12">
             <div>
                 <div class="table-responsive">
