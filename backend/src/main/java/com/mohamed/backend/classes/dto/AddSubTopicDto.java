@@ -1,0 +1,12 @@
+package com.mohamed.backend.classes.dto;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class AddSubTopicDto {
+
+    private int sessionId;
+    private List<Integer> subTopicsId;
+}
