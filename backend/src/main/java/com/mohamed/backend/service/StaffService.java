@@ -159,6 +159,61 @@ public class StaffService {
         return new Response("تم تغيير البريد الإلكتروني بنجاح");
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    @Transactional
+    public Response updatePassword(UpdatePasswordDto updatePasswordReq) throws JsonProcessingException {
+
+        Integer staffId = getStaffId();
+        log.info("updatePassword called by staff ID: {}", staffId);
+
+        if (updatePasswordReq.getCurrentPassword() == null || updatePasswordReq.getCurrentPassword().trim().isEmpty()) {
+            log.warn("Current password is empty for staff ID: {}", staffId);
+            throw new HandledRejection("يرجى التأكد من إدخال الكلمة السرية الحالية بشكل صحيح");
+        }
+
+        if (updatePasswordReq.getNewPassword() == null || updatePasswordReq.getNewPassword().trim().isEmpty()) {
+            log.warn("New password is empty for staff ID: {}", staffId);
+            throw new HandledRejection("يرجى التأكد من إدخال الكلمة السرية الجديدة بشكل صحيح");
+        }
+
+        if (updatePasswordReq.getNewPassword2() == null || updatePasswordReq.getNewPassword2().trim().isEmpty()) {
+            log.warn("New password confirmation is empty for staff ID: {}", staffId);
+            throw new HandledRejection("يرجى التأكد من إدخال الكلمة السرية الجديدة الثانية بشكل صحيح");
+        }
+
+        if (updatePasswordReq.getNewPassword().length() < 6 || updatePasswordReq.getNewPassword2().length() < 6) {
+            log.warn("New password too short for staff ID: {}", staffId);
+            throw new HandledRejection("كلمة السر يجب أن تتكون من 6 أحرف على الأقل");
+        }
+
+        if (!updatePasswordReq.getNewPassword().equals(updatePasswordReq.getNewPassword2())) {
+            log.warn("New passwords do not match for staff ID: {}", staffId);
+            throw new HandledRejection("كلمتا السر غير متطابقتين، يرجى إعادة المحاولة");
+        }
+
+
+        log.info("Calling [staffRepository].[findByIdAndArchived]");
+        Staff staff = staffRepository.findByIdAndArchived(getStaffId(), false)
+                .orElseThrow(() -> {
+                    log.error("Staff not found");
+                    return new HandledRejection("يرجى التأكد من البيانات");
+                });
+        log.info("[staffRepository].[findByIdAndArchived] called successfully");
+
+
+        if (!HashUtils.sha256(updatePasswordReq.getCurrentPassword()).equals(staff.getHash())) {
+            log.warn("Invalid current password for staff ID: {}", staffId);
+            throw new HandledRejection("كلمة السر الحالية غير صحيحة");
+        }
+
+        staff.setHash(HashUtils.sha256(updatePasswordReq.getNewPassword()));
+        log.info("Calling [staffRepository].[save]");
+        staffRepository.save(staff);
+        log.info("[staffRepository].[save] called successfully");
+
+        return new Response("تم تغيير كلمة السر بنجاح");
+    }
+
     public Response login(Login login, HttpSession session) throws JsonProcessingException {
 
         logger.logJsonObject("Request parameter:\n{}", login);

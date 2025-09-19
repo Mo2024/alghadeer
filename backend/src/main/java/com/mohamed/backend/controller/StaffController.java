@@ -1,10 +1,7 @@
 package com.mohamed.backend.controller;
 
 import com.mohamed.backend.dto.*;
-import com.mohamed.backend.dto.user.ArchiveDto;
-import com.mohamed.backend.dto.user.Login;
-import com.mohamed.backend.dto.user.StaffListView;
-import com.mohamed.backend.dto.user.StaffView;
+import com.mohamed.backend.dto.user.*;
 import com.mohamed.backend.exceptions.HandledRejection;
 import com.mohamed.backend.model.user.Staff;
 import com.mohamed.backend.service.StaffService;
@@ -144,7 +141,7 @@ public class StaffController {
 
     @GetMapping("/admin/get-staff")
     @Operation(
-            summary = "Archives a staff account (soft delete)",
+            summary = "Fetches list of staff",
             description = "Only admins are authorized to perform this request."
     )
     @ApiResponses(value = {
@@ -165,6 +162,40 @@ public class StaffController {
                 List<StaffListView> allStaff = staffService.getStaff();
                 return ResponseEntity.ok().body(allStaff);
             }
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @PostMapping("/all/update-password")
+    @Operation(
+            summary = "Updates staff password",
+            description = "All staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> updatePassword(@RequestBody UpdatePasswordDto updatePasswordDto) {
+        try {
+            log.info("executing method [staffService].[updatePassword]");
+            Response response = staffService.updatePassword(updatePasswordDto);
+            log.info("[staffService].[updatePassword] executed successfully");
+            logger.logJsonObject("Response for [updatePassword]:\n{}", response);
+            return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()
