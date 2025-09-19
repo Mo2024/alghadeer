@@ -162,6 +162,14 @@ export const routes: Routes = [
                 data: { role: 'SUPERVISOR', accessControlled: true }
             },
 
+            //General route (staff)
+            {
+                path: 'staff/update-password',
+                loadComponent: () => import('./staff/general/update-password/update-password.component').then(c => c.UpdatePasswordComponent),
+                canActivate: [authGuard],
+                data: { role: 'INSTRUCTOR', accessControlled: true }
+            },
+
             // any other path
             {
                 path: '**',

@@ -76,6 +76,18 @@
                         <a class="nav-link nav-font" href="/staff/instructor/topics">المواضيع</a>
                     </li>
 
+                    <!-- الكل Dropdown -->
+                    <li class="nav-item dropdown"
+                        *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR') || hasPermission('SUPERVISOR')">
+                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            الحساب
+                        </a>
+                        <ul class="dropdown-menu text-end">
+                            <li><a class="dropdown-item" routerLink="/staff/update-password">تحديث الكلمة السرية</a></li>
+                        </ul>
+                    </li>
+
                     <!-- Login / Logout -->
                     <li class="nav-item" *ngIf="isPermissionsEmpty() && isStaffDomain()">
                         <a class="nav-link nav-font" href="/staff/login">تسجيل الدخول</a>

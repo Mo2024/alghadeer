@@ -39,6 +39,10 @@ export class StaffService {
     return this.http.get(`${this.url}/admin/get-staff`, { withCredentials: true });
   }
 
+  updatePassword(body: any): Observable<any> {
+    return this.http.post(`${this.url}/all/update-password`, body, { withCredentials: true });
+  }
+
   register(body: any): Observable<any> {
     return this.http.post(`${this.url}/admin/register`, body, { withCredentials: true });
   }
