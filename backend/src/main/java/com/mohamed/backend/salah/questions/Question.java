@@ -1,6 +1,6 @@
 package com.mohamed.backend.salah.questions;
 
-import com.mohamed.backend.salah.Level;
+import com.mohamed.backend.salah.questions.subjects.SubjectArea;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +27,16 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private Level level;
 
+    @Column(name = "sequence")
+    private Integer sequence;
+
+    @Column(name = "is_pillar")
+    private Boolean isPillar;
+
     @Column(name = "deleted")
     private Boolean deleted;
+
+    @ManyToOne
+    @JoinColumn(name = "area_id")
+    private SubjectArea area;
 }

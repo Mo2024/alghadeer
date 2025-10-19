@@ -1,6 +1,5 @@
 package com.mohamed.backend.salah.questions;
 
-import com.mohamed.backend.salah.Level;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;

@@ -1,6 +1,5 @@
 package com.mohamed.backend.salah.questions;
 
-import com.mohamed.backend.salah.Level;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +15,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     Page<Question> findAllByDeletedFalse(Pageable pageable);
 
     Optional<Question> findByIdAndDeletedFalse(Integer id);
+
+    Integer countByLevelAndDeletedFalse(Level level);
 }

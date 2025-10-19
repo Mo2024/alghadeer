@@ -1,4 +1,4 @@
-package com.mohamed.backend.salah;
+package com.mohamed.backend.salah.questions;
 
 public enum Level {
     ONE,

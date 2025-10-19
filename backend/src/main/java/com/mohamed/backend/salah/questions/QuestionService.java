@@ -1,12 +1,13 @@
 package com.mohamed.backend.salah.questions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mohamed.backend.salah.Level;
-import com.mohamed.backend.semesters.dto.SemesterView;
-import com.mohamed.backend.sessions.Session;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
 import com.mohamed.backend.utils.methods.ValidationUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
     private final QuestionRepository questionRepository;
     private final Logger logger;
 
@@ -36,6 +39,7 @@ public class QuestionService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
+    @Transactional
     public Page<Question> createQuestion(Pageable pageable,Question question) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", question);
 
@@ -49,6 +53,22 @@ public class QuestionService {
             throw new HandledRejection("يرجى التأكد من إدخال المستوى بشكل صحيح");
         }
 
+        Integer sequenceCount = questionRepository.countByLevelAndDeletedFalse(question.getLevel());
+
+        if(question.getSequence() > sequenceCount + 1){
+            log.error("Invalid sequence: {}", question.getSequence());
+            throw new HandledRejection("يرجى التأكد من أن رقم التسلسل ضمن النطاق المسموح به");
+        }
+
+        if (question.getSequence() < 1){
+            log.error("Invalid Sequence:\n{}", question.getSequence());
+            throw new HandledRejection("يرجى التأكد من إدخال التسلسل بشكل صحيح");
+        }
+
+        log.info("Calling [updateQuestionSequence]");
+        updateQuestionSequence(question.getSequence(), true);
+        log.info("[updateQuestionSequence] called successfully");
+
         question.setDeleted(false);
 
         log.info("Calling [questionRepository].[save]");
@@ -59,6 +79,7 @@ public class QuestionService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
+    @Transactional
     public Page<Question> editQuestion(Pageable pageable,Question questionReq) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", questionReq);
 
@@ -87,6 +108,7 @@ public class QuestionService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
+    @Transactional
     public Page<Question> deleteQuestion(Pageable pageable, int questionId) throws JsonProcessingException {
         log.info("Question ID: {}", questionId);
 
@@ -100,6 +122,8 @@ public class QuestionService {
         log.info("[questionRepository].[findById] called successfully");
 
 
+        updateQuestionSequence(question.getSequence(), false);
+
         question.setDeleted(true);
 
         log.info("Calling [questionRepository].[save]");
@@ -108,6 +132,17 @@ public class QuestionService {
 
         return questionRepository.findAllByDeletedFalse(pageable);
     }
+
+    @Transactional
+    public void updateQuestionSequence(int sequence, Boolean isIncrement) {
+        entityManager.createStoredProcedureQuery("update_question_sequence")
+                .registerStoredProcedureParameter("p_seq", Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("p_is_increment", Boolean.class, ParameterMode.IN)
+                .setParameter("p_seq", sequence)
+                .setParameter("p_is_increment", isIncrement)
+                .execute();
+    }
+
 
 
 }
