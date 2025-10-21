@@ -1,0 +1,28 @@
+.full-screen-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100vh;
+    width: 100vw;
+    padding-top: 50px;
+    overflow-y: auto;
+
+}
+
+
+.btn-close-white {
+    filter: brightness(0) invert(1);
+}
+
+.btn-light {
+    background-color: #87CEFA;
+    color: #333333 !important;
+}
+
+::ng-deep app-toast .toast-wrapper {
+    padding-top: 0 !important;
+    padding-bottom: 1rem !important;
+}

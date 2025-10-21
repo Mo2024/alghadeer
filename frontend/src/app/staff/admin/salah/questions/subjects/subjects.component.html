@@ -1,0 +1,69 @@
+<div class="container py-4" dir="rtl">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="
+        color: #2c3e50;
+    ">
+            المواضيع
+            <span style="
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 3px;
+        "></span>
+        </h4>
+    </div>
+
+    <div class="accordion" id="topicsAccordion">
+        <div *ngFor="let subject of subjects; trackBy: trackBySubjectId; let i = index"
+            class="accordion-item mb-3 shadow-sm rounded-4 border-0">
+            <h2 class="accordion-header" id="heading{{ i }}">
+                <button class="accordion-button collapsed fw-bold rounded-top-4" type="button" data-bs-toggle="collapse"
+                    [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
+                    {{ subject.name }}
+                </button>
+            </h2>
+
+
+            <div [id]="'collapse' + i" class="accordion-collapse collapse rounded-bottom-4"
+                [attr.aria-labelledby]="'heading' + i">
+                <!-- ❌ NO data-bs-parent -->
+                <div class="accordion-body">
+                    <!-- Area -->
+                    <ul class="list-group list-group-flush pe-0 me-0">
+                        <li *ngFor="let area of subject.subjectAreas; trackBy: trackByAreaId; let j = index"
+                            class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 border border-light shadow-sm subtopic-bg">
+                            <span>{{ area.name }}</span>
+                            <div class="d-flex gap-2">
+                                <i (click)="toggleEditSubjectOpen(true, area?.name, subject.id, area?.id)"
+                                    class="bx bx-edit-alt text-warning fs-5"></i>
+                                <!-- <i class="bx bx-trash text-danger fs-5" (click)="deleteArea(area.id, i, j)"></i> -->
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div dir="ltr" class="d-flex justify-content-start gap-2 mt-3">
+                        <!-- <i class="bx bx-trash text-danger fs-5" (click)="deleteSubject(subject.id, i)"></i> -->
+
+                        <i class="bx bx-edit text-warning fs-5"
+                            (click)="toggleEditSubjectOpen(false, subject.name, subject.id)"></i>
+
+                        <i class="bx bx-plus text-success fs-5" (click)="toggleAddSubjectOpen(true, subject.id)"></i>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn bg-ahlulbayt-green text-dark btn-lg rounded-circle position-fixed bottom-0 end-0 m-4"
+        (click)="toggleAddSubjectOpen(false)">+</button>
+</div>
+
+<app-create [subjectId]="subjectId" [isArea]="isArea" (closeClicked)="toggleAddSubject()"
+    (pushSubject)="handleSubjectAdded($event)" *ngIf="showAddSubject"></app-create>
+
+<app-edit [subjectName]="subjectName" [subjectId]="subjectId" [areaId]="areaId" [isArea]="isArea"
+    (closeClicked)="toggleEditSubject()" (editSubjectEmit)="handleSubjectEdited($event)" *ngIf="showEditSubject">
+</app-edit>

@@ -1,0 +1,36 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5" dir="rtl">
+            <div class="col-md-6">
+                <div class="card border-secondary shadow rounded-3 border-0">
+                    <div
+                        class="card-header d-flex justify-content-between align-items-center bg-dark text-white rounded-top">
+                        تعديل الموضوع
+                        <button type="button" class="btn-close btn-close-white" aria-label="إغلاق"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+
+                    <div class="card-body bg-light rounded-bottom">
+
+                        <app-toast *ngIf="toastMessage" [message]="toastMessage" [type]="toastType"
+                            (close)="toastMessage = ''" />
+
+                        <form>
+                            <div class="mb-3">
+                                <label for="siteName" class="form-label">اسم الموضوع</label>
+                                <input type="text" class="form-control" id="siteName" placeholder="أدخل اسم الموضوع"
+                                    [(ngModel)]="subjectName" name="subjectName">
+                            </div>
+
+                            <div class="text-start">
+                                <button type="submit" class="btn btn-primary"
+                                    (click)="editSubject(subjectName)">تعديل</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

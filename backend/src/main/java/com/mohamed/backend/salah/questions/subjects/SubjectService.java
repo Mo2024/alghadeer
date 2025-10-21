@@ -52,7 +52,7 @@ public class SubjectService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public SubjectArea createSubjectArea(SubjectArea subjectArea) throws JsonProcessingException {
+    public List<Subject> createSubjectArea(SubjectArea subjectArea) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", subjectArea);
 
         if (subjectArea.getName() == null || subjectArea.getName().trim().isEmpty() || !ValidationUtils.isArabic(subjectArea.getName())) {
@@ -72,7 +72,7 @@ public class SubjectService {
         subjectAreaRepository.save(subjectArea);
         log.info("[subjectAreaRepository].[save] called successfully");
 
-        return subjectArea;
+        return subjectRepository.findAll();
     }
 
 
@@ -105,7 +105,7 @@ public class SubjectService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public SubjectArea editSubjectArea(SubjectArea subjectAreaReq) throws JsonProcessingException {
+    public List<Subject> editSubjectArea(SubjectArea subjectAreaReq) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", subjectAreaReq);
 
         log.info("Calling [subjectRepository].[findById]");
@@ -137,6 +137,6 @@ public class SubjectService {
         subjectAreaRepository.save(subjectArea);
         log.info("[subjectAreaRepository].[save] called successfully");
 
-        return subjectArea;
+        return subjectRepository.findAll();
     }
 }

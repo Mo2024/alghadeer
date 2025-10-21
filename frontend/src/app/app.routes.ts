@@ -73,6 +73,18 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'ADMIN', accessControlled: true }
             },
+            {
+                path: 'staff/admin/salah/questions',
+                loadComponent: () => import('./staff/admin/salah/questions/questions.component').then(c => c.QuestionsComponent),
+                canActivate: [authGuard],
+                data: { role: 'ADMIN', accessControlled: true }
+            },
+            {
+                path: 'staff/admin/salah/questions/subjects',
+                loadComponent: () => import('./staff/admin/salah/questions/subjects/subjects.component').then(c => c.SubjectsComponent),
+                canActivate: [authGuard],
+                data: { role: 'ADMIN', accessControlled: true }
+            },
 
             // Instructor Routes
             {

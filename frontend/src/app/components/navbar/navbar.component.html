@@ -70,6 +70,19 @@
                         </ul>
                     </li>
 
+                    <!-- برنامج الصلاة Dropdown -->
+                    <li class="nav-item dropdown"
+                        *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR') || hasPermission('SUPERVISOR')">
+                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            برنامج الصلاة
+                        </a>
+                        <ul class="dropdown-menu text-end">
+                            <li *ngIf="hasPermission('ADMIN')"><a class="dropdown-item"
+                                    routerLink="/staff/admin/salah/questions">الأسئلة</a></li>
+                        </ul>
+                    </li>
+
                     <!-- المواضيع -->
                     <li class="nav-item"
                         *ngIf="hasPermission('ADMIN') || hasPermission('SUPERVISOR') || hasPermission('INSTRUCTOR')">
@@ -84,7 +97,8 @@
                             الحساب
                         </a>
                         <ul class="dropdown-menu text-end">
-                            <li><a class="dropdown-item" routerLink="/staff/update-password">تحديث الكلمة السرية</a></li>
+                            <li><a class="dropdown-item" routerLink="/staff/update-password">تحديث الكلمة السرية</a>
+                            </li>
                         </ul>
                     </li>
 

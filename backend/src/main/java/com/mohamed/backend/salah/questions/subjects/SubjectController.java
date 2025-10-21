@@ -110,7 +110,7 @@ public class SubjectController {
     public ResponseEntity<?> createSubjectArea(@RequestBody SubjectArea subjectArea) {
         try {
             log.info("executing method [subjectService].[createSubjectArea]");
-            SubjectArea response = subjectService.createSubjectArea(subjectArea);
+            List<Subject> response = subjectService.createSubjectArea(subjectArea);
             log.info("[subjectService].[createSubjectArea] executed successfully");
             logger.logJsonObject("Response for [createSubjectArea]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -180,7 +180,7 @@ public class SubjectController {
     public ResponseEntity<?> editSubjectArea(@RequestBody SubjectArea subjectArea) {
         try {
             log.info("executing method [subjectService].[editSubjectArea]");
-            SubjectArea response = subjectService.editSubjectArea(subjectArea);
+            List<Subject> response = subjectService.editSubjectArea(subjectArea);
             log.info("[subjectService].[editSubjectArea] executed successfully");
             logger.logJsonObject("Response for [editSubjectArea]:\n{}", response);
             return ResponseEntity.ok().body(response);
