@@ -18,3 +18,31 @@
     width: clamp(180px, 40vw, 280px);
     height: clamp(180px, 40vw, 280px);
 }
+
+.announcement-card {
+    background: #fefefe;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    direction: rtl;
+}
+
+.announcement-field {
+    padding: 0.5rem 0;
+    text-align: right;
+    font-size: 1rem;
+    color: #333;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.announcement-field:last-child {
+    border-bottom: none;
+}
+
+.announcement-field .label {
+    font-weight: 600;
+    display: inline-block;
+    min-width: 90px;
+}

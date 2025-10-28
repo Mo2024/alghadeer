@@ -64,42 +64,6 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/admin/get-all-questions")
-    @Operation(
-            summary = "Gets all non deleted questions",
-            description = "Only Admins are authorized to perform this request."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
-            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
-            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
-    })
-    public ResponseEntity<?> getQuestionsAdmin(@RequestParam int page, @RequestParam int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            log.info("executing method [questionService].[getQuestionsAdmin]");
-            Page<Question> response = questionService.getQuestionsAdmin(pageable);
-            log.info("[questionService].[getQuestionsAdmin] executed successfully");
-            logger.logJsonObject("Response for [getQuestionsAdmin]:\n{}", response);
-            return ResponseEntity.ok().body(response);
-        } catch (HandledRejection e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new Response(e.getMessage(), "ALGD-400"));
-        } catch (AuthorizationDeniedException e) {
-            log.error("Authorization Denied error:", e);
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
-        } catch (Exception e) {
-            log.error("Unexpected error:", e);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
-        }
-    }
-
     @PostMapping("/admin/create-question")
     @Operation(
             summary = "Creates a question",
@@ -111,11 +75,10 @@ public class QuestionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> createQuestion(@RequestParam int page, @RequestParam int size, @RequestBody Question question) {
+    public ResponseEntity<?> createQuestion(@RequestParam Level level, @RequestBody Question question) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
             log.info("executing method [questionService].[createQuestion]");
-            Page<Question> response = questionService.createQuestion(pageable, question);
+            List<Question> response = questionService.createQuestion(level, question);
             log.info("[questionService].[createQuestion] executed successfully");
             logger.logJsonObject("Response for [createQuestion]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -148,11 +111,10 @@ public class QuestionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> editQuestion(@RequestParam int page, @RequestParam int size, @RequestBody Question question) {
+    public ResponseEntity<?> editQuestion(@RequestParam Level level, @RequestBody Question question) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
             log.info("executing method [questionService].[editQuestion]");
-            Page<Question> response = questionService.editQuestion(pageable, question);
+            List<Question> response = questionService.editQuestion(level, question);
             log.info("[questionService].[editQuestion] executed successfully");
             logger.logJsonObject("Response for [editQuestion]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -184,11 +146,10 @@ public class QuestionController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> deleteQuestion(@RequestParam int page, @RequestParam int size, @RequestBody int questionId) {
+    public ResponseEntity<?> deleteQuestion(@RequestParam Level level, @RequestParam int questionId) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
             log.info("executing method [questionService].[deleteQuestion]");
-            Page<Question> response = questionService.deleteQuestion(pageable, questionId);
+            List<Question> response = questionService.deleteQuestion(level, questionId);
             log.info("[questionService].[deleteQuestion] executed successfully");
             logger.logJsonObject("Response for [deleteQuestion]:\n{}", response);
             return ResponseEntity.ok().body(response);

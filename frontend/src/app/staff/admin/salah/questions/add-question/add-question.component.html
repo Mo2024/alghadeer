@@ -1,0 +1,109 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5" dir="rtl">
+            <div class="col-md-6">
+                <div class="card border-secondary shadow rounded-3 border-0">
+                    <div
+                        class="card-header d-flex justify-content-between align-items-center bg-dark text-white rounded-top">
+                        تفاصيل السؤال
+                        <button type="button" class="btn-close btn-close-white" aria-label="إغلاق"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+
+                    <div class="card-body bg-light rounded-bottom">
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="toast-wrapper" *ngIf="showToast">
+                                    <div class="toast" [ngClass]="toastType" dir="rtl">
+                                        <span class="msg">{{ toastMessage }}</span>
+                                        <span class="close-btn" (click)="closeToast()">&#x2715;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-4 fw-bold text-dark">السؤال:</div>
+                            <div class="col-8">
+                                <input placeholder="أدخل نص السؤال هنا" type="text" class="form-control"
+                                    [(ngModel)]="question.question" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-4 fw-bold text-dark">المستوى:</div>
+                            <div class="col-8">
+                                <select class="form-select" [(ngModel)]="question.level">
+                                    <option value="">اختر المستوى</option>
+                                    <option value="ONE">الأول</option>
+                                    <option value="TWO">الثاني</option>
+                                    <option value="THREE">الثالث</option>
+                                    <option value="FOUR">الرابع</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-4 fw-bold text-dark">التسلسل:</div>
+                            <div class="col-8">
+                                <input placeholder="أدخل رقم التسلسل" type="number" class="form-control"
+                                    [(ngModel)]="question.sequence" />
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-4 fw-bold text-dark">ركن:</div>
+                            <div class="col-8">
+                                <label class="switch">
+                                    <input type="checkbox" [(ngModel)]="question.isPillar">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-3">
+                            <div class="col-4 fw-bold text-dark">الموضوع:</div>
+                            <div class="col-8">
+                                <select class="form-select mb-2" [(ngModel)]="selectedSubjectIndex">
+                                    <option [ngValue]="''">اختر الموضوع</option>
+                                    <option *ngFor="let subject of subjects; let i = index" [ngValue]="i">
+                                        {{ subject.name }}
+                                    </option>
+                                </select>
+
+                                <div class="d-flex align-items-center gap-2 mb-4">
+                                    <select class="form-select flex-grow-1" [(ngModel)]="selectedAreaIndex">
+                                        <option [ngValue]="''">اختر المحور</option>
+
+                                        <ng-container
+                                            *ngFor="let area of subjects[selectedSubjectIndex]?.subjectAreas; let j = index">
+                                            <option [ngValue]="j">
+                                                {{ area.name }}
+                                            </option>
+                                        </ng-container>
+
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="mt-4 text-start">
+
+                            <button class="btn btn-primary ms-2" (click)="submitQuestion()">
+                                إضافة
+                            </button>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

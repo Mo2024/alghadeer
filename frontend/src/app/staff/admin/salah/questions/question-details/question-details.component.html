@@ -1,0 +1,130 @@
+<div class="full-screen-bg">
+    <div class="container">
+        <div class="row justify-content-center mt-5" dir="rtl">
+            <div class="col-md-6">
+                <div class="card border-secondary shadow rounded-3 border-0">
+                    <div
+                        class="card-header d-flex justify-content-between align-items-center bg-dark text-white rounded-top">
+                        إنشاء السؤال
+                        <button type="button" class="btn-close btn-close-white" aria-label="إغلاق"
+                            (click)="emitCloseClicked()"></button>
+                    </div>
+
+                    <div class="card-body bg-light rounded-bottom">
+                        <div *ngIf="questionObject">
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">السؤال:</div>
+                                <div class="col-8">
+                                    <ng-container *ngIf="isEditable; else questionText">
+                                        <input placeholder="أدخل نص السؤال هنا" type="text" class="form-control"
+                                            [(ngModel)]="questionObject.question" />
+                                    </ng-container>
+                                    <ng-template #questionText>
+                                        {{ questionObject.question }}
+                                    </ng-template>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">المستوي:</div>
+                                <div class="col-8">
+                                    {{ getArabicLevel(questionObject.level) }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">التسلسل:</div>
+                                <div class="col-8">
+                                    {{ questionObject.sequence }}
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-4 fw-bold text-dark">ركن:</div>
+                                <div class="col-8">
+                                    <i class="bx bx-md"
+                                        [ngClass]="questionObject.isPillar ? 'bx-check text-success' : 'bx-x text-danger'">
+                                    </i>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">الموضوع:</div>
+                                <div class="col-8">
+                                    <!-- <ng-container *ngIf="isEditable; else showTopic">
+                                        <select class="form-select mb-2" [(ngModel)]="selectedSubjectIndex">
+                                            <option [ngValue]="''">اختر الموضوع</option>
+                                            <option *ngFor="let subject of subjects; let i = index" [ngValue]="i">
+                                                {{ subject.name }}
+                                            </option>
+                                        </select>
+
+                                        <div class="d-flex align-items-center gap-2 mb-4">
+                                            <select class="form-select flex-grow-1" [(ngModel)]="selectedAreaIndex">
+                                                <option [ngValue]="''">اختر المحور</option>
+
+                                                <ng-container
+                                                    *ngFor="let area of subjects[selectedSubjectIndex]?.subjectAreas; let j = index">
+                                                    <option [ngValue]="j">
+                                                        {{ area.name }}
+                                                    </option>
+                                                </ng-container>
+
+                                            </select>
+                                        </div>
+
+                                    </ng-container> -->
+
+                                    <!-- <ng-template #showTopic> -->
+                                    <div class="col-8">
+                                        {{ questionObject.subject.name }}
+                                    </div>
+                                    <!-- </ng-template> -->
+
+                                </div>
+                            </div>
+
+                            <!-- <div *ngIf="!isEditable;" class="row mb-3"> -->
+                            <div class="row mb-3">
+                                <div class="col-4 fw-bold text-dark">المحور:</div>
+                                <div class="col-8">
+                                    {{ questionObject.area.name }}
+                                </div>
+
+                            </div>
+
+                            <div class="mt-4 text-start">
+
+                                <button *ngIf="!isEditable" class="btn btn-primary ms-2" (click)="toggleEnableEdit()">
+                                    إنشاء
+                                </button>
+
+                                <button *ngIf="!isEditable"
+                                    class="btn btn-danger d-inline-flex align-items-center justify-content-center"
+                                    (click)="onDeleteQuestion()" style="width: 42px; height: 42px; border-radius: 8px;">
+                                    <i class='bx bx-trash' style="font-size: 20px;"></i>
+                                </button>
+
+                                <ng-container *ngIf="isEditable">
+                                    <button [disabled]="isDisabled" class="btn btn-success ms-2"
+                                        (click)="submitQuestionChange()">
+                                        تم
+                                    </button>
+                                    <button [disabled]="isDisabled" class="btn btn-danger ms-auto"
+                                        (click)="cancelEditing()">
+                                        إلغاء التعديل
+                                    </button>
+                                </ng-container>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

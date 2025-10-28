@@ -1,5 +1,6 @@
 package com.mohamed.backend.salah.questions;
 
+import com.mohamed.backend.salah.questions.subjects.Subject;
 import com.mohamed.backend.salah.questions.subjects.SubjectArea;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,4 +40,8 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "area_id")
     private SubjectArea area;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id")
+    private Subject subject;
 }

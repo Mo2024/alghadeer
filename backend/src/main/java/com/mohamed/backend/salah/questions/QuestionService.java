@@ -1,6 +1,10 @@
 package com.mohamed.backend.salah.questions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.salah.questions.subjects.Subject;
+import com.mohamed.backend.salah.questions.subjects.SubjectArea;
+import com.mohamed.backend.salah.questions.subjects.SubjectAreaRepository;
+import com.mohamed.backend.salah.questions.subjects.SubjectRepository;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
 import com.mohamed.backend.utils.methods.ValidationUtils;
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.awt.geom.Area;
 import java.util.List;
 
 @Service
@@ -25,22 +30,19 @@ public class QuestionService {
     @PersistenceContext
     private EntityManager entityManager;
     private final QuestionRepository questionRepository;
+    private final SubjectRepository subjectRepository;
+    private final SubjectAreaRepository subjectAreaRepository;
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
     public List<Question> getQuestionsByLevel(Level level) {
         log.info("Level param: {}", level);
-        return questionRepository.findAllByLevelAndDeletedFalse(level);
-    }
-
-    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
-    public Page<Question> getQuestionsAdmin(Pageable pageable) {
-        return questionRepository.findAllByDeletedFalse(pageable);
+        return questionRepository.findAllByLevelAndDeletedFalseOrderBySequenceAsc(level);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Page<Question> createQuestion(Pageable pageable,Question question) throws JsonProcessingException {
+    public List<Question> createQuestion(Level level, Question question) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", question);
 
         if (question.getQuestion() == null || question.getQuestion().trim().isEmpty() || !ValidationUtils.isArabic(question.getQuestion())) {
@@ -51,6 +53,32 @@ public class QuestionService {
         if (question.getLevel() == null) {
             log.error("Invalid Level:\n{}", (Object) null);
             throw new HandledRejection("يرجى التأكد من إدخال المستوى بشكل صحيح");
+        }
+
+        if (question.getIsPillar() == null) {
+            log.error("Invalid isPillar value: null");
+            throw new HandledRejection("يرجى تحديد ما إذا كان السؤال من الأركان أو لا");
+        }
+
+        log.info("Calling [subjectRepository].[findById]");
+        subjectRepository.findById(question.getSubject().getId())
+                .orElseThrow(() -> {
+                    log.error("Subject not found");
+                    return new HandledRejection("يرجى التأكد من البيانات");
+                });
+        log.info("[subjectRepository].[findById] called successfully");
+
+        log.info("Calling [subjectAreaRepository].[findById]");
+        SubjectArea area = subjectAreaRepository.findById(question.getArea().getId())
+                .orElseThrow(() -> {
+                    log.error("Subject area not found");
+                    return new HandledRejection("يرجى التأكد من البيانات");
+                });
+        log.info("[subjectAreaRepository].[findById] called successfully");
+
+        if(!area.getSubject().getId().equals(question.getSubject().getId())){
+            log.error("area is not related to subject");
+            throw  new HandledRejection("يرجى التأكد من البيانات");
         }
 
         Integer sequenceCount = questionRepository.countByLevelAndDeletedFalse(question.getLevel());
@@ -75,12 +103,12 @@ public class QuestionService {
         questionRepository.save(question);
         log.info("[questionRepository].[save] called successfully");
 
-        return questionRepository.findAllByDeletedFalse(pageable);
+        return questionRepository.findAllByLevelAndDeletedFalseOrderBySequenceAsc(level);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Page<Question> editQuestion(Pageable pageable,Question questionReq) throws JsonProcessingException {
+    public List<Question> editQuestion(Level level, Question questionReq) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", questionReq);
 
 
@@ -104,12 +132,12 @@ public class QuestionService {
         questionRepository.save(question);
         log.info("[questionRepository].[save] called successfully");
 
-        return questionRepository.findAllByDeletedFalse(pageable);
+        return questionRepository.findAllByLevelAndDeletedFalseOrderBySequenceAsc(level);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional
-    public Page<Question> deleteQuestion(Pageable pageable, int questionId) throws JsonProcessingException {
+    public List<Question> deleteQuestion(Level level, int questionId) throws JsonProcessingException {
         log.info("Question ID: {}", questionId);
 
 
@@ -130,7 +158,7 @@ public class QuestionService {
         questionRepository.save(question);
         log.info("[questionRepository].[save] called successfully");
 
-        return questionRepository.findAllByDeletedFalse(pageable);
+        return questionRepository.findAllByLevelAndDeletedFalseOrderBySequenceAsc(level);
     }
 
     @Transactional

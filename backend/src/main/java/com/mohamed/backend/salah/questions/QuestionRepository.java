@@ -10,9 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-    List<Question> findAllByLevelAndDeletedFalse(Level level);
-    
-    Page<Question> findAllByDeletedFalse(Pageable pageable);
+    List<Question> findAllByLevelAndDeletedFalseOrderBySequenceAsc(Level level);
 
     Optional<Question> findByIdAndDeletedFalse(Integer id);
 
