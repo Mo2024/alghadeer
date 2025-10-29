@@ -94,7 +94,7 @@ public class QuestionService {
         }
 
         log.info("Calling [updateQuestionSequence]");
-        updateQuestionSequence(question.getSequence(), true);
+        updateQuestionSequence(question.getSequence(), true, question.getLevel());
         log.info("[updateQuestionSequence] called successfully");
 
         question.setDeleted(false);
@@ -150,7 +150,7 @@ public class QuestionService {
         log.info("[questionRepository].[findById] called successfully");
 
 
-        updateQuestionSequence(question.getSequence(), false);
+        updateQuestionSequence(question.getSequence(), false, question.getLevel());
 
         question.setDeleted(true);
 
@@ -162,12 +162,14 @@ public class QuestionService {
     }
 
     @Transactional
-    public void updateQuestionSequence(int sequence, Boolean isIncrement) {
+    public void updateQuestionSequence(int sequence, Boolean isIncrement, Level level) {
         entityManager.createStoredProcedureQuery("update_question_sequence")
                 .registerStoredProcedureParameter("p_seq", Integer.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("p_is_increment", Boolean.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("p_level", String.class, ParameterMode.IN)
                 .setParameter("p_seq", sequence)
                 .setParameter("p_is_increment", isIncrement)
+                .setParameter("p_level", level.toString())
                 .execute();
     }
 
