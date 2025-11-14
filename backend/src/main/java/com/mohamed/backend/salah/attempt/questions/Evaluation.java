@@ -1,4 +1,4 @@
-package com.mohamed.backend.salah.questions;
+package com.mohamed.backend.salah.attempt.questions;
 
 public enum Evaluation {
     ITQAN,
