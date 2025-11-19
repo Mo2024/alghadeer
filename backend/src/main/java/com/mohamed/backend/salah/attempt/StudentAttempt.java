@@ -1,5 +1,7 @@
 package com.mohamed.backend.salah.attempt;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.users.students.Student;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,8 +26,16 @@ public class StudentAttempt {
 
     @ManyToOne
     @JoinColumn(name = "student_id")
+    @JsonIgnoreProperties
     private Student student;
 
     @Column(name = "attempt_date_time")
-    private LocalDateTime AttemptDateTime;
+    private LocalDateTime attemptDateTime;
+
+    @JsonProperty("studentId")
+    public Integer getStudent() {
+        return student != null ? student.getId() : null;
+    }
+
+
 }
