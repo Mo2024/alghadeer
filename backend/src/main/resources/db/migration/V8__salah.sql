@@ -1,11 +1,24 @@
-CREATE TABLE student_salah_attempt(
+CREATE TABLE student_level (
     id INT PRIMARY KEY,
     student_id INT,
-    attempt_date_time timestamp(6),
-    passed BOOLEAN,
+    level VARCHAR(10) CHECK (level IN ('ONE', 'TWO', 'THREE', 'FOUR')),
     CONSTRAINT fk_student
         FOREIGN KEY (student_id)
         REFERENCES students(id)
+);
+
+create sequence student_level_sequence start with 1 increment by 1;
+
+CREATE TABLE student_salah_attempt(
+    id INT PRIMARY KEY,
+    student_level_id INT,
+    attempt_date_time timestamp(6),
+    passed BOOLEAN,
+    subjects JSONB,
+    completed BOOLEAN,
+    CONSTRAINT fk_student_level
+        FOREIGN KEY (student_level_id)
+        REFERENCES student_level(id)
 );
 
 create sequence student_salah_attempt_sequence start with 1 increment by 1;
@@ -27,14 +40,3 @@ CREATE TABLE student_salah_question (
 );
 
 create sequence student_salah_question_sequence start with 1 increment by 1;
-
-CREATE TABLE student_level (
-    id INT PRIMARY KEY,
-    student_id INT,
-    level VARCHAR(10) CHECK (level IN ('ONE', 'TWO', 'THREE', 'FOUR')),
-    CONSTRAINT fk_student
-        FOREIGN KEY (student_id)
-        REFERENCES students(id)
-);
-
-create sequence student_level_sequence start with 1 increment by 1;

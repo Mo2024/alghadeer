@@ -19,7 +19,7 @@ public class StudentLevelService {
     private final Logger logger;
 
     @Transactional
-    public void createStudentLevel(StudentLevel studentLevelParam) throws JsonProcessingException {
+    public StudentLevel createStudentLevel(StudentLevel studentLevelParam) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", studentLevelParam);
 
         log.info("Calling [studentLevelRepository].[findByStudentId]");
@@ -31,9 +31,10 @@ public class StudentLevelService {
         log.info("[studentLevelRepository].[findByStudentId] called successfully");
 
         log.info("Calling [studentLevelRepository].[save]");
-        studentLevelRepository.save(studentLevelParam);
+        StudentLevel studentLevel = studentLevelRepository.save(studentLevelParam);
         log.info("[studentLevelRepository].[save] called successfully");
 
+        return studentLevel;
     }
 
     @Transactional
@@ -58,14 +59,35 @@ public class StudentLevelService {
         return new Response("تم تحديث مستوى الطالب بنجاح");
     }
 
-    public Level getStudentLevel(int studentId){
+//    public Level getStudentLevel(int studentId){
+//        log.info("Request parameter studentId: {}", studentId);
+//
+//        log.info("Calling [studentLevelRepository].[findLevelByStudentId]");
+//        Level level = studentLevelRepository.findLevelByStudentId(studentId);
+//        log.info("[studentLevelRepository].[findLevelByStudentId] called successfully");
+//
+//
+//        return level;
+//    }
+
+    public StudentLevel getStudentLevelObjectById(int studentLevelId){
+        log.info("Request parameter studentLevelId: {}", studentLevelId);
+
+        log.info("Calling [studentLevelRepository].[findById]");
+        StudentLevel studentLevel = studentLevelRepository.findById(studentLevelId);
+        log.info("[studentLevelRepository].[findById] called successfully");
+
+        return studentLevel;
+    }
+
+    public StudentLevel getStudentLevelObjectByStudentId(int studentId){
         log.info("Request parameter studentId: {}", studentId);
 
-        log.info("Calling [studentLevelRepository].[findLevelByStudentId]");
-        Level level = studentLevelRepository.findLevelByStudentId(studentId);
-        log.info("[studentLevelRepository].[findLevelByStudentId] called successfully");
+        log.info("Calling [studentLevelRepository].[findByStudentId]");
+        StudentLevel studentLevel = studentLevelRepository.findByStudentId(studentId)
+                .orElse(null);
+        log.info("[studentLevelRepository].[findByStudentId] called successfully");
 
-
-        return level;
+        return studentLevel;
     }
 }

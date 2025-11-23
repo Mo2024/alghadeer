@@ -1,5 +1,7 @@
 package com.mohamed.backend.salah.level;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mohamed.backend.salah.questions.Level;
 import com.mohamed.backend.users.students.Student;
 import jakarta.persistence.*;
@@ -22,6 +24,7 @@ public class StudentLevel {
     private Integer id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "student_id")
     private Student student;
 

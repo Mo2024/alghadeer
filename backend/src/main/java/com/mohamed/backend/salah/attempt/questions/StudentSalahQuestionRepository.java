@@ -13,6 +13,9 @@ public interface StudentSalahQuestionRepository  extends JpaRepository<StudentSa
 
     @Query("""
     SELECT
+        NULL AS id,
+        NULL AS grade,
+        NULL AS evaluation,
         q AS question,
         sa as studentSalahAttempt
     
@@ -28,5 +31,7 @@ public interface StudentSalahQuestionRepository  extends JpaRepository<StudentSa
             Level level,
             Integer attemptId
     );
+
+    List<StudentSalahQuestionView> findByStudentSalahAttemptId(Integer attemptId);
 }
 

@@ -1,5 +1,6 @@
 package com.mohamed.backend.salah.attempt;
 
+import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionService;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionView;
 import com.mohamed.backend.salah.level.StudentLevel;
 import com.mohamed.backend.salah.questions.subjects.Subject;
@@ -27,6 +28,7 @@ import java.util.List;
 public class AttemptController {
 
     private final AttemptService attemptService;
+    private final StudentSalahQuestionService studentSalahQuestionService;
     private final Logger logger;
 
     @PostMapping("/all/create-attempt")
@@ -46,7 +48,77 @@ public class AttemptController {
             List<StudentSalahQuestionView> response = attemptService.createSalahAttempt(selectedSubjects, studentId);
             log.info("[attemptService].[createSalahAttempt] executed successfully");
             logger.logJsonObject("Response for [createSalahAttempt]:\n{}", response);
-            return ResponseEntity.ok().body("response");
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/all/latest-attempt")
+    @Operation(
+            summary = "Fetches latest attempt for all subjects the student took",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getLatestAttempt(@RequestParam int studentId) {
+        try {
+            log.info("executing method [attemptService].[getLatestAttempts]");
+            List<SalahAttemptView> response = attemptService.getLatestAttempts(studentId);
+            log.info("[attemptService].[getLatestAttempts] executed successfully");
+            logger.logJsonObject("Response for [getLatestAttempts]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/all/attempt-questions")
+    @Operation(
+            summary = "Fetches questions of attempt",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getAttemptQuestions(@RequestParam int attemptId) {
+        try {
+            log.info("executing method [studentSalahQuestionService].[getQuestionsOfAttempt]");
+            List<StudentSalahQuestionView> response = studentSalahQuestionService.getQuestionsOfAttempt(attemptId);
+            log.info("[studentSalahQuestionService].[getQuestionsOfAttempt] executed successfully");
+            logger.logJsonObject("Response for [getQuestionsOfAttempt]:\n{}", response);
+            return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
                     .badRequest()

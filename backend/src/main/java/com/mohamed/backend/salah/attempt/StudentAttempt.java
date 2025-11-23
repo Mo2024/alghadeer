@@ -2,14 +2,19 @@ package com.mohamed.backend.salah.attempt;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mohamed.backend.salah.level.StudentLevel;
 import com.mohamed.backend.users.students.Student;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "student_salah_attempt")
@@ -25,17 +30,18 @@ public class StudentAttempt {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_level_id")
     @JsonIgnoreProperties
-    private Student student;
+    private StudentLevel studentLevel;
 
     @Column(name = "attempt_date_time")
     private LocalDateTime attemptDateTime;
 
-    @JsonProperty("studentId")
-    public Integer getStudent() {
-        return student != null ? student.getId() : null;
-    }
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private List<Integer> subjects;
 
+    @Column(name = "completed")
+    private Boolean isCompleted;
 
 }

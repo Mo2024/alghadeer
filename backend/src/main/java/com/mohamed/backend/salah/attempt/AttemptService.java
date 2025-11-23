@@ -12,6 +12,7 @@ import com.mohamed.backend.salah.questions.subjects.Subject;
 import com.mohamed.backend.salah.questions.subjects.SubjectRepository;
 import com.mohamed.backend.users.students.Student;
 import com.mohamed.backend.users.students.StudentRepository;
+import com.mohamed.backend.users.students.StudentService;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
 import jakarta.persistence.EntityManager;
@@ -33,7 +34,7 @@ public class AttemptService {
     private final StudentLevelService studentLevelService;
     private final SubjectRepository subjectRepository;
     private final StudentRepository studentRepository;
-    private final QuestionRepository questionRepository;
+    private final StudentService studentService;
     private final EntityManager entityManager;
     private final Logger logger;
 
@@ -42,43 +43,36 @@ public class AttemptService {
         logger.logJsonObject("Request parameter 1:\n{}", selectedSubjects);
         logger.logJsonObject("Request parameter 2 studentId: {}", studentId);
 
-        Level level = studentLevelService.getStudentLevel(studentId);
+        StudentLevel studentLevel = studentLevelService.getStudentLevelObjectByStudentId(studentId);
 
-        if(level == null){
+        if(studentLevel == null){
             Student studentRef = entityManager.getReference(Student.class, studentId);
 
-            StudentLevel studentLevel = StudentLevel.builder()
+            studentLevel = StudentLevel.builder()
                     .student(studentRef)
                     .level(Level.ONE)
                     .build();
-            studentLevelService.createStudentLevel(studentLevel);
-            level = Level.ONE;
+            studentLevel = studentLevelService.createStudentLevel(studentLevel);
         }
 
         log.info("Calling [subjectRepository].[countOfSelectedSubjectsInLevel]");
-        int count = subjectRepository.countOfSelectedSubjectsInLevel(selectedSubjects, level.toString());
+        int count = subjectRepository.countOfSelectedSubjectsInLevel(selectedSubjects, studentLevel.getLevel().toString());
         log.info("[subjectRepository].[countOfSelectedSubjectsInLevel] called successfully");
 
         log.info("{}",count);
         log.info("{}",selectedSubjects.size());
 
+        //This is a validation to check if the selected subjects actually belong to that level or not
         if (selectedSubjects.size() != count) {
             log.error("At least one of the subjects does not exist in that level");
             throw new HandledRejection("واحد أو أكثر من المواضيع المحددة ليست من ضمن المستوى المحدد");
         }
 
-        log.info("Calling [studentRepository].[findById]");
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> {
-                    log.error("Student does not exist:\n{}", studentId);
-                    return new HandledRejection("الطالب غير موجود");
-                });
-        log.info("[studentRepository].[findById] called successfully");
-
-
         StudentAttempt attempt = StudentAttempt.builder()
-                .student(student)
+                .studentLevel(studentLevel)
                 .attemptDateTime(LocalDateTime.now())
+                .subjects(selectedSubjects)
+                .isCompleted(false)
                 .build();
 
         log.info("Calling [studentSalahAttemptRepository].[save]");
@@ -86,12 +80,35 @@ public class AttemptService {
         log.info("[studentSalahAttemptRepository].[save] called successfully");
 
         log.info("Calling [questionRepository].[getListOfQuestions]");
-        List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.getFreshStudentSalahQuestions(selectedSubjects, level, attempt.getId());
+        List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.getFreshStudentSalahQuestions(selectedSubjects, studentLevel.getLevel(), attempt.getId());
         log.info("[questionRepository].[getListOfQuestions] called successfully");
 
         return listOfQuestions;
     }
 
+    public List<SalahAttemptView> getLatestAttempts(Integer studentId) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter studentId: {}", studentId);
 
+        log.info("Calling [studentLevelService].[getStudentLevelObjectById]");
+        StudentLevel studentLevel = studentLevelService.getStudentLevelObjectByStudentId(studentId);
+        log.info("[studentLevelService].[getStudentLevelObjectById] called successfully");
+
+        logger.logJsonObject("Student level:\n{}", studentLevel);
+
+        if(studentLevel == null){
+            log.error("No previous attempts for the student");
+            throw new HandledRejection("لا توجد محاولات سابقة للطالب");
+        }
+
+        log.info("Calling [subjectRepository].[subjectsIdByLevel]");
+        List<Integer> subjectsId = subjectRepository.subjectsIdByLevel(studentLevel.getLevel());
+        log.info("[subjectRepository].[subjectsIdByLevel] called successfully");
+
+        log.info("Calling [studentSalahAttemptRepository].[getLatestStudentAttempts]");
+        List<SalahAttemptView> latestStudentAttempts = studentSalahAttemptRepository.getLatestStudentAttempts(studentLevel.getStudent().getId(), subjectsId);
+        log.info("[studentSalahAttemptRepository].[getLatestStudentAttempts] called successfully");
+
+        return latestStudentAttempts;
+    }
 
 }

@@ -14,4 +14,5 @@ public interface StudentLevelRepository extends JpaRepository<StudentLevel, Inte
     @Query("SELECT s.level FROM StudentLevel s WHERE s.student.id = :studentId")
     Level findLevelByStudentId(int studentId);
 
+    StudentLevel findById(int studentLevelId);
 }
