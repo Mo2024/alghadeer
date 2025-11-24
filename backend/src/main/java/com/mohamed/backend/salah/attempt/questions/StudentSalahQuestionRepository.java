@@ -32,6 +32,22 @@ public interface StudentSalahQuestionRepository  extends JpaRepository<StudentSa
             Integer attemptId
     );
 
-    List<StudentSalahQuestionView> findByStudentSalahAttemptId(Integer attemptId);
+    @Query("""
+    SELECT COUNT(q)
+    FROM Question q
+    LEFT JOIN StudentAttempt sa ON sa.id = :attemptId
+    WHERE q.subject.id IN (:subjectsId)
+      AND q.deleted = false
+      AND q.level = :level
+""")
+    int getFreshStudentSalahQuestionsCount(
+            List<Integer> subjectsId,
+            Level level,
+            Integer attemptId
+    );
+
+    List<StudentSalahQuestionView> findByStudentSalahAttemptId(int attemptId);
+
+    int countByStudentSalahAttemptId(int attemptId);
 }
 

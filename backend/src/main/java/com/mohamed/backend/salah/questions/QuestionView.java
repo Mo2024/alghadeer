@@ -6,4 +6,5 @@ public interface QuestionView {
     String getQuestion();
     Integer getSequence();
     Boolean getIsPillar();
+    Integer getSubjectId();
 }

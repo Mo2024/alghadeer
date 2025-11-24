@@ -1,5 +1,6 @@
 package com.mohamed.backend.salah.questions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.salah.questions.subjects.Subject;
 import com.mohamed.backend.salah.questions.subjects.SubjectArea;
 import jakarta.persistence.*;
@@ -44,4 +45,14 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
+
+    @Transient
+    @JsonProperty("subjectId")
+    private Integer subjectId;
+
+    public Integer getSubjectId() {
+        return subject != null ? subject.getId() : subjectId;
+    }
+
+
 }
