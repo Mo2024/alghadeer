@@ -44,4 +44,7 @@ public class StudentAttempt {
     @Column(name = "completed")
     private Boolean isCompleted;
 
+    @Column(name = "comments")
+    private String comments;
+
 }

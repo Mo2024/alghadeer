@@ -1,6 +1,7 @@
 package com.mohamed.backend.users.students;
 
 import com.mohamed.backend.users.staff.dto.Login;
+import com.mohamed.backend.users.students.dto.StudentView;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.semesters.dto.SemesterEnrollmentView;
 import com.mohamed.backend.users.students.dto.StudentDetailsPageDTO;
@@ -121,6 +122,41 @@ public class StudentController {
             List<SemesterEnrollmentView> response = studentService.getEnrolledStudents();
             log.info("[studentService].[getEnrolledStudents] executed successfully");
             logger.logJsonObject("Response for [getEnrolledStudents]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @GetMapping("/all/students-by-class-id")
+    @Operation(
+            summary = "Fetches students by their class ID",
+            description = "This request is only authorized for admins and supervisors."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> getStudentsByClassId(@RequestParam Integer classId) {
+        try {
+            log.info("executing method [studentService].[getStudentsByClassId]");
+            List<StudentView> response = studentService.getStudentsByClassId(classId);
+            log.info("[studentService].[getStudentsByClassId] executed successfully");
+            logger.logJsonObject("Response for [getStudentsByClassId]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity

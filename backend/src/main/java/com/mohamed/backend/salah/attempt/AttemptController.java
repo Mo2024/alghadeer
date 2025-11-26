@@ -151,7 +151,42 @@ public class AttemptController {
     public ResponseEntity<?> SaveQuestions(@RequestBody List<StudentSalahQuestion> questionList, @RequestParam int attemptId) {
         try {
             log.info("executing method [attemptService].[createSalahAttempt]");
-            Response response = studentSalahQuestionService.saveAttempt(questionList, attemptId);
+            Response response = studentSalahQuestionService.saveAttempt(questionList, attemptId, false);
+            log.info("[attemptService].[createSalahAttempt] executed successfully");
+            logger.logJsonObject("Response for [createSalahAttempt]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
+    @PostMapping("/all/submit-questions")
+    @Operation(
+            summary = "Submits questions of an attempt",
+            description = "Only staff are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request - Handled rejection in service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> submitQuestions(@RequestBody List<StudentSalahQuestion> questionList, @RequestParam int attemptId) {
+        try {
+            log.info("executing method [attemptService].[createSalahAttempt]");
+            Response response = studentSalahQuestionService.submitAttempt(questionList, attemptId);
             log.info("[attemptService].[createSalahAttempt] executed successfully");
             logger.logJsonObject("Response for [createSalahAttempt]:\n{}", response);
             return ResponseEntity.ok().body(response);

@@ -83,6 +83,7 @@ public class AttemptService {
         List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.getFreshStudentSalahQuestions(selectedSubjects, studentLevel.getLevel(), attempt.getId());
         log.info("[questionRepository].[getListOfQuestions] called successfully");
 
+
         return listOfQuestions;
     }
 

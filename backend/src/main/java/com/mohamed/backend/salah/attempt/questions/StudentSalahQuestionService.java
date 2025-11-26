@@ -6,11 +6,14 @@ import com.mohamed.backend.salah.attempt.StudentAttemptRepository;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -40,11 +43,14 @@ public class StudentSalahQuestionService {
             log.info("[questionRepository].[getFreshStudentSalahQuestions] called successfully");
         }
 
+
         return listOfQuestions;
     }
 
-    public Response saveAttempt(List<StudentSalahQuestion> listOfQuestions, int attemptId) throws JsonProcessingException {
+    @Transactional
+    public Response saveAttempt(List<StudentSalahQuestion> listOfQuestions, int attemptId, boolean isSubmitAttempt) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", listOfQuestions);
+        logger.logJsonObject("Request attemptId: {}", attemptId);
 
         log.info("listOfQuestions count: {}", listOfQuestions.size());
 
@@ -68,7 +74,7 @@ public class StudentSalahQuestionService {
 
         log.info("freshListOfQuestionsCount: {}", freshListOfQuestionsCount);
 
-        if ((questionsCount != listOfQuestions.size() && questionsCount != 0) ||  freshListOfQuestionsCount != listOfQuestions.size()){
+        if ((questionsCount != listOfQuestions.size() && questionsCount != 0) || freshListOfQuestionsCount != listOfQuestions.size()) {
             log.error("Invalid data provided");
             throw new HandledRejection("البيانات غير صالحة");
         }
@@ -76,7 +82,7 @@ public class StudentSalahQuestionService {
 
         for (StudentSalahQuestion salahQuestion : listOfQuestions) {
             // To check if the id of that salah question actually exists
-            boolean existsById = studentSalahQuestionRepository.existsById(salahQuestion.getId());
+            boolean existsById = salahQuestion.getId() != null && studentSalahQuestionRepository.existsById(salahQuestion.getId());
 
 
             // To check if the attempt provided matches the one in the array question object
@@ -89,10 +95,51 @@ public class StudentSalahQuestionService {
                 logger.logJsonObject("Invalid data provided:\n{}", salahQuestion);
                 throw new HandledRejection("البيانات غير صالحة");
             }
+
+            if (isSubmitAttempt) {
+
+                if (salahQuestion.getEvaluation() == null) {
+                    logger.logJsonObject("Invalid data provided:\n{}", salahQuestion);
+                    throw new HandledRejection("التقوييم غير صالح");
+                }
+
+                if (salahQuestion.getEvaluation().equals(Evaluation.YANSAA_AW_LA_YAALAM) || salahQuestion.getEvaluation().equals(Evaluation.GHAYR_MOTAMAKEN)) {
+                    salahQuestion.setGrade(0);
+                } else if (salahQuestion.getEvaluation().equals(Evaluation.LA_BAS)) {
+                    salahQuestion.setGrade(1);
+                } else if (salahQuestion.getEvaluation().equals(Evaluation.ITQAN)) {
+                    salahQuestion.setGrade(2);
+                } else {
+                    logger.logJsonObject("Something went wrong:\n{}", salahQuestion);
+                    throw new HandledRejection("يرجي التأكد من البيانات");
+                }
+            }
+
         }
 
+        if (isSubmitAttempt) {
+            studentAttempt.setIsCompleted(true);
+            studentAttemptRepository.save(studentAttempt);
+        }
+
+        //need validation for manual grades from postman etc
         studentSalahQuestionRepository.saveAll(listOfQuestions);
 
         return new Response("Attempt saved successfully");
     }
+
+    @Transactional
+    public Response submitAttempt(List<StudentSalahQuestion> questionList, int attemptId) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter 1 questionList :\n{}", questionList);
+        logger.logJsonObject("Request parameter 1 attemptId: {}", attemptId);
+
+        saveAttempt(
+                questionList,
+                attemptId,
+                true
+        );
+
+        return new Response("Attempt Completed successfully");
+    }
+
 }

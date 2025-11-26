@@ -1,6 +1,8 @@
 package com.mohamed.backend.users.students;
 
+import com.mohamed.backend.users.students.dto.StudentView;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,4 +15,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     boolean existsByCpr(String cpr);
 
     int countByIdIn(List<Integer> studentsId);
+
+    @Query(value = "SELECT s.id AS id, s.name AS name FROM students s INNER JOIN student_class sc ON sc.student_id = s.id WHERE sc.class_id = :classId", nativeQuery = true)
+    List<StudentView> getStudentsByClassId(Integer classId);
 }

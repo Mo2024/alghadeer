@@ -12,6 +12,7 @@ import com.mohamed.backend.users.students.dto.StudentDetailsPageDTO;
 import com.mohamed.backend.semesters.Semester;
 import com.mohamed.backend.semesters.semesterEnrollments.SemesterEnrollmentRepository;
 import com.mohamed.backend.semesters.SemesterRepository;
+import com.mohamed.backend.users.students.dto.StudentView;
 import com.mohamed.backend.utils.security.StudentDetails;
 import com.mohamed.backend.utils.methods.HashUtils;
 import com.mohamed.backend.utils.methods.ImageUtils;
@@ -213,6 +214,18 @@ public class StudentService {
         logger.logJsonObject("Semester Details:\n{}", semester);
 
         return semesterEnrollmentRepository.findAllBySemesterId(semester.getId());
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
+    public List<StudentView> getStudentsByClassId(Integer classId) throws JsonProcessingException {
+
+        log.info("Calling [studentRepository].[getStudentsByClassId]");
+        List<StudentView> studentsList = studentRepository.getStudentsByClassId(classId);
+        log.info("[studentRepository].[getStudentsByClassId] called successfully");
+
+        logger.logJsonObject("studentsList Details:\n{}", studentsList);
+
+        return studentsList;
     }
 
 

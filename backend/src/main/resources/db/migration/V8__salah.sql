@@ -1,7 +1,7 @@
 CREATE TABLE student_level (
     id INT PRIMARY KEY,
     student_id INT,
-    level VARCHAR(10) CHECK (level IN ('ONE', 'TWO', 'THREE', 'FOUR')),
+    level TEXT CHECK (level IN ('ONE', 'TWO', 'THREE', 'FOUR')),
     CONSTRAINT fk_student
         FOREIGN KEY (student_id)
         REFERENCES students(id)
@@ -15,6 +15,7 @@ CREATE TABLE student_salah_attempt(
     attempt_date_time timestamp(6),
     passed BOOLEAN,
     subjects JSONB,
+    comments TEXT,
     completed BOOLEAN,
     CONSTRAINT fk_student_level
         FOREIGN KEY (student_level_id)
@@ -29,7 +30,7 @@ CREATE TABLE student_salah_question (
     grade INT,
     question_id INT,
     student_salah_attempt_id INT,
-    evaluation VARCHAR(10) CHECK (evaluation IN ('ITQAN', 'LA_BAS', 'GHAYR_MOTAMAKEN', 'YANSAA_AW_LA_YAALAM')),
+    evaluation TEXT CHECK (evaluation IN ('ITQAN', 'LA_BAS', 'GHAYR_MOTAMAKEN', 'YANSAA_AW_LA_YAALAM')),
 
     CONSTRAINT fk_question
         FOREIGN KEY (question_id)
