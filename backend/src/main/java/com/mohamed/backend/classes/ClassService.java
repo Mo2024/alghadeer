@@ -46,14 +46,32 @@ public class ClassService {
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public List<ClassView> getClassesFromActiveSemester() throws JsonProcessingException {
+    public List<ClassView> getClassesBySemester() throws JsonProcessingException {
+
         log.info("Calling [semesterRepository].[findByActive]");
         Semester semester = semesterRepository.findByActive(true)
-                .orElseThrow(() -> {
-                    log.error("No active semester found");
-                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
-                });
+                    .orElseThrow(() -> {
+                        log.error("No active semester found");
+                        return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                    });
         log.info("[semesterRepository].[findByActive] called successfully");
+
+
+        logger.logJsonObject("Semester Details:\n{}", semester);
+
+        return classRepository.findAllBySemesterId(semester.getId());
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public List<ClassView> getClassesByLatestSemester() throws JsonProcessingException {
+
+        log.info("Calling [semesterRepository].[getLatestSemester]");
+        Semester semester = semesterRepository.getLatestSemester()
+                    .orElseThrow(() -> {
+                        log.error("No semester found");
+                        return new HandledRejection("لا يوجد فصل دراسي حالياً");
+                    });
+        log.info("[semesterRepository].[getLatestSemester] called successfully");
 
         logger.logJsonObject("Semester Details:\n{}", semester);
 

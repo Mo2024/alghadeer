@@ -48,6 +48,9 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
         """, nativeQuery = true)
     List<StudentExportDto> getEnrolledStudentsTelephone();
 
+    @Query(value = "SELECT * FROM semesters ORDER BY start_date DESC LIMIT 1", nativeQuery = true)
+    Optional<Semester> getLatestSemester();
+
     boolean existsByActive(boolean active);
 
     Optional<Semester> findByActive(boolean active);
