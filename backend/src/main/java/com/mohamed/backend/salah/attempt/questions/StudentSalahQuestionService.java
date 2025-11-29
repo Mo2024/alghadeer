@@ -1,6 +1,7 @@
 package com.mohamed.backend.salah.attempt.questions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.salah.attempt.AttemptAndQuestionsDto;
 import com.mohamed.backend.salah.attempt.StudentAttempt;
 import com.mohamed.backend.salah.attempt.StudentAttemptRepository;
 import com.mohamed.backend.utils.Response;
@@ -9,11 +10,10 @@ import com.mohamed.backend.utils.methods.Logger;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,14 +24,17 @@ public class StudentSalahQuestionService {
     private final StudentSalahQuestionRepository studentSalahQuestionRepository;
     private final StudentAttemptRepository studentAttemptRepository;
 
-    public List<StudentSalahQuestionView> getQuestionsOfAttempt(Integer attemptId) throws JsonProcessingException {
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
+    public AttemptAndQuestionsDto getQuestionsOfAttempt(Integer attemptId) throws JsonProcessingException {
         logger.logJsonObject("Request parameter attemptId:\n{}", attemptId);
 
+        log.info("Calling [studentAttemptRepository].[findById]");
         StudentAttempt studentAttempt = studentAttemptRepository.findById(attemptId)
                 .orElseThrow(() -> {
             log.error("Attempt does not exist:\n{}", attemptId);
             return new HandledRejection("الإختبار غير موجود");
         });
+        log.info("[studentAttemptRepository].[findById] called successfully");
 
         log.info("Calling [questionRepository].[findByStudentSalahAttemptId]");
         List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.findByStudentSalahAttemptId(attemptId);
@@ -44,25 +47,33 @@ public class StudentSalahQuestionService {
         }
 
 
-        return listOfQuestions;
+        return AttemptAndQuestionsDto.builder()
+                .salahQuestionsRes(listOfQuestions)
+                .studentAttempt(studentAttempt)
+                .build();
     }
 
     @Transactional
-    public Response saveAttempt(List<StudentSalahQuestion> listOfQuestions, int attemptId, boolean isSubmitAttempt) throws JsonProcessingException {
-        logger.logJsonObject("Request parameter:\n{}", listOfQuestions);
-        logger.logJsonObject("Request attemptId: {}", attemptId);
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
+    public Response saveAttempt(AttemptAndQuestionsDto attemptAndQuestionsDto, boolean isSubmitAttempt) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter:\n{}", attemptAndQuestionsDto);
 
-        log.info("listOfQuestions count: {}", listOfQuestions.size());
+        log.info("listOfQuestions count: {}", attemptAndQuestionsDto.getSalahQuestionsReq().size());
 
-        StudentAttempt studentAttempt = studentAttemptRepository.findById(attemptId)
+        log.info("Calling [studentAttemptRepository].[findById]");
+        StudentAttempt studentAttempt = studentAttemptRepository.findById(attemptAndQuestionsDto.getStudentAttempt().getId())
                 .orElseThrow(() -> {
-                    log.error("Attempt does not exist:\n{}", attemptId);
+                    log.error("Attempt does not exist:\n{}", attemptAndQuestionsDto.getStudentAttempt().getId());
                     return new HandledRejection("الإختبار غير موجود");
                 });
+        log.info("[studentAttemptRepository].[findById] called successfully");
 
         List<Integer> subjectsId = studentAttempt.getSubjects();
 
-        int questionsCount = studentSalahQuestionRepository.countByStudentSalahAttemptId(attemptId);
+        log.info("Calling [studentSalahQuestionRepository].[countByStudentSalahAttemptId]");
+        int questionsCount = studentSalahQuestionRepository.countByStudentSalahAttemptId(attemptAndQuestionsDto.getStudentAttempt().getId());
+        log.info("[studentSalahQuestionRepository].[countByStudentSalahAttemptId] called successfully");
+
         log.info("questionsCount: {}", questionsCount);
 
         log.info("Calling [questionRepository].[getFreshStudentSalahQuestionsCount]");
@@ -74,19 +85,21 @@ public class StudentSalahQuestionService {
 
         log.info("freshListOfQuestionsCount: {}", freshListOfQuestionsCount);
 
-        if ((questionsCount != listOfQuestions.size() && questionsCount != 0) || freshListOfQuestionsCount != listOfQuestions.size()) {
+        if ((questionsCount != attemptAndQuestionsDto.getSalahQuestionsReq().size() && questionsCount != 0) || freshListOfQuestionsCount != attemptAndQuestionsDto.getSalahQuestionsReq().size()) {
             log.error("Invalid data provided");
             throw new HandledRejection("البيانات غير صالحة");
         }
 
 
-        for (StudentSalahQuestion salahQuestion : listOfQuestions) {
+        for (StudentSalahQuestion salahQuestion : attemptAndQuestionsDto.getSalahQuestionsReq()) {
             // To check if the id of that salah question actually exists
+            log.info("Calling [studentSalahQuestionRepository].[existsById]");
             boolean existsById = salahQuestion.getId() != null && studentSalahQuestionRepository.existsById(salahQuestion.getId());
+            log.info("[studentSalahQuestionRepository].[existsById] called successfully");
 
 
             // To check if the attempt provided matches the one in the array question object
-            boolean attemptIdMatch = salahQuestion.getStudentSalahAttempt().getId().equals(attemptId);
+            boolean attemptIdMatch = salahQuestion.getStudentSalahAttempt().getId().equals(attemptAndQuestionsDto.getStudentAttempt().getId());
 
             // To check if the subject id of the question is included in the subjects array in student attempt object
             boolean subjectIdExistsInAttempt = studentAttempt.getSubjects().contains(salahQuestion.getQuestion().getSubjectId());
@@ -100,7 +113,7 @@ public class StudentSalahQuestionService {
 
                 if (salahQuestion.getEvaluation() == null) {
                     logger.logJsonObject("Invalid data provided:\n{}", salahQuestion);
-                    throw new HandledRejection("التقوييم غير صالح");
+                    throw new HandledRejection("يرجى اختيار التقييم");
                 }
 
                 if (salahQuestion.getEvaluation().equals(Evaluation.YANSAA_AW_LA_YAALAM) || salahQuestion.getEvaluation().equals(Evaluation.GHAYR_MOTAMAKEN)) {
@@ -119,25 +132,39 @@ public class StudentSalahQuestionService {
 
         if (isSubmitAttempt) {
             studentAttempt.setIsCompleted(true);
-            studentAttemptRepository.save(studentAttempt);
         }
 
+        if (attemptAndQuestionsDto.getStudentAttempt().getIsPassed() == null){
+            logger.logJsonObject("Unable to determine if the student passed or failed:\n{}", attemptAndQuestionsDto.getStudentAttempt());
+            throw new HandledRejection("يرجى تحديد ما إذا كان الطالب ناجحاً أم راسباً");
+        }
+
+        studentAttempt.setIsPassed(attemptAndQuestionsDto.getStudentAttempt().getIsPassed());
+        studentAttempt.setComments(attemptAndQuestionsDto.getStudentAttempt().getComments());
+
+        log.info("Calling [studentAttemptRepository].[save]");
+        studentAttemptRepository.save(studentAttempt);
+        log.info("[studentAttemptRepository].[save] called successfully");
+
         //need validation for manual grades from postman etc
-        studentSalahQuestionRepository.saveAll(listOfQuestions);
+        log.info("Calling [studentSalahQuestionRepository].[saveAll]");
+        studentSalahQuestionRepository.saveAll(attemptAndQuestionsDto.getSalahQuestionsReq());
+        log.info("[studentSalahQuestionRepository].[saveAll] called successfully");
 
         return new Response("Attempt saved successfully");
     }
 
     @Transactional
-    public Response submitAttempt(List<StudentSalahQuestion> questionList, int attemptId) throws JsonProcessingException {
-        logger.logJsonObject("Request parameter 1 questionList :\n{}", questionList);
-        logger.logJsonObject("Request parameter 1 attemptId: {}", attemptId);
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
+    public Response submitAttempt(AttemptAndQuestionsDto attemptAndQuestionsDto) throws JsonProcessingException {
+        logger.logJsonObject("Request parameter:\n{}", attemptAndQuestionsDto);
 
+        log.info("Calling [saveAttempt]");
         saveAttempt(
-                questionList,
-                attemptId,
+                attemptAndQuestionsDto,
                 true
         );
+        log.info("[saveAttempt] called successfully");
 
         return new Response("Attempt Completed successfully");
     }

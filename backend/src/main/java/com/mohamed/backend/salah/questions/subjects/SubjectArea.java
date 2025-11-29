@@ -1,6 +1,5 @@
 package com.mohamed.backend.salah.questions.subjects;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

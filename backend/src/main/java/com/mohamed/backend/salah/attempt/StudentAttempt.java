@@ -1,16 +1,13 @@
 package com.mohamed.backend.salah.attempt;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.salah.level.StudentLevel;
-import com.mohamed.backend.users.students.Student;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
@@ -43,6 +40,9 @@ public class StudentAttempt {
 
     @Column(name = "completed")
     private Boolean isCompleted;
+
+    @Column(name = "passed")
+    private Boolean isPassed;
 
     @Column(name = "comments")
     private String comments;

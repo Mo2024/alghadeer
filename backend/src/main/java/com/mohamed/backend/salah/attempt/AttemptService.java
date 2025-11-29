@@ -5,20 +5,15 @@ import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionRepositor
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionView;
 import com.mohamed.backend.salah.level.StudentLevel;
 import com.mohamed.backend.salah.level.StudentLevelService;
-import com.mohamed.backend.salah.questions.Level;
-import com.mohamed.backend.salah.questions.Question;
 import com.mohamed.backend.salah.questions.QuestionRepository;
 import com.mohamed.backend.salah.questions.subjects.Subject;
 import com.mohamed.backend.salah.questions.subjects.SubjectRepository;
-import com.mohamed.backend.users.students.Student;
-import com.mohamed.backend.users.students.StudentRepository;
-import com.mohamed.backend.users.students.StudentService;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,27 +28,23 @@ public class AttemptService {
     private final StudentSalahQuestionRepository studentSalahQuestionRepository;
     private final StudentLevelService studentLevelService;
     private final SubjectRepository subjectRepository;
-    private final StudentRepository studentRepository;
-    private final StudentService studentService;
-    private final EntityManager entityManager;
+    private final QuestionRepository questionRepository;
     private final Logger logger;
 
     @Transactional
-    public List<StudentSalahQuestionView> createSalahAttempt(List<Integer> selectedSubjects, int studentId) throws JsonProcessingException {
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
+    public AttemptAndQuestionsDto createSalahAttempt(List<Integer> selectedSubjects, int studentId) throws JsonProcessingException {
         logger.logJsonObject("Request parameter 1:\n{}", selectedSubjects);
         logger.logJsonObject("Request parameter 2 studentId: {}", studentId);
 
-        StudentLevel studentLevel = studentLevelService.getStudentLevelObjectByStudentId(studentId);
-
-        if(studentLevel == null){
-            Student studentRef = entityManager.getReference(Student.class, studentId);
-
-            studentLevel = StudentLevel.builder()
-                    .student(studentRef)
-                    .level(Level.ONE)
-                    .build();
-            studentLevel = studentLevelService.createStudentLevel(studentLevel);
+        if (selectedSubjects.isEmpty()){
+            log.error("No subjects selected");
+            throw new HandledRejection("الرجاء اختيار موضوع واحد على الأقل");
         }
+
+        log.info("Calling [studentLevelService].[getStudentLevelObjectByStudentId]");
+        StudentLevel studentLevel = studentLevelService.getStudentLevelObjectByStudentId(studentId);
+        log.info("[studentLevelService].[getStudentLevelObjectByStudentId] called successfully");
 
         log.info("Calling [subjectRepository].[countOfSelectedSubjectsInLevel]");
         int count = subjectRepository.countOfSelectedSubjectsInLevel(selectedSubjects, studentLevel.getLevel().toString());
@@ -66,6 +57,28 @@ public class AttemptService {
         if (selectedSubjects.size() != count) {
             log.error("At least one of the subjects does not exist in that level");
             throw new HandledRejection("واحد أو أكثر من المواضيع المحددة ليست من ضمن المستوى المحدد");
+        }
+
+        for (Integer subjectId: selectedSubjects){
+            log.info("Calling [questionRepository].[existsBySubject_Id]");
+            Boolean existBySubjectId = questionRepository.existsBySubject_Id(subjectId);
+            log.info("[questionRepository].[existsBySubject_Id] called successfully");
+
+            log.info("{}", existBySubjectId);
+
+            if(!existBySubjectId){
+                log.info("Calling [subjectRepository].[findById]");
+                Subject subject = subjectRepository.findById(subjectId)
+                        .orElseThrow(() -> {
+                            log.error("Subject does not exist:\n{}", subjectId);
+                            return new HandledRejection("البيانات غير صحيحة");
+                        });
+                log.info("[subjectRepository].[findById] called successfully");
+
+                logger.logJsonObjectError("No questions exist for the specified subject\n {}", subject);
+                throw new HandledRejection( "لا توجد أسئلة للموضوع: "+ subject.getName());
+
+            }
         }
 
         StudentAttempt attempt = StudentAttempt.builder()
@@ -83,16 +96,19 @@ public class AttemptService {
         List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.getFreshStudentSalahQuestions(selectedSubjects, studentLevel.getLevel(), attempt.getId());
         log.info("[questionRepository].[getListOfQuestions] called successfully");
 
-
-        return listOfQuestions;
+        return AttemptAndQuestionsDto.builder()
+                .salahQuestionsRes(listOfQuestions)
+                .studentAttempt(attempt)
+                .build();
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
     public List<SalahAttemptView> getLatestAttempts(Integer studentId) throws JsonProcessingException {
         logger.logJsonObject("Request parameter studentId: {}", studentId);
 
-        log.info("Calling [studentLevelService].[getStudentLevelObjectById]");
+        log.info("Calling [studentLevelService].[getStudentLevelObjectByStudentId]");
         StudentLevel studentLevel = studentLevelService.getStudentLevelObjectByStudentId(studentId);
-        log.info("[studentLevelService].[getStudentLevelObjectById] called successfully");
+        log.info("[studentLevelService].[getStudentLevelObjectByStudentId] called successfully");
 
         logger.logJsonObject("Student level:\n{}", studentLevel);
 

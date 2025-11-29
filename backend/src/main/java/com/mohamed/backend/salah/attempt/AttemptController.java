@@ -1,10 +1,6 @@
 package com.mohamed.backend.salah.attempt;
 
-import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestion;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionService;
-import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionView;
-import com.mohamed.backend.salah.level.StudentLevel;
-import com.mohamed.backend.salah.questions.subjects.Subject;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
@@ -46,7 +42,7 @@ public class AttemptController {
     public ResponseEntity<?> createAttempt(@RequestBody List<Integer> selectedSubjects, @RequestParam int studentId) {
         try {
             log.info("executing method [attemptService].[createSalahAttempt]");
-            List<StudentSalahQuestionView> response = attemptService.createSalahAttempt(selectedSubjects, studentId);
+            AttemptAndQuestionsDto response = attemptService.createSalahAttempt(selectedSubjects, studentId);
             log.info("[attemptService].[createSalahAttempt] executed successfully");
             logger.logJsonObject("Response for [createSalahAttempt]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -116,7 +112,7 @@ public class AttemptController {
     public ResponseEntity<?> getAttemptQuestions(@RequestParam int attemptId) {
         try {
             log.info("executing method [studentSalahQuestionService].[getQuestionsOfAttempt]");
-            List<StudentSalahQuestionView> response = studentSalahQuestionService.getQuestionsOfAttempt(attemptId);
+            AttemptAndQuestionsDto response = studentSalahQuestionService.getQuestionsOfAttempt(attemptId);
             log.info("[studentSalahQuestionService].[getQuestionsOfAttempt] executed successfully");
             logger.logJsonObject("Response for [getQuestionsOfAttempt]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -148,10 +144,10 @@ public class AttemptController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> SaveQuestions(@RequestBody List<StudentSalahQuestion> questionList, @RequestParam int attemptId) {
+    public ResponseEntity<?> SaveQuestions(@RequestBody AttemptAndQuestionsDto attemptAndQuestionsDto) {
         try {
             log.info("executing method [attemptService].[createSalahAttempt]");
-            Response response = studentSalahQuestionService.saveAttempt(questionList, attemptId, false);
+            Response response = studentSalahQuestionService.saveAttempt(attemptAndQuestionsDto, false);
             log.info("[attemptService].[createSalahAttempt] executed successfully");
             logger.logJsonObject("Response for [createSalahAttempt]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -183,10 +179,10 @@ public class AttemptController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> submitQuestions(@RequestBody List<StudentSalahQuestion> questionList, @RequestParam int attemptId) {
+    public ResponseEntity<?> submitQuestions(@RequestBody AttemptAndQuestionsDto attemptAndQuestionsDto) {
         try {
             log.info("executing method [attemptService].[createSalahAttempt]");
-            Response response = studentSalahQuestionService.submitAttempt(questionList, attemptId);
+            Response response = studentSalahQuestionService.submitAttempt(attemptAndQuestionsDto);
             log.info("[attemptService].[createSalahAttempt] executed successfully");
             logger.logJsonObject("Response for [createSalahAttempt]:\n{}", response);
             return ResponseEntity.ok().body(response);

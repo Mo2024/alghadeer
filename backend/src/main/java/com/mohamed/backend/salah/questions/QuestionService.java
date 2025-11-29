@@ -1,7 +1,6 @@
 package com.mohamed.backend.salah.questions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mohamed.backend.salah.questions.subjects.Subject;
 import com.mohamed.backend.salah.questions.subjects.SubjectArea;
 import com.mohamed.backend.salah.questions.subjects.SubjectAreaRepository;
 import com.mohamed.backend.salah.questions.subjects.SubjectRepository;
@@ -14,12 +13,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.awt.geom.Area;
 import java.util.List;
 
 @Service
@@ -80,8 +76,9 @@ public class QuestionService {
             log.error("area is not related to subject");
             throw  new HandledRejection("يرجى التأكد من البيانات");
         }
-
+        log.info("Calling [questionRepository].[countByLevelAndDeletedFalse]");
         Integer sequenceCount = questionRepository.countByLevelAndDeletedFalse(question.getLevel());
+        log.info("[questionRepository].[countByLevelAndDeletedFalse] called successfully");
 
         if(question.getSequence() > sequenceCount + 1){
             log.error("Invalid sequence: {}", question.getSequence());
@@ -149,8 +146,9 @@ public class QuestionService {
                 });
         log.info("[questionRepository].[findById] called successfully");
 
-
+        log.info("Calling [updateQuestionSequence]");
         updateQuestionSequence(question.getSequence(), false, question.getLevel());
+        log.info("[updateQuestionSequence] called successfully");
 
         question.setDeleted(true);
 

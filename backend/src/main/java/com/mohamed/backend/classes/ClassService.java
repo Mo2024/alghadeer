@@ -62,13 +62,13 @@ public class ClassService {
         return classRepository.findAllBySemesterId(semester.getId());
     }
 
-    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
     public List<ClassView> getClassesByLatestSemester() throws JsonProcessingException {
 
         log.info("Calling [semesterRepository].[getLatestSemester]");
         Semester semester = semesterRepository.getLatestSemester()
                     .orElseThrow(() -> {
-                        log.error("No semester found");
+                        log.error("No semesters found");
                         return new HandledRejection("لا يوجد فصل دراسي حالياً");
                     });
         log.info("[semesterRepository].[getLatestSemester] called successfully");

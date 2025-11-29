@@ -8,6 +8,7 @@ import com.mohamed.backend.utils.methods.Logger;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +20,7 @@ public class StudentLevelService {
     private final Logger logger;
 
     @Transactional
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
     public StudentLevel createStudentLevel(StudentLevel studentLevelParam) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", studentLevelParam);
 
@@ -38,6 +40,7 @@ public class StudentLevelService {
     }
 
     @Transactional
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
     public Response updateStudentLevel(StudentLevel studentLevelParam) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", studentLevelParam);
 
@@ -59,27 +62,7 @@ public class StudentLevelService {
         return new Response("تم تحديث مستوى الطالب بنجاح");
     }
 
-//    public Level getStudentLevel(int studentId){
-//        log.info("Request parameter studentId: {}", studentId);
-//
-//        log.info("Calling [studentLevelRepository].[findLevelByStudentId]");
-//        Level level = studentLevelRepository.findLevelByStudentId(studentId);
-//        log.info("[studentLevelRepository].[findLevelByStudentId] called successfully");
-//
-//
-//        return level;
-//    }
-
-    public StudentLevel getStudentLevelObjectById(int studentLevelId){
-        log.info("Request parameter studentLevelId: {}", studentLevelId);
-
-        log.info("Calling [studentLevelRepository].[findById]");
-        StudentLevel studentLevel = studentLevelRepository.findById(studentLevelId);
-        log.info("[studentLevelRepository].[findById] called successfully");
-
-        return studentLevel;
-    }
-
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
     public StudentLevel getStudentLevelObjectByStudentId(int studentId){
         log.info("Request parameter studentId: {}", studentId);
 

@@ -16,4 +16,7 @@ public interface SubjectRepository  extends JpaRepository<Subject, Integer> {
     @Query(value = "SELECT s.id FROM Question q INNER JOIN q.subject s WHERE q.level = :level")
     List<Integer> subjectsIdByLevel(Level level);
 
+    @Query(value = "SELECT s FROM Question q INNER JOIN q.subject s WHERE q.level = :level")
+    List<Subject> subjectsByLevel(Level level);
+
 }
