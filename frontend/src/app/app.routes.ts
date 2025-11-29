@@ -182,6 +182,20 @@ export const routes: Routes = [
                 data: { role: 'INSTRUCTOR', accessControlled: true }
             },
 
+            //Salah Module route (staff)
+            {
+                path: 'staff/salah',
+                loadComponent: () => import('./staff/salah/salah.component').then(c => c.SalahComponent),
+                canActivate: [authGuard],
+                data: { role: 'INSTRUCTOR', accessControlled: true }
+            },
+            {
+                path: 'staff/salah/attempt',
+                loadComponent: () => import('./staff/salah/attempt/attempt.component').then(c => c.AttemptComponent),
+                canActivate: [authGuard],
+                data: { role: 'INSTRUCTOR', accessControlled: true }
+            },
+
             // any other path
             {
                 path: '**',

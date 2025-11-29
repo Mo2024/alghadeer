@@ -80,7 +80,12 @@
                         <ul class="dropdown-menu text-end">
                             <li *ngIf="hasPermission('ADMIN')"><a class="dropdown-item"
                                     routerLink="/staff/admin/salah/questions">الأسئلة</a></li>
+                            <li
+                                *ngIf="hasPermission('ADMIN') || hasPermission('INSTRUCTOR') || hasPermission('SUPERVISOR')">
+                                <a class="dropdown-item" routerLink="/staff/salah">الاختبارات</a>
+                            </li>
                         </ul>
+
                     </li>
 
                     <!-- المواضيع -->

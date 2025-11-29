@@ -52,4 +52,8 @@ export class StudentService {
     return this.http.post(`${this.url}/register`, body, { withCredentials: true });
   }
 
+  getStudentsByClassId(classId: any): Observable<any> {
+    return this.http.get(`${this.url}/all/students-by-class-id?classId=${classId}`, { withCredentials: true });
+  }
+
 }

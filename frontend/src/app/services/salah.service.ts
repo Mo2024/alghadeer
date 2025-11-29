@@ -19,6 +19,10 @@ export class SalahService {
     return this.http.get(`${this.url}/subjects/admin/get-subjects`, { withCredentials: true });
   }
 
+  getSubjectsByLevel(studentId: any): Observable<any> {
+    return this.http.get(`${this.url}/subjects/all/subjects-by-level?studentId=${studentId}`, { withCredentials: true });
+  }
+
   createSubject(body: any): Observable<any> {
     return this.http.post(`${this.url}/subjects/admin/create-subject`, body, { withCredentials: true });
   }
@@ -52,5 +56,37 @@ export class SalahService {
 
   deleteQuestion(level: string, questionId: any): Observable<any> {
     return this.http.delete(`${this.url}/questions/admin/delete-question?level=${level}&questionId=${questionId}`, { withCredentials: true });
+  }
+
+
+  // attempt
+
+  getStudentAttempt(studentId: any): Observable<any> {
+    return this.http.get(`${this.url}/attempt/all/latest-attempt?studentId=${studentId}`, { withCredentials: true });
+  }
+
+  getAttemptQuestions(attemptId: any): Observable<any> {
+    return this.http.get(`${this.url}/attempt/all/attempt-questions?attemptId=${attemptId}`, { withCredentials: true });
+  }
+
+  createAttempt(body: any, studentId: any): Observable<any> {
+    return this.http.post(`${this.url}/attempt/all/create-attempt?studentId=${studentId}`, body, { withCredentials: true });
+  }
+
+  submitAttempt(body: any): Observable<any> {
+    return this.http.post(`${this.url}/attempt/all/submit-questions`, body, { withCredentials: true });
+  }
+
+  saveAttempt(body: any): Observable<any> {
+    return this.http.put(`${this.url}/attempt/all/save-questions`, body, { withCredentials: true });
+  }
+
+  //Student level
+  updateLevel(body: any): Observable<any> {
+    return this.http.put(`${this.url}/level/all/update-level`, body, { withCredentials: true });
+  }
+
+  getLevelByStudentId(studentId: any): Observable<any> {
+    return this.http.get(`${this.url}/level/all/level-by-student-id?studentId=${studentId}`, { withCredentials: true });
   }
 }

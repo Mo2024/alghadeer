@@ -1,0 +1,108 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="color: #2c3e50;">
+            الاختبارات
+            <span style="
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 50%;
+                height: 3px;
+                background: linear-gradient(to right, #3498db, #2ecc71);
+                border-radius: 3px;
+            "></span>
+        </h4>
+    </div>
+    <form>
+
+        <!-- CLASS -->
+        <div class="mb-3">
+            <label for="classSelect" class="form-label fw-semibold">الصف</label>
+            <select id="classSelect" class="form-select" [(ngModel)]="classId" name="classId"
+                (ngModelChange)="onClassChange($event)">
+                <option value="">اختر الصف</option>
+                <option *ngFor="let class of classes" [value]="class.id">
+                    {{ class.name }}
+                </option>
+            </select>
+        </div>
+
+        <!-- STUDENT -->
+        <div class="mb-3">
+            <label for="studentSelect" class="form-label fw-semibold">الطالب</label>
+            <select id="studentSelect" class="form-select" [(ngModel)]="studentId" name="studentId"
+                (ngModelChange)="onStudentChange($event)">
+                <option value="">اختر الطالب</option>
+                <option *ngFor="let student of students" [value]="student.id">
+                    {{ student.name }}
+                </option>
+            </select>
+        </div>
+
+        <!-- STUDENT LEVEL -->
+        <div *ngIf="studentLevel !== ''" class="mb-3">
+            <label for="studentSelect" class="form-label fw-semibold">المستوى</label>
+            <select id="studentSelect" class="form-select" [(ngModel)]="studentLevel" name="studentLevel"
+                (ngModelChange)="onLevelChange($event)">
+                <option value="ONE">الأول</option>
+                <option value="TWO">الثاني</option>
+                <option value="THREE">الثالث</option>
+                <option value="FOUR">الرابع</option>
+            </select>
+        </div>
+
+        <label *ngIf="attempts.length > 0">الاختبارات</label>
+
+        <!-- ATTEMPTS -->
+        <div (click)="continueAttempt(attempt.id)" *ngFor="let attempt of attempts" class="attempt-item mb-3">
+
+            <div class="attempt-grid">
+
+                <div class="grid-row">
+                    <span class="label">الموضوع</span>
+                    <span class="value">{{ attempt.subjectName }}</span>
+                </div>
+
+                <div class="grid-row">
+                    <span class="label">التاريخ</span>
+                    <span class="value">{{ attempt.latestAttempt | date: 'yyyy/MM/dd HH:mm' }}</span>
+                </div>
+
+                <div class="grid-row">
+                    <span class="label">الحالة</span>
+                    <span class="value status">
+                        <span>
+                            {{ attempt.completed ? 'مكتمل' : 'غير مكتمل' }}
+                        </span>
+                        <i [ngClass]="attempt.completed ? 'bx bxs-check-circle text-success' : 'bx bxs-error-circle text-warning'"
+                            style="font-size: 20px;"> </i>
+                    </span>
+                </div>
+
+                <div class="grid-row">
+                    <span class="label">النتيجة</span>
+                    <span class="value">
+                        <span *ngIf="attempt.passed === true && attempt.completed === true"
+                            class="d-flex align-items-center">
+                            ناجح
+                            <i class="bx bxs-check-circle text-success" style="font-size: 20px; margin-left: 6px;"></i>
+                        </span>
+
+                        <span *ngIf="attempt.passed === false && attempt.completed === true"
+                            class="d-flex align-items-center">
+                            راسب
+                            <i class="bx bxs-x-circle text-danger" style="font-size: 20px; margin-left: 6px;"></i>
+                        </span>
+
+                        <span *ngIf="attempt.passed === null || attempt.completed === false">—</span>
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <button class="btn shadow-sm rounded-3 btn-color mb-4" (click)="createAttempt()">إنشاء اختبار</button>
+
+    </form>
+</div>

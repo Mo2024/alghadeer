@@ -1,0 +1,49 @@
+.attempt-item {
+    padding: 18px 20px;
+    background: #fafafa;
+    border: 1px solid #e3e4e8;
+    border-radius: 14px;
+    transition: 0.25s ease;
+}
+
+.attempt-item:hover {
+    background: #ffffff;
+    border-color: #cfd2d8;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- HEADER --- */
+.attempt-header {
+    margin-bottom: 12px;
+}
+
+.attempt-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #222;
+}
+
+/* --- GRID --- */
+.attempt-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    row-gap: 8px;
+}
+
+.grid-row {
+    display: contents;
+}
+
+.label {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.value {
+    font-weight: 500;
+    color: #222;
+}
+
+.btn-color {
+    background-color: #A8DADC;
+}

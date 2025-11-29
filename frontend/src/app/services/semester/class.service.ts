@@ -29,4 +29,9 @@ export class ClassService {
   getClassesByActiveSemester(): Observable<any> {
     return this.http.get(`${this.url}/supervisor/get-classes-active-semester`, { withCredentials: true });
   }
+
+
+  getClassesByLatestSemester(): Observable<any> {
+    return this.http.get(`${this.url}/all/get-classes-by-latest-semester`, { withCredentials: true });
+  }
 }
