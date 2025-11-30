@@ -1,5 +1,6 @@
-package com.mohamed.backend.salah.attempt;
+package com.mohamed.backend.salah.attempt.dto;
 
+import com.mohamed.backend.salah.attempt.StudentAttempt;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestion;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionView;
 import lombok.AllArgsConstructor;

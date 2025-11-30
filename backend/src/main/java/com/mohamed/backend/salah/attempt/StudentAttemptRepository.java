@@ -1,5 +1,6 @@
 package com.mohamed.backend.salah.attempt;
 
+import com.mohamed.backend.salah.attempt.dto.SalahAttemptView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

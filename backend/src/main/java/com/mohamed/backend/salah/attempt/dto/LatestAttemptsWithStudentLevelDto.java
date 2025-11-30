@@ -1,4 +1,4 @@
-package com.mohamed.backend.salah.attempt;
+package com.mohamed.backend.salah.attempt.dto;
 
 import com.mohamed.backend.salah.level.StudentLevel;
 import lombok.AllArgsConstructor;

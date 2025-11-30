@@ -1,6 +1,9 @@
 package com.mohamed.backend.salah.attempt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.salah.attempt.dto.AttemptAndQuestionsDto;
+import com.mohamed.backend.salah.attempt.dto.LatestAttemptsWithStudentLevelDto;
+import com.mohamed.backend.salah.attempt.dto.SalahAttemptView;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionRepository;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionView;
 import com.mohamed.backend.salah.level.StudentLevel;

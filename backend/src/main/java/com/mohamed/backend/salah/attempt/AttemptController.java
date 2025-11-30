@@ -1,5 +1,7 @@
 package com.mohamed.backend.salah.attempt;
 
+import com.mohamed.backend.salah.attempt.dto.AttemptAndQuestionsDto;
+import com.mohamed.backend.salah.attempt.dto.LatestAttemptsWithStudentLevelDto;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionService;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
