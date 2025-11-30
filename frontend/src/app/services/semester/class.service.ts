@@ -30,8 +30,7 @@ export class ClassService {
     return this.http.get(`${this.url}/supervisor/get-classes-active-semester`, { withCredentials: true });
   }
 
-
-  getClassesByLatestSemester(): Observable<any> {
-    return this.http.get(`${this.url}/all/get-classes-by-latest-semester`, { withCredentials: true });
+  getClassesBySemesterId(semesterId: number): Observable<any> {
+    return this.http.get(`${this.url}/all/get-classes-by-semesterId?semesterId=${semesterId}`, { withCredentials: true });
   }
 }

@@ -33,6 +33,10 @@ export class SemesterService {
     return this.http.get(`${this.url}/admin/get-semesters?page=${page}&size=${this.pageSize}`, { withCredentials: true });
   }
 
+  getLatestThreeSemesters(): Observable<any> {
+    return this.http.get(`${this.url}/all/semesters-list`, { withCredentials: true });
+  }
+
   enrollStudent(body: any): Observable<any> {
     return this.http.post(`${this.url}/student/enroll`, body, { withCredentials: true });
   }

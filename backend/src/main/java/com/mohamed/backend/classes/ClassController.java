@@ -100,9 +100,9 @@ public class ClassController {
         }
     }
 
-    @GetMapping("/all/get-classes-by-latest-semester")
+    @GetMapping("/all/get-classes-by-semesterId")
     @Operation(
-            summary = "Fetches classes from latest semesters",
+            summary = "Fetches classes by semester id",
             description = "Only staff are authorized to perform this request."
     )
     @ApiResponses(value = {
@@ -111,11 +111,11 @@ public class ClassController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getClassesByLatestSemester() {
+    public ResponseEntity<?> getClassesByLatestSemester(@RequestParam Integer semesterId) {
 
         try {
             log.info("executing method [classService].[getClassesByLatestSemester]");
-            List<ClassView> response = classService.getClassesByLatestSemester();
+            List<ClassView> response = classService.getClassesBySemesterId(semesterId);
             log.info("[classService].[getClassesByLatestSemester] executed successfully");
             logger.logJsonObject("Response for [getClassesByLatestSemester]:\n{}", response);
             return ResponseEntity.ok().body(response);

@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SalahService } from '../../services/salah.service';
 import { Router } from '@angular/router';
+import { SemesterService } from '../../services/semester/semester.service';
 
 @Component({
   selector: 'app-salah',
@@ -19,15 +20,19 @@ export class SalahComponent {
   students: any = []
   studentLevel: any = ''
   classId: any = '';
+  semesterId: any = '';
   studentId: any = '';
   classes: any[] = [];
+  semesters: any[] = [];
   attempts: any[] = [];
   constructor(
     private toastService: ToastService,
     private salahService: SalahService,
     private classService: ClassService,
     private studentService: StudentService,
-    private router: Router) { }
+    private router: Router,
+    private semesterService: SemesterService
+  ) { }
 
   ngOnInit() {
 
@@ -46,14 +51,14 @@ export class SalahComponent {
       state.classId = null
     }
 
-    this.classService.getClassesByLatestSemester().subscribe({
+    this.semesterService.getLatestThreeSemesters().subscribe({
       next: async (res) => {
         if (!environment.production) {
           console.log(res)
         }
 
         if (res) {
-          this.classes = [...res];
+          this.semesters = [...res];
         }
 
       },
@@ -83,6 +88,42 @@ export class SalahComponent {
 
     this.router.navigate(['/staff/salah/attempt'], { queryParams: { studentId: this.studentId, new: true, classId: this.classId } });
 
+  }
+
+  onSemesterChange(value: any) {
+    this.studentId = '';
+    this.studentLevel = ''
+    this.attempts = []
+    if (this.semesterId == '') {
+      return
+    }
+    this.classService.getClassesBySemesterId(value).subscribe({
+      next: async (res) => {
+        if (!environment.production) {
+          console.log(res)
+        }
+
+        if (res) {
+          this.classes = [...res];
+        }
+
+      },
+      error: (error) => {
+        if (!environment.production) {
+          console.log(error)
+        }
+
+        if (error.error.status === "ALGD-400") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-403") {
+          this.toastService.show(error.error.message, 'error');
+        } else if (error.error.status === "ALGD-500") {
+          this.toastService.show(error.error.message, 'error');
+        } else {
+          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+        }
+      }
+    })
   }
 
   onClassChange(value: any) {
@@ -127,8 +168,8 @@ export class SalahComponent {
         }
 
         if (res) {
-          this.attempts = res;
-          this.getLevelByStudentId(value);
+          this.attempts = res.latestAttempts;
+          this.studentLevel = res.studentLevel.level
         }
 
       },
@@ -154,36 +195,6 @@ export class SalahComponent {
     this.router.navigate(['/staff/salah/attempt'], { queryParams: { attemptId: attemptId, new: false, studentId: this.studentId, classId: this.classId } });
   }
 
-  getLevelByStudentId(studentId: any) {
-    this.salahService.getLevelByStudentId(studentId).subscribe({
-      next: async (res) => {
-        if (!environment.production) {
-          console.log(res)
-        }
-
-        if (res) {
-          this.studentLevel = res.level
-
-        }
-
-      },
-      error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
-
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-      }
-    })
-  }
 
   onLevelChange(value: any) {
 

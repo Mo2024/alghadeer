@@ -63,19 +63,18 @@ public class ClassService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<ClassView> getClassesByLatestSemester() throws JsonProcessingException {
+    public List<ClassView> getClassesBySemesterId(Integer semesterId) throws JsonProcessingException {
 
-        log.info("Calling [semesterRepository].[getLatestSemester]");
-        Semester semester = semesterRepository.getLatestSemester()
-                    .orElseThrow(() -> {
-                        log.error("No semesters found");
-                        return new HandledRejection("لا يوجد فصل دراسي حالياً");
-                    });
-        log.info("[semesterRepository].[getLatestSemester] called successfully");
+        log.info("Calling [semesterRepository].[existsById]");
+        boolean existsById = semesterRepository.existsById(semesterId);
+        log.info("[semesterRepository].[existsById] called successfully");
 
-        logger.logJsonObject("Semester Details:\n{}", semester);
+        if(!existsById){
+            log.error("Semester does not exist {}", semesterId);
+            throw new HandledRejection("يرجى التاكد من البيانات");
+        }
 
-        return classRepository.findAllBySemesterId(semester.getId());
+        return classRepository.findAllBySemesterId(semesterId);
     }
 
     @Transactional

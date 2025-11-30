@@ -1,6 +1,7 @@
 package com.mohamed.backend.semesters;
 
 import com.mohamed.backend.semesters.dto.SemesterView;
+import com.mohamed.backend.semesters.dto.SemesterView2;
 import com.mohamed.backend.semesters.dto.StudentExportDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +49,8 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
         """, nativeQuery = true)
     List<StudentExportDto> getEnrolledStudentsTelephone();
 
-    @Query(value = "SELECT * FROM semesters ORDER BY start_date DESC LIMIT 1", nativeQuery = true)
-    Optional<Semester> getLatestSemester();
+    @Query(value = "SELECT s.id AS id, s.name AS name FROM semesters s ORDER BY s.start_date DESC LIMIT 3", nativeQuery = true)
+    List<SemesterView2> getLatestThreeSemesters();
 
     boolean existsByActive(boolean active);
 

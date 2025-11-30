@@ -77,7 +77,7 @@ public class AttemptController {
     public ResponseEntity<?> getLatestAttempt(@RequestParam int studentId) {
         try {
             log.info("executing method [attemptService].[getLatestAttempts]");
-            List<SalahAttemptView> response = attemptService.getLatestAttempts(studentId);
+            LatestAttemptsWithStudentLevelDto response = attemptService.getLatestAttemptsAndStudentLevel(studentId);
             log.info("[attemptService].[getLatestAttempts] executed successfully");
             logger.logJsonObject("Response for [getLatestAttempts]:\n{}", response);
             return ResponseEntity.ok().body(response);

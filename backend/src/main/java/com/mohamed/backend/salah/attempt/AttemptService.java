@@ -103,7 +103,7 @@ public class AttemptService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR','INSTRUCTOR')")
-    public List<SalahAttemptView> getLatestAttempts(Integer studentId) throws JsonProcessingException {
+    public LatestAttemptsWithStudentLevelDto getLatestAttemptsAndStudentLevel(Integer studentId) throws JsonProcessingException {
         logger.logJsonObject("Request parameter studentId: {}", studentId);
 
         log.info("Calling [studentLevelService].[getStudentLevelObjectByStudentId]");
@@ -111,11 +111,6 @@ public class AttemptService {
         log.info("[studentLevelService].[getStudentLevelObjectByStudentId] called successfully");
 
         logger.logJsonObject("Student level:\n{}", studentLevel);
-
-        if(studentLevel == null){
-            log.error("No previous attempts for the student");
-            throw new HandledRejection("لا توجد محاولات سابقة للطالب");
-        }
 
         log.info("Calling [subjectRepository].[subjectsIdByLevel]");
         List<Integer> subjectsId = subjectRepository.subjectsIdByLevel(studentLevel.getLevel());
@@ -125,7 +120,11 @@ public class AttemptService {
         List<SalahAttemptView> latestStudentAttempts = studentSalahAttemptRepository.getLatestStudentAttempts(studentLevel.getStudent().getId(), subjectsId);
         log.info("[studentSalahAttemptRepository].[getLatestStudentAttempts] called successfully");
 
-        return latestStudentAttempts;
+        return LatestAttemptsWithStudentLevelDto
+                .builder()
+                .latestAttempts(latestStudentAttempts)
+                .studentLevel(studentLevel)
+                .build();
     }
 
 }

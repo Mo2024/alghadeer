@@ -2,6 +2,7 @@ package com.mohamed.backend.semesters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.classes.ClassService;
+import com.mohamed.backend.semesters.dto.SemesterView2;
 import com.mohamed.backend.semesters.semesterEnrollments.SemesterEnrollment;
 import com.mohamed.backend.semesters.semesterEnrollments.SemesterEnrollmentRepository;
 import com.mohamed.backend.utils.Response;
@@ -26,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -44,6 +46,10 @@ public class SemesterService {
         return semesterRepository.findAllByOrderByIdDesc(pageable);
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','INSTRUCTOR','SUPERVISOR')")
+    public List<SemesterView2> getSemestersList() {
+        return semesterRepository.getLatestThreeSemesters();
+    }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
     @Transactional

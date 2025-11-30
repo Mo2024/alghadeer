@@ -15,6 +15,18 @@
     </div>
     <form>
 
+        <!-- SEMESTER -->
+        <div class="mb-3">
+            <label for="semesterSelect" class="form-label fw-semibold">الفصل</label>
+            <select id="semesterSelect" class="form-select" [(ngModel)]="semesterId" name="semesterId"
+                (ngModelChange)="onSemesterChange($event)">
+                <option value="">اختر الفصل</option>
+                <option *ngFor="let semester of semesters" [value]="semester.id">
+                    {{ semester.name }}
+                </option>
+            </select>
+        </div>
+
         <!-- CLASS -->
         <div class="mb-3">
             <label for="classSelect" class="form-label fw-semibold">الصف</label>

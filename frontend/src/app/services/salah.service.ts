@@ -85,8 +85,4 @@ export class SalahService {
   updateLevel(body: any): Observable<any> {
     return this.http.put(`${this.url}/level/all/update-level`, body, { withCredentials: true });
   }
-
-  getLevelByStudentId(studentId: any): Observable<any> {
-    return this.http.get(`${this.url}/level/all/level-by-student-id?studentId=${studentId}`, { withCredentials: true });
-  }
 }
