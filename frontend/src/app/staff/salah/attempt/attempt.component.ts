@@ -25,7 +25,6 @@ export class AttemptComponent {
   selectedSubjectsId: any[] = []
 
 
-
   showQuestions: boolean = false;
   questions: any[] = [];
   studentAttempt: any
@@ -33,10 +32,12 @@ export class AttemptComponent {
   isNew?: boolean;
   attemptId?: number;
   studentId?: number;
+  semesterId?: number;
   classId?: number;
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
+      this.semesterId = parseInt(params['semesterId']);
       this.studentId = parseInt(params['studentId']);
       this.attemptId = parseInt(params['attemptId']);
       this.classId = parseInt(params['classId']);
@@ -55,6 +56,11 @@ export class AttemptComponent {
 
     if (!Number.isInteger(this.classId)) {
       this.toastService.show("رقم الصف غير صحيح", 'error'); // "Invalid attempt number"
+      return;
+    }
+
+    if (!Number.isInteger(this.semesterId)) {
+      this.toastService.show("رقم الفصل غير صحيح", 'error'); // "Invalid attempt number"
       return;
     }
 
@@ -123,8 +129,6 @@ export class AttemptComponent {
       })
 
     }
-
-
   }
 
   createAttempt() {
@@ -197,7 +201,8 @@ export class AttemptComponent {
               state: {
                 studentId: this.studentId,
                 attemptReroute: true,
-                classId: this.classId
+                classId: this.classId,
+                semesterId: this.semesterId
               }
             }
           );
@@ -241,7 +246,8 @@ export class AttemptComponent {
               state: {
                 studentId: this.studentId,
                 attemptReroute: true,
-                classId: this.classId
+                classId: this.classId,
+                semesterId: this.semesterId
               }
             }
           );
@@ -265,6 +271,24 @@ export class AttemptComponent {
         }
       }
     })
+  }
+
+
+  trackBySubjects(index: number, subject: any) {
+    return subject.id;
+  }
+
+
+
+  getSubjects() {
+    return this.questions
+      .filter((q, i, arr) => i === 0 || q.question.subject.name !== arr[i - 1].question.subject.name)
+      .map(q => q.question.subject);
+  }
+
+  getQuestions(i: number) {
+    let subjectId = this.getSubjects()[i].id
+    return this.questions.filter((q, i, arr) => q.question.subject.id == subjectId)
   }
 
 }

@@ -36,7 +36,10 @@
 
     <!-- Second form (questions evaluation) -->
     <form *ngIf="showQuestions">
-        <div *ngFor="let q of questions" class="mb-3">
+        <!-- <div *ngFor="let q of questions; let i = index" class="mb-3">
+            <h2 class="my-3" *ngIf="i === 0 || q.question.subject.name !== questions[i-1].question.subject.name">
+                الموضوع: {{q.question.subject.name }}
+            </h2>
             <label class="form-label fw-semibold">{{ q.question.question }}</label>
 
             <select class="form-select" [(ngModel)]="q.evaluation" name="evaluation_{{q.question.id}}">
@@ -48,33 +51,77 @@
             </select>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-semibold">ملاحظات المعلم</label>
-            <textarea class="form-control" rows="3" [(ngModel)]="studentAttempt.comments" name="comments">
-        </textarea>
-        </div>
+ -->
 
-        <!-- Toggle for isPassed -->
-        <div class="mb-3 d-flex align-items-center">
-            <label class="form-label fw-semibold me-3 mb-0">الطالب ناجح</label>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="isPassed" [(ngModel)]="studentAttempt.isPassed"
-                    name="isPassed">
+        <div class="accordion" id="topicsAccordion">
+            <div *ngFor="let s of getSubjects(); let i = index; trackBy: trackBySubjects"
+                class="accordion-item mb-3 shadow-sm rounded-4 border-0">
+
+                <h2 class="accordion-header" id="heading{{ i }}">
+                    <button class="accordion-button collapsed fw-bold rounded-top-4" type="button"
+                        data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false"
+                        [attr.aria-controls]="'collapse' + i">
+                        {{ s.name }}
+                    </button>
+                </h2>
+
+                <div [id]="'collapse' + i" class="accordion-collapse collapse rounded-bottom-4"
+                    [attr.aria-labelledby]="'heading' + i">
+                    <div class="accordion-body">
+
+                        <div *ngFor="let q of getQuestions(i) as questionsResult; let j = index" class="mb-3">
+
+                            <h5 *ngIf="j === 0 || q.question.area.name !== questionsResult[j-1].question.area.name"
+                                class="section-badge">
+                                {{ q.question.area.name }}
+                            </h5>
+
+                            <label class="form-label fw-semibold">{{ q.question.question }}</label>
+
+                            <select class="form-select" [(ngModel)]="q.evaluation" name="evaluation_{{q.question.id}}">
+                                <option [ngValue]="null">التقييم</option>
+                                <option value="YANSAA_AW_LA_YAALAM">ينسى أو لا يعلم</option>
+                                <option value="GHAYR_MOTAMAKEN">غير متمكن</option>
+                                <option value="LA_BAS">لا بأس</option>
+                                <option value="ITQAN">إتقان</option>
+                            </select>
+
+                            <div class="my-3">
+                                <label class="form-label fw-semibold">ملاحظات المعلم</label>
+                                <textarea class="form-control" rows="1" [(ngModel)]="q.comments"
+                                    name="comments_{{q.question.id}}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex align-items-center">
+                <label class="form-label fw-semibold me-3 mb-0">الطالب ناجح</label>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="isPassed" [(ngModel)]="studentAttempt.isPassed"
+                        name="isPassed">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">ملاحظات المعلم</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="studentAttempt.comments"
+                    name="comments"></textarea>
+            </div>
+
+            <div class="d-flex gap-2 mt-3 mb-4">
+                <button class="btn shadow-sm rounded-3 btn-submit d-flex align-items-center" (click)="submitAttempt()">
+                    تسليم التقييمات
+                </button>
+
+                <button class="btn shadow-sm rounded-3 btn-save d-flex align-items-center" (click)="saveAttempt()">
+                    حفظ <i class='bx bx-save me-2'></i>
+                </button>
             </div>
         </div>
-
-        <div class="d-flex gap-2 mt-3 mb-4">
-            <!-- Submit Button -->
-            <button class="btn shadow-sm rounded-3 btn-submit d-flex align-items-center" (click)="submitAttempt()">
-                تسليم التقييمات
-            </button>
-
-            <!-- Save Button -->
-            <button class="btn shadow-sm rounded-3 btn-save d-flex align-items-center" (click)="saveAttempt()">
-                حفظ <i class='bx bx-save me-2'></i> <!-- Boxicons save icon -->
-            </button>
-        </div>
-
     </form>
+
+
 
 </div>

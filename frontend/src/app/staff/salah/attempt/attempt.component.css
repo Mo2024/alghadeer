@@ -5,3 +5,193 @@
 .btn-save {
     background-color: #A8DAC0;
 }
+
+/* h5 {
+    color: #1E88E5;
+} */
+
+.section-badge {
+    background: #F1FAFF;
+    /* very light teal/blue */
+    color: #00897B;
+    /* modern teal */
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    border-left: 4px solid #00897B;
+}
+
+
+/* ---- */
+
+.accordion-button.collapsed {
+    background-color: #f8f9fa;
+    /* soft greyish-white */
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.accordion-button.collapsed:hover {
+    background-color: #e9ecef;
+    /* slightly darker on hover */
+    cursor: pointer;
+}
+
+.subtopic-bg {
+    background-color: #f8f9fa;
+    /* light grey, similar to Bootstrap’s accordion-button background */
+    border-color: #dee2e6;
+    /* match border color */
+}
+
+.btn-success {
+    background-color: #4CC9F0;
+    color: #003243;
+    border: none;
+}
+
+.bg-ahlulbayt-green {
+    background-color: #A8DADC;
+}
+
+.subtopic-bg {
+    background: #f0f4f8;
+}
+
+.list-group-item {
+    border-radius: 8px !important;
+    border: 1px solid #d1d9e6 !important;
+}
+
+.list-group-item span {
+    min-width: 80px;
+    text-align: center;
+}
+
+.session-item {
+    background: #f9fbfd;
+    border: 1px solid #d1d9e6;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.15s ease;
+    text-align: center;
+}
+
+.session-item:hover {
+    background: #eef3f9;
+    transform: translateY(-2px);
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.info-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.label {
+    font-size: 0.95rem;
+    color: #718096;
+    font-weight: 600;
+}
+
+.value {
+    font-weight: 600;
+    color: #4a5568;
+    background: #edf2f7;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+}
+
+.subtopic {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.session-item.finished {
+    background: #f0fdf4;
+    /* light greenish background */
+    border-color: #68d391;
+    /* green border */
+}
+
+.session-item.finished .value {
+    background: #c6f6d5;
+    /* lighter green */
+    color: #2f855a;
+    /* dark green text */
+}
+
+.session-item.finished .subtopic {
+    background: #c6f6d5;
+    /* same lighter green */
+    color: #2f855a;
+    /* dark green text */
+}
+
+
+.session-item.cancelled {
+    background: #fff5f5;
+    border-color: #feb2b2;
+}
+
+.session-item.cancelled .value {
+    background: #fed7d7;
+    color: #9b2c2c;
+}
+
+.session-item.cancelled .subtopic {
+    background: #fed7d7;
+    color: #9b2c2c;
+}
+
+/* ---- */
+
+.schedule-title {
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.schedule-item {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #34495e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    background: #f0f4f8;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    /* <-- space between each row */
+}
+
+
+/* On small screens, stack vertically */
+@media (max-width: 576px) {
+    .schedule-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.4rem;
+    }
+}
+
+.schedule-item {
+    justify-content: center;
+
+}

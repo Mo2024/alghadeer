@@ -42,13 +42,16 @@ export class SalahComponent {
     let attemptReroute = state.attemptReroute;
 
     if (attemptReroute) {
-      this.onClassChange(state.classId)
-      this.onStudentChange(state.studentId)
-      this.studentId = state.studentId;
+      this.semesterId = state.semesterId;
+      this.onSemesterChange(state.semesterId)
       this.classId = state.classId;
+      this.onClassChange(state.classId)
+      this.studentId = state.studentId;
+      this.onStudentChange(state.studentId)
       state.attemptReroute = null;
       state.studentId = null
       state.classId = null
+      state.semesterId = null
     }
 
     this.semesterService.getLatestThreeSemesters().subscribe({
@@ -86,15 +89,23 @@ export class SalahComponent {
       return
     }
 
-    this.router.navigate(['/staff/salah/attempt'], { queryParams: { studentId: this.studentId, new: true, classId: this.classId } });
+    this.router.navigate(['/staff/salah/attempt'], { queryParams: { studentId: this.studentId, new: true, classId: this.classId, semesterId: this.semesterId } });
 
   }
 
   onSemesterChange(value: any) {
+
     this.studentId = '';
-    this.studentLevel = ''
+    this.students = []
+
+    this.classId = ''
+    this.classes = []
+
     this.attempts = []
+    this.studentLevel = ''
+
     if (this.semesterId == '') {
+
       return
     }
     this.classService.getClassesBySemesterId(value).subscribe({
@@ -128,8 +139,14 @@ export class SalahComponent {
 
   onClassChange(value: any) {
     this.studentId = '';
-    this.studentLevel = ''
+    this.students = []
+
     this.attempts = []
+    this.studentLevel = ''
+    if (this.classId == '') {
+      return
+    }
+
     this.studentService.getStudentsByClassId(value).subscribe({
       next: async (res) => {
         if (!environment.production) {
@@ -160,7 +177,14 @@ export class SalahComponent {
   }
 
   onStudentChange(value: any) {
+
+    this.attempts = []
     this.studentLevel = ''
+
+    if (this.studentId == '') {
+      return
+    }
+
     this.salahService.getStudentAttempt(value).subscribe({
       next: async (res) => {
         if (!environment.production) {
@@ -192,7 +216,7 @@ export class SalahComponent {
   }
 
   continueAttempt(attemptId: number) {
-    this.router.navigate(['/staff/salah/attempt'], { queryParams: { attemptId: attemptId, new: false, studentId: this.studentId, classId: this.classId } });
+    this.router.navigate(['/staff/salah/attempt'], { queryParams: { attemptId: attemptId, new: false, studentId: this.studentId, classId: this.classId, semesterId: this.semesterId } });
   }
 
 
