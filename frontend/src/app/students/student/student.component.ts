@@ -48,9 +48,9 @@ export class StudentComponent {
         }
 
         this.getStudentPageDetails();
-        this.toastService.show('تم التسجيل في الفصل الدراسي بنجاح', 'success');
+        this.toastService.show(res.message, 'success');
 
-        this.toastService.clear()
+        // this.toastService.clear()
       },
       error: (error) => {
         if (!environment.production) {
