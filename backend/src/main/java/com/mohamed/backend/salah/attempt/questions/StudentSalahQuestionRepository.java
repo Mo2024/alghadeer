@@ -15,6 +15,7 @@ public interface StudentSalahQuestionRepository  extends JpaRepository<StudentSa
         NULL AS id,
         NULL AS grade,
         NULL AS evaluation,
+        '' AS comments,
         q AS question,
         sa as studentSalahAttempt
     

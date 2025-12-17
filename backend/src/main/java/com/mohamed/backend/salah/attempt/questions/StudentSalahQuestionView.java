@@ -8,6 +8,8 @@ public interface StudentSalahQuestionView {
     Integer getId();
     Integer getGrade();
     String getEvaluation();
+    String getComments();
     QuestionView getQuestion();
     StudentAttempt getStudentSalahAttempt();
+
 }

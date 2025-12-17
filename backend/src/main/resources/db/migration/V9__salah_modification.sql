@@ -1,0 +1,1 @@
+ALTER TABLE student_salah_question ADD COLUMN comments TEXT DEFAULT '';

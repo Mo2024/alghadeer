@@ -23,6 +23,9 @@ public class StudentSalahQuestion {
     @Column(name = "grade")
     private Integer grade;
 
+    @Column(name = "comments")
+    private String comments;
+
     @Column(name = "evaluation")
     @Enumerated(EnumType.STRING)
     private Evaluation evaluation;
