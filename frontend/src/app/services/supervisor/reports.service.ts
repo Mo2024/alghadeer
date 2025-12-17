@@ -12,8 +12,8 @@ export class ReportsService {
   url = `${this.apiUrl}/api/reports`;
 
   constructor(private http: HttpClient) { }
-  getEnrolledStudentsTelephone(): Observable<Blob> {
-    return this.http.get(`${this.url}/supervisor/get-enrolled-students-telephone`, {
+  getEnrolledStudentsTelephone(semesterId: any): Observable<Blob> {
+    return this.http.get(`${this.url}/supervisor/get-enrolled-students-telephone?semesterId=${semesterId}`, {
       responseType: 'blob',
       withCredentials: true
     });

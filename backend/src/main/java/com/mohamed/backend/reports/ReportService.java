@@ -2,6 +2,7 @@ package com.mohamed.backend.reports;
 
 import com.mohamed.backend.semesters.dto.StudentExportDto;
 import com.mohamed.backend.semesters.SemesterRepository;
+import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,19 @@ public class ReportService {
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN','SUPERVISOR')")
     @Transactional
-    public byte[] getEnrolledStudentsTelephoneExcel() throws Exception {
+    public byte[] getEnrolledStudentsTelephoneExcel(Integer semesterId) throws Exception {
+
+        log.info("Calling [semesterRepository].[existsById]");
+        boolean existsById = semesterRepository.existsById(semesterId);
+        log.info("[semesterRepository].[existsById] called successfully");
+
+        if(!existsById){
+            log.error("Semester does not exist {}", semesterId);
+            throw new HandledRejection("يرجى التاكد من البيانات");
+        }
 
         log.info("Calling [semesterRepository].[getEnrolledStudentsTelephone]");
-        List<StudentExportDto> students = semesterRepository.getEnrolledStudentsTelephone();
+        List<StudentExportDto> students = semesterRepository.getEnrolledStudentsTelephone(semesterId);
         log.info("[semesterRepository].[getEnrolledStudentsTelephone] called successfully");
 
         logger.logJsonObject("Enrolled students numbers:\n", students);

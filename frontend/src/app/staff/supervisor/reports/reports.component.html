@@ -19,9 +19,19 @@
         <form (ngSubmit)="onSubmit()" class="login-form text-center">
 
             <div class="form-group mb-4">
-                <select class="minimalist-input" [(ngModel)]="report" name="role">
+                <select class="minimalist-input" (ngModelChange)="onReportChange($event)" [(ngModel)]="report"
+                    name="role">
                     <option [value]="''">اختر التقرير</option>
                     <option value="PHONE_NUMBERS_CLASSES">أرقام الهواتف و الصفوف</option>
+                </select>
+            </div>
+
+            <div *ngIf="report === 'PHONE_NUMBERS_CLASSES'" class="form-group mb-4">
+                <select class="minimalist-input" [(ngModel)]="semesterId" name="semesterId">
+                    <option [value]="''">اختر الفصل</option>
+                    <option *ngFor="let semester of semesters" [value]="semester.id">
+                        {{ semester.name }}
+                    </option>
                 </select>
             </div>
 

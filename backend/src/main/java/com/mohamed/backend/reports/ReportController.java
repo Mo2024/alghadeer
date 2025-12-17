@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -38,10 +39,10 @@ public class ReportController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getEnrolledStudentsTelephoneExcel() {
+    public ResponseEntity<?> getEnrolledStudentsTelephoneExcel(@RequestParam Integer semesterId) {
         try {
             log.info("executing method [semesterService].[getEnrolledStudentsTelephoneExcel]");
-            byte[] response = reportService.getEnrolledStudentsTelephoneExcel();
+            byte[] response = reportService.getEnrolledStudentsTelephoneExcel(semesterId);
             log.info("[semesterService].[getEnrolledStudentsTelephoneExcel] executed successfully");
             logger.logJsonObject("Response for [getEnrolledStudentsTelephoneExcel]:\n{}", response);
             return ResponseEntity.ok()
