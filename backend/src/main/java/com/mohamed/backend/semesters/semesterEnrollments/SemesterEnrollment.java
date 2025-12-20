@@ -33,4 +33,9 @@ public class SemesterEnrollment {
 
     @Column(name = "enrollment_date")
     private LocalDateTime enrollmentDate;
+
+    @Column(name = "enrollment_status")
+    @Enumerated(EnumType.STRING)
+    private EnrollmentStatus enrollmentStatus;
+
 }

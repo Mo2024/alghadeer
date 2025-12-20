@@ -18,4 +18,16 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     @Query(value = "SELECT s.id AS id, s.name AS name FROM students s INNER JOIN student_class sc ON sc.student_id = s.id WHERE sc.class_id = :classId", nativeQuery = true)
     List<StudentView> getStudentsByClassId(Integer classId);
+
+    @Query(value = "SELECT s.id AS id, s.name AS name " +
+            "FROM students s " +
+            "INNER JOIN student_class sc " +
+            "ON sc.student_id = s.id " +
+            "INNER JOIN student_enrollments se " +
+            "ON se.student_id = s.id " +
+            "WHERE sc.class_id = :classId " +
+            "AND se.enrollment_status = 'ACTIVE' " +
+            "AND se.semester_id = :semesterId \n",
+            nativeQuery = true)
+    List<StudentView> getActiveStudentsByClassId(Integer classId, Integer semesterId);
 }

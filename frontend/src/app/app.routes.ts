@@ -86,6 +86,7 @@ export const routes: Routes = [
                 data: { role: 'ADMIN', accessControlled: true }
             },
 
+
             // Instructor Routes
             {
                 path: 'staff/instructor/topics',
@@ -170,6 +171,12 @@ export const routes: Routes = [
             {
                 path: 'staff/supervisor/reports',
                 loadComponent: () => import('./staff/supervisor/reports/reports.component').then(c => c.ReportsComponent),
+                canActivate: [authGuard],
+                data: { role: 'SUPERVISOR', accessControlled: true }
+            },
+            {
+                path: 'staff/supervisor/drop-student',
+                loadComponent: () => import('./staff/supervisor/drop-student/drop-student.component').then(c => c.DropStudentComponent),
                 canActivate: [authGuard],
                 data: { role: 'SUPERVISOR', accessControlled: true }
             },

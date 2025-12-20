@@ -45,4 +45,8 @@ export class SemesterService {
     return this.http.post(`${this.url}/admin/create`, body, { withCredentials: true });
   }
 
+  dropStudent(studentId: any): Observable<any> {
+    return this.http.post(`${this.url}/supervisor/drop-student?studentId=${studentId}`, {}, { withCredentials: true });
+  }
+
 }

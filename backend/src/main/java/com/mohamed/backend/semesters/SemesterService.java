@@ -1,8 +1,11 @@
 package com.mohamed.backend.semesters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.classes.ClassRepository;
 import com.mohamed.backend.classes.ClassService;
+import com.mohamed.backend.classes.dto.ChangeStudentClassDto;
 import com.mohamed.backend.semesters.dto.SemesterView2;
+import com.mohamed.backend.semesters.semesterEnrollments.EnrollmentStatus;
 import com.mohamed.backend.semesters.semesterEnrollments.SemesterEnrollment;
 import com.mohamed.backend.semesters.semesterEnrollments.SemesterEnrollmentRepository;
 import com.mohamed.backend.utils.Response;
@@ -27,6 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,6 +43,7 @@ public class SemesterService {
     private final StudentRepository studentRepository;
     private final GradeClassAssignmentRepository gradeClassAssignmentRepository;
     private final ClassService classService;
+    private final ClassRepository classRepository;
     private final Logger logger;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
@@ -166,6 +171,8 @@ public class SemesterService {
                 });
         log.info("[studentRepository].[findById] called successfully");
 
+        logger.logJsonObject("Student enrolling:\n{}", student);
+
         // I do not need to validate here if the semester is active because above the semester is already fetched by activeness
         log.info("Calling [gradeClassAssignmentRepository].[findBySemesterIdAndGrade]");
         Class class_ = gradeClassAssignmentRepository.findBySemesterIdAndGrade(semester.getId(), grade).getClass_();
@@ -173,25 +180,46 @@ public class SemesterService {
 
         logger.logJsonObject("Fetched Class:\n{}", class_);
 
-        student.getClasses().add(class_);
+        SemesterEnrollment semesterEnrollment;
+
+        log.info("Calling [semesterEnrollmentRepository].[existsByStudentIdAndSemesterIdAndEnrollmentStatus]");
+        boolean existsByStudentIdAndSemesterIdAndEnrollmentStatusActive =  semesterEnrollmentRepository.existsByStudentIdAndSemesterIdAndEnrollmentStatus(studentDetails.getId(), semester.getId(), EnrollmentStatus.ACTIVE);
+        log.info("[semesterEnrollmentRepository].[existsByStudentIdAndSemesterIdAndEnrollmentStatus] called successfully");
+
+        if (existsByStudentIdAndSemesterIdAndEnrollmentStatusActive) {
+            log.error("Student already registered in semester");
+            throw new HandledRejection("لا يمكن تسجيل الطالب لأنه مسجل في هذا الفصل الدراسي");
+        } else if (semesterEnrollmentRepository.existsByStudentIdAndSemesterIdAndEnrollmentStatus(studentDetails.getId(), semester.getId(), EnrollmentStatus.DROPPED_EXCESS_ABSENCE)){
+
+            semesterEnrollment = semesterEnrollmentRepository.findByStudentIdAndSemesterId(studentDetails.getId(), semester.getId())
+                    .orElseThrow(() -> {
+                        log.error("semester enrollment does not exist:\n{}", studentDetails.getId());
+                        return new RuntimeException();
+                    });
+
+            semesterEnrollment.setEnrollmentStatus(EnrollmentStatus.ACTIVE);
+
+            log.info("Calling [classRepository].[transferStudentsToClassInSemester]");
+            classRepository.transferStudentsToClassInSemester(List.of(studentDetails.getId()), class_.getId(), class_.getSemester().getId());
+            log.info("[classRepository].[transferStudentsToClassInSemester] called successfully");
+
+        } else {
+
+            student.getClasses().add(class_);
+
+            semesterEnrollment = SemesterEnrollment.builder()
+                    .student(student)
+                    .semester(semester)
+                    .enrollmentStatus(EnrollmentStatus.ACTIVE)
+                    .enrollmentDate(LocalDateTime.now())
+                    .build();
+        }
+
+
         log.info("Calling [studentRepository].[save]");
         studentRepository.save(student);
         log.info("[studentRepository].[save] called successfully");
 
-        logger.logJsonObject("Student enrolling:\n{}", student);
-
-        log.info("Calling [semesterEnrollmentRepository].[existsByStudentIdAndSemesterId]");
-        if (semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentDetails.getId(), semester.getId())) {
-            log.error("Student already registered in semester");
-            throw new HandledRejection("لا يمكن تسجيل الطالب لأنه مسجل في هذا الفصل الدراسي");
-        }
-        log.info("[semesterEnrollmentRepository].[existsByStudentIdAndSemesterId] called successfully");
-
-        SemesterEnrollment semesterEnrollment = SemesterEnrollment.builder()
-                .student(student)
-                .semester(semester)
-                .enrollmentDate(LocalDateTime.now())
-                .build();
 
         log.info("Calling [semesterEnrollmentRepository].[save]");
         semesterEnrollmentRepository.save(semesterEnrollment);
@@ -199,7 +227,8 @@ public class SemesterService {
 
         logger.logJsonObject("Semester Enrollment saved successfully:\n{}", semesterEnrollment);
 
-        return new Response("تم تسجيل الطالب في الفصل الدراسي بنجاح");
+        String respMsg = "شكراً " + student.getName() + "، تم تسجيلكم في " + semester.getName();
+        return new Response(respMsg);
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN')")
@@ -228,6 +257,44 @@ public class SemesterService {
 
     public boolean isEnrolled(Integer studentId, Integer semesterId) {
         return semesterEnrollmentRepository.existsByStudentIdAndSemesterId(studentId, semesterId);
+    }
+
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public Response dropStudentFromSemester(Integer studentId) throws JsonProcessingException {
+
+        log.info("Calling [semesterRepository].[findByActive]");
+        Semester semester = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                });
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        log.info("Calling [studentRepository].[findById]");
+        studentRepository.findById(studentId)
+                .orElseThrow(() -> {
+                    log.error("Student does not exist:\n{}", studentId);
+                    return new HandledRejection("الطالب غير موجود");
+                });
+        log.info("[studentRepository].[findById] called successfully");
+
+
+        log.info("Calling [semesterEnrollmentRepository].[findByStudentIdAndSemesterId]");
+        SemesterEnrollment semesterEnrollment = semesterEnrollmentRepository
+                .findByStudentIdAndSemesterId(studentId, semester.getId())
+                .orElseThrow(() -> {
+                    log.error("Student not enrolled in this semester:\n{}", studentId);
+                    return new HandledRejection("الطالب غير مسجل في هذا الفصل الدراسي");
+                });
+        log.info("[semesterEnrollmentRepository].[findByStudentIdAndSemesterId] called successfully");
+
+        logger.logJsonObject("semesterEnrollment: \n{}", semesterEnrollment);
+
+        semesterEnrollment.setEnrollmentStatus(EnrollmentStatus.DROPPED_EXCESS_ABSENCE);
+
+        semesterEnrollmentRepository.save(semesterEnrollment);
+
+        return new Response("تم انسحاب الطالب بنجاح");
     }
 
 }

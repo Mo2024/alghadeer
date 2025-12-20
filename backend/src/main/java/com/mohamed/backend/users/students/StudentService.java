@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.announcements.AnnouncementView;
 import com.mohamed.backend.semesters.dto.SemesterEnrollmentView;
 
+import com.mohamed.backend.semesters.semesterEnrollments.EnrollmentStatus;
 import com.mohamed.backend.topics.main.MainTopicView;
 import com.mohamed.backend.announcements.AnnouncementService;
 import com.mohamed.backend.sessions.AttendanceService;
@@ -228,6 +229,26 @@ public class StudentService {
         return studentsList;
     }
 
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public List<StudentView> getActiveStudentsByClassId(Integer classId) throws JsonProcessingException {
+
+        log.info("Calling [semesterRepository].[findByActive]");
+        Integer semesterId = semesterRepository.findByActive(true)
+                .orElseThrow(() -> {
+                    log.error("No active semester found");
+                    return new HandledRejection("لا يوجد فصل دراسي نشط حالياً");
+                }).getId();
+        log.info("[semesterRepository].[findByActive] called successfully");
+
+        log.info("Calling [studentRepository].[getActiveStudentsByClassId]");
+        List<StudentView> studentsList = studentRepository.getActiveStudentsByClassId(classId, semesterId);
+        log.info("[studentRepository].[getActiveStudentsByClassId] called successfully");
+
+        logger.logJsonObject("studentsList Details:\n{}", studentsList);
+
+        return studentsList;
+    }
+
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('STUDENT')")
     public StudentDetailsPageDTO getStudentDetails() {
@@ -247,12 +268,19 @@ public class StudentService {
         Double attendancePercentage = attendanceService.getAttendancePercentage(studentId, semester.getId());
         List<AnnouncementView> activeAnnouncements = announcementService.findActiveAnnouncements(studentId, semester.getId());
         boolean isEnrolled = semesterService.isEnrolled(studentId, semester.getId());
+        boolean isEnrollmentStatusActive =
+                semesterEnrollmentRepository
+                        .existsByStudentIdAndSemesterIdAndEnrollmentStatus(
+                                studentId,
+                                semester.getId(),
+                                EnrollmentStatus.ACTIVE
+                        );
 
         return StudentDetailsPageDTO.builder()
                 .missedTopics(missedTopics)
                 .attendedTopics(attendedTopics)
                 .attendancePercentage(attendancePercentage)
-                .isEnrolled(isEnrolled)
+                .isEnrolled(isEnrolled && isEnrollmentStatusActive)
                 .announcements(activeAnnouncements)
                 .build();
 

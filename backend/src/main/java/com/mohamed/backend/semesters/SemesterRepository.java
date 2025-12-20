@@ -3,6 +3,7 @@ package com.mohamed.backend.semesters;
 import com.mohamed.backend.semesters.dto.SemesterView;
 import com.mohamed.backend.semesters.dto.SemesterView2;
 import com.mohamed.backend.semesters.dto.StudentExportDto;
+import com.mohamed.backend.semesters.semesterEnrollments.SemesterEnrollment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,10 +45,10 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
         inner join student_class sc on sc.class_id = c.id
         inner join students s2 on s2.id = sc.student_id
         inner join student_enrollments se on se.student_id = s2.id and se.semester_id = s.id
-        where s.active = true
+        where s.id = :semesterId
         order by enrollmentDate asc
         """, nativeQuery = true)
-    List<StudentExportDto> getEnrolledStudentsTelephone();
+    List<StudentExportDto> getEnrolledStudentsTelephone(@Param("semesterId") Integer semesterId);
 
     @Query(value = "SELECT s.id AS id, s.name AS name FROM semesters s ORDER BY s.start_date DESC LIMIT 3", nativeQuery = true)
     List<SemesterView2> getLatestThreeSemesters();
@@ -55,4 +56,5 @@ public interface SemesterRepository extends JpaRepository<Semester, Integer> {
     boolean existsByActive(boolean active);
 
     Optional<Semester> findByActive(boolean active);
+
 }

@@ -218,4 +218,38 @@ public class SemesterController {
         }
     }
 
+    @PostMapping("/supervisor/drop-student")
+    @Operation(
+            summary = "Drops student from semester",
+            description = "Only admins are authorized to perform this request."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success request - Request executed successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
+    })
+    public ResponseEntity<?> dropStudent(@RequestParam Integer studentId) {
+        try {
+            log.info("executing method [semesterService].[dropStudentFromSemester]");
+            Response response = semesterService.dropStudentFromSemester(studentId);
+            log.info("[semesterService].[dropStudentFromSemester] executed successfully");
+            logger.logJsonObject("Response for [dropStudentFromSemester]:\n{}", response);
+            return ResponseEntity.ok().body(response);
+        } catch (HandledRejection e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new Response(e.getMessage(), "ALGD-400"));
+        } catch (AuthorizationDeniedException e) {
+            log.error("Authorization Denied error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new Response("ليس لديك صلاحية للوصول إلى هذا المورد", "ALGD-403"));
+        } catch (Exception e) {
+            log.error("Unexpected error:", e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", "ALGD-500"));
+        }
+    }
+
 }

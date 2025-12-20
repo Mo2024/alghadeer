@@ -1,0 +1,43 @@
+<div class="container" style="padding-top: 1.5rem;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="color: #2c3e50;">
+            انسحاب الطالب
+            <span style="
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 50%;
+                height: 3px;
+                background: linear-gradient(to right, #3498db, #2ecc71);
+                border-radius: 3px;
+                "></span>
+        </h4>
+
+    </div>
+    <div class="login-wrapper">
+
+        <form (ngSubmit)="onSubmit()" class="login-form text-center">
+
+            <div class="form-group mb-4">
+                <select class="minimalist-input" (ngModelChange)="onClassChange($event)" [(ngModel)]="classId"
+                    name="role">
+                    <option [value]="''">اختر الصف</option>
+                    <option *ngFor="let class of classes" [value]="class.id">
+                        {{ class.name }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group mb-4">
+                <select class="minimalist-input" [(ngModel)]="studentId" name="studentId">
+                    <option [value]="''">اختر الطالب</option>
+                    <option *ngFor="let student of students" [value]="student.id">
+                        {{ student.name }}
+                    </option>
+                </select>
+            </div>
+
+            <button [disabled]="isDisabled" type="submit" class="btn-login w-75 rounded-pill">انسحاب</button>
+        </form>
+    </div>
+</div>

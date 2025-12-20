@@ -55,5 +55,8 @@ export class StudentService {
   getStudentsByClassId(classId: any): Observable<any> {
     return this.http.get(`${this.url}/all/students-by-class-id?classId=${classId}`, { withCredentials: true });
   }
+  getActiveStudentsByClassId(classId: any): Observable<any> {
+    return this.http.get(`${this.url}/supervisor/active-students-by-class-id?classId=${classId}`, { withCredentials: true });
+  }
 
 }

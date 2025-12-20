@@ -5,10 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SemesterEnrollmentRepository extends JpaRepository<SemesterEnrollment, Integer> {
     boolean existsByStudentIdAndSemesterId(Integer studentId, Integer semesterId);
 
     List<SemesterEnrollmentView> findAllBySemesterId(int semesterId);
+
+    Optional<SemesterEnrollment> findByStudentIdAndSemesterId(Integer studentId, Integer id);
+
+    boolean existsByStudentIdAndSemesterIdAndEnrollmentStatus(Integer studentId, Integer id, EnrollmentStatus enrollmentStatus);
 }

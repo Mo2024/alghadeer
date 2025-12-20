@@ -88,9 +88,13 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
                 SELECT s AS student, false AS isPresent
                 FROM Class c
                 JOIN c.students s
+                JOIN SemesterEnrollment se
+                ON se.student.id = s.id
                 WHERE c.id = :classId
+                AND se.enrollmentStatus = 'ACTIVE'
+                AND se.semester.active = true
             """)
-    List<StudentAttendanceView> findStudentByClassId(@Param("classId") int classId);
+    List<StudentAttendanceView> findStudentByClassIdAndActiveEnrollmentAndActiveSemester(@Param("classId") int classId);
 
     List<ClassView2> findAllBySemesterActiveTrue();
 

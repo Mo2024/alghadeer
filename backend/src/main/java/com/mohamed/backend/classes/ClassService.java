@@ -232,7 +232,6 @@ public class ClassService {
     }
 
     @Transactional
-    @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
     public Response changeStudentClass(ChangeStudentClassDto changeStudentClassDto) throws JsonProcessingException {
         logger.logJsonObject("Request parameter:\n{}", changeStudentClassDto);
 

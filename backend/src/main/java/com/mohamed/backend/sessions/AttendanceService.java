@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.classes.dto.AttendanceRequestDTO;
 import com.mohamed.backend.classes.dto.AttendanceView;
 import com.mohamed.backend.classes.dto.GetAttendanceStatusDto;
+import com.mohamed.backend.semesters.SemesterRepository;
 import com.mohamed.backend.topics.main.MainTopicView;
 import com.mohamed.backend.users.staff.StaffService;
 import com.mohamed.backend.users.students.dto.StudentAttendanceView;
@@ -35,6 +36,7 @@ public class AttendanceService {
     private final StaffService staffService;
     private final ClassRepository classRepository;
     private final SessionRepository sessionRepository;
+    private final SemesterRepository semesterRepository;
     private final Logger logger;
 
     @Transactional
@@ -201,9 +203,9 @@ public class AttendanceService {
             response.setAttendanceList(attendanceList);
             response.setStudents(null);
         } else {
-            log.info("Calling [classRepository].[findStudentByClassId]");
-            List<StudentAttendanceView> students = classRepository.findStudentByClassId(classId);
-            log.info("[classRepository].[findStudentByClassId] called successfully:\n{}", students);
+            log.info("Calling [classRepository].[findStudentByClassIdAndActiveEnrollment]");
+            List<StudentAttendanceView> students = classRepository.findStudentByClassIdAndActiveEnrollmentAndActiveSemester(classId);
+            log.info("[classRepository].[findStudentByClassIdAndActiveEnrollment] called successfully:\n{}", students);
             response.setStudents(students);
             response.setAttendanceList(null);
         }
