@@ -3,8 +3,6 @@ services:
     image: mohdosama2002/alghadeer-frontend:latest
     container_name: frontend
     restart: always
-    depends_on:
-      - backend
     ports:
       - "443:443"
     volumes:
@@ -16,59 +14,16 @@ services:
     image: mohdosama2002/alghadeer-backend:latest
     container_name: backend
     restart: always
+    env_file:
+      - .env.prod
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
-    environment:
-      PORT: "${PORT}"
-      STAGE: "${STAGE}"
-      FRONTEND_ORIGIN: "${FRONTEND_ORIGIN}"
-      SESSION_TTL: "${SESSION_TTL}"
-      SWAGGER_STATUS: "${SWAGGER_STATUS}"
-      API_DOCS_STATUS: "${API_DOCS_STATUS}"
-      SPRING_MAIL_HOST: "${SPRING_MAIL_HOST}"
-      SPRING_MAIL_PORT: "${SPRING_MAIL_PORT}"
-      SPRING_MAIL_USERNAME: "${SPRING_MAIL_USERNAME}"
-      SPRING_MAIL_PASSWORD: "${SPRING_MAIL_PASSWORD}"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH}"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE}"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED: "${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED}"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_CONNECTIONTIMEOUT: "${SPRING_MAIL_PROPERTIES_MAIL_SMTP_CONNECTIONTIMEOUT}"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT: "${SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT}"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITETIMEOUT: "${SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITETIMEOUT}"
-      LOGGING_FILE: "${LOGGING_FILE}"
-      FILE_PATH: "${FILE_PATH}"
-      IMAGE_WIDTH: "${IMAGE_WIDTH}"
-      IMAGE_HEIGHT: "${IMAGE_HEIGHT}"
-      DATABASE_URL: "${DATABASE_URL}"
-      DATABASE_USERNAME: "${DATABASE_USERNAME}"
-      DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
-      FAIL_TIMEOUT: "${FAIL_TIMEOUT}"
-      DDL_GENERATION: "${DDL_GENERATION}"
-      DDL_STATUS: "${DDL_STATUS}"
-      FLYWAY_STATUS: "${FLYWAY_STATUS}"
     volumes:
       - /opt/students-images:/tmp/students-images
-      - /opt/logs:/tmp/logs
+      - /var/log/alghadeer:/tmp/logs
     networks:
       - alghadeer-network
-  postgres:
-    image: postgres
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: spring_user
-      POSTGRES_PASSWORD: "a1ghadeer_spr1ng_pa55w0rd_pg"
-      POSTGRES_DB: alghadeer
-      TZ: Asia/Bahrain
-    ports:
-      - "5432:5432"
-    volumes:
-      - /opt/postgres-data:/var/lib/postgresql/data
-      - /opt/backups:/var/lib/postgresql/backups
-    networks:
-      - alghadeer-network
+
 networks:
   alghadeer-network:
     driver: bridge
