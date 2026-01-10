@@ -91,17 +91,21 @@
                                 <textarea class="form-control" rows="1" [(ngModel)]="q.comments"
                                     name="comments_{{q.question.id}}"></textarea>
                             </div>
+
+
+                        </div>
+                        <div class="my-3 d-flex align-items-center">
+                            <label class="form-label fw-bold  mb-0">ناجح في الموضوع</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox"
+                                    [(ngModel)]="studentAttempt.subjects[s.subjectIndexInStudentAttempt].passed"
+                                    name="passed{{s.subjectIndexInStudentAttempt}}"
+                                    id="passed{{s.subjectIndexInStudentAttempt}}">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mb-3 d-flex align-items-center">
-                <label class="form-label fw-semibold me-3 mb-0">الطالب ناجح</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="isPassed" [(ngModel)]="studentAttempt.isPassed"
-                        name="isPassed">
-                </div>
             </div>
 
             <div class="mb-3">

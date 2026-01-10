@@ -27,7 +27,10 @@ export class AttemptComponent {
 
   showQuestions: boolean = false;
   questions: any[] = [];
-  studentAttempt: any
+  studentAttempt: any;
+
+  subjectsHashMap: any = new Map();
+
 
   isNew?: boolean;
   attemptId?: number;
@@ -64,7 +67,8 @@ export class AttemptComponent {
       return;
     }
 
-
+    //checks if this is a fresh attempt, if it is then it will display the subjects to choose then create the attempt 
+    // otherwise it will get the questions
     if (this.isNew == true) {
 
       this.salahService.getSubjectsByLevel(this.studentId).subscribe({
@@ -106,6 +110,7 @@ export class AttemptComponent {
           if (res) {
             this.questions = res.salahQuestionsRes;
             this.studentAttempt = res.studentAttempt;
+            await this.createSubjectsHashmap()
             this.studentAttempt.isPassed = this.studentAttempt.isPassed === true;
             this.showQuestions = true;
           }
@@ -147,6 +152,7 @@ export class AttemptComponent {
         if (res) {
           this.questions = res.salahQuestionsRes;
           this.studentAttempt = res.studentAttempt;
+          await this.createSubjectsHashmap()
           this.studentAttempt.isPassed = this.studentAttempt.isPassed === true;
           this.showQuestions = true;
         }
@@ -169,6 +175,19 @@ export class AttemptComponent {
       }
     })
 
+  }
+
+  // this hashmap is to be able to map the failed/passed values to the this.studentAttempt variable 
+  // without having to do a nested loop, this will be done by making for each subject id stored
+  // in the this.studentAttempt.subjects array, it will make a key based on the subject id and store
+  // the index of the id in the array and the value
+  async createSubjectsHashmap() {
+    for (let i = 0; i < this.studentAttempt.subjects.length; i++) {
+      let subjectObject = this.studentAttempt.subjects[i]
+      let key = subjectObject.subjectId
+      let value = i
+      this.subjectsHashMap.set(key, value)
+    }
   }
 
 
@@ -278,12 +297,13 @@ export class AttemptComponent {
     return subject.id;
   }
 
-
-
   getSubjects() {
     return this.questions
       .filter((q, i, arr) => i === 0 || q.question.subject.name !== arr[i - 1].question.subject.name)
-      .map(q => q.question.subject);
+      .map(q => ({
+        ...q.question.subject,
+        subjectIndexInStudentAttempt: this.subjectsHashMap.get(q.question.subject.id)
+      }));
   }
 
   getQuestions(i: number) {
