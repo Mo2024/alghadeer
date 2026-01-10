@@ -1,6 +1,7 @@
 package com.mohamed.backend.salah.attempt;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.mohamed.backend.salah.attempt.dto.SubjectJsonDto;
 import com.mohamed.backend.salah.level.StudentLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,13 +37,10 @@ public class StudentAttempt {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private List<Integer> subjects;
+    private List<SubjectJsonDto> subjects;
 
     @Column(name = "completed")
     private Boolean isCompleted;
-
-    @Column(name = "passed")
-    private Boolean isPassed;
 
     @Column(name = "comments")
     private String comments;

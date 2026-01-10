@@ -1,0 +1,1 @@
+ALTER TABLE student_salah_attempt DROP COLUMN passed;

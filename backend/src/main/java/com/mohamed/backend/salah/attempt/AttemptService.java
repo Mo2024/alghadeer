@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.salah.attempt.dto.AttemptAndQuestionsDto;
 import com.mohamed.backend.salah.attempt.dto.LatestAttemptsWithStudentLevelDto;
 import com.mohamed.backend.salah.attempt.dto.SalahAttemptView;
+import com.mohamed.backend.salah.attempt.dto.SubjectJsonDto;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionRepository;
 import com.mohamed.backend.salah.attempt.questions.StudentSalahQuestionView;
 import com.mohamed.backend.salah.level.StudentLevel;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,6 +64,8 @@ public class AttemptService {
             throw new HandledRejection("واحد أو أكثر من المواضيع المحددة ليست من ضمن المستوى المحدد");
         }
 
+        List<SubjectJsonDto> subjectJsonDtos = new ArrayList<>();
+
         for (Integer subjectId: selectedSubjects){
             log.info("Calling [questionRepository].[existsBySubject_Id]");
             Boolean existBySubjectId = questionRepository.existsBySubject_Id(subjectId);
@@ -81,13 +85,21 @@ public class AttemptService {
                 logger.logJsonObjectError("No questions exist for the specified subject\n {}", subject);
                 throw new HandledRejection( "لا توجد أسئلة للموضوع: "+ subject.getName());
 
+            } else {
+                SubjectJsonDto dto = SubjectJsonDto.builder()
+                        .passed(false)
+                        .subjectId(subjectId)
+                        .build();
+
+                subjectJsonDtos.add(dto);
             }
+
         }
 
         StudentAttempt attempt = StudentAttempt.builder()
                 .studentLevel(studentLevel)
                 .attemptDateTime(LocalDateTime.now())
-                .subjects(selectedSubjects)
+                .subjects(subjectJsonDtos)
                 .isCompleted(false)
                 .build();
 

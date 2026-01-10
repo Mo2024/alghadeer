@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mohamed.backend.salah.attempt.dto.AttemptAndQuestionsDto;
 import com.mohamed.backend.salah.attempt.StudentAttempt;
 import com.mohamed.backend.salah.attempt.StudentAttemptRepository;
+import com.mohamed.backend.salah.attempt.dto.SubjectJsonDto;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -42,7 +43,7 @@ public class StudentSalahQuestionService {
 
         if(listOfQuestions.isEmpty()){
             log.info("Calling [questionRepository].[getFreshStudentSalahQuestions]");
-            listOfQuestions = studentSalahQuestionRepository.getFreshStudentSalahQuestions(studentAttempt.getSubjects(), studentAttempt.getStudentLevel().getLevel(), studentAttempt.getId());
+            listOfQuestions = studentSalahQuestionRepository.getFreshStudentSalahQuestions(getSubjectsId(studentAttempt.getSubjects()), studentAttempt.getStudentLevel().getLevel(), studentAttempt.getId());
             log.info("[questionRepository].[getFreshStudentSalahQuestions] called successfully");
         }
 
@@ -68,7 +69,7 @@ public class StudentSalahQuestionService {
                 });
         log.info("[studentAttemptRepository].[findById] called successfully");
 
-        List<Integer> subjectsId = studentAttempt.getSubjects();
+        List<Integer> subjectsId = getSubjectsId(studentAttempt.getSubjects());
 
         log.info("Calling [studentSalahQuestionRepository].[countByStudentSalahAttemptId]");
         int questionsCount = studentSalahQuestionRepository.countByStudentSalahAttemptId(attemptAndQuestionsDto.getStudentAttempt().getId());
@@ -102,7 +103,7 @@ public class StudentSalahQuestionService {
             boolean attemptIdMatch = salahQuestion.getStudentSalahAttempt().getId().equals(attemptAndQuestionsDto.getStudentAttempt().getId());
 
             // To check if the subject id of the question is included in the subjects array in student attempt object
-            boolean subjectIdExistsInAttempt = studentAttempt.getSubjects().contains(salahQuestion.getQuestion().getSubjectId());
+            boolean subjectIdExistsInAttempt = getSubjectsId(studentAttempt.getSubjects()).contains(salahQuestion.getQuestion().getSubjectId());
 
             if (!attemptIdMatch || !subjectIdExistsInAttempt || (questionsCount != 0 && !existsById)) {
                 logger.logJsonObject("Invalid data provided:\n{}", salahQuestion);
@@ -134,13 +135,39 @@ public class StudentSalahQuestionService {
             studentAttempt.setIsCompleted(true);
         }
 
-        if (attemptAndQuestionsDto.getStudentAttempt().getIsPassed() == null){
-            logger.logJsonObject("Unable to determine if the student passed or failed:\n{}", attemptAndQuestionsDto.getStudentAttempt());
-            throw new HandledRejection("يرجى تحديد ما إذا كان الطالب ناجحاً أم راسباً");
+        studentAttempt.setComments(attemptAndQuestionsDto.getStudentAttempt().getComments());
+
+        if (studentAttempt.getSubjects().size() != attemptAndQuestionsDto.getStudentAttempt().getSubjects().size()){
+            logger.logJsonObject("Subjects size in request does not match the one stored :\n{}", attemptAndQuestionsDto.getStudentAttempt().getSubjects());
+            throw new HandledRejection("يرجي التأكد من البيانات");
         }
 
-        studentAttempt.setIsPassed(attemptAndQuestionsDto.getStudentAttempt().getIsPassed());
-        studentAttempt.setComments(attemptAndQuestionsDto.getStudentAttempt().getComments());
+        Set<Integer> subjectsIdReqSet = new HashSet<>();
+
+        for (SubjectJsonDto subject : attemptAndQuestionsDto.getStudentAttempt().getSubjects()) {
+            subjectsIdReqSet.add(subject.getSubjectId());
+
+            if (isSubmitAttempt && subject.getPassed() == null) {
+                logger.logJsonObject(
+                        "Subject has null passed' value. Subject object: \n{}",
+                        subject
+                );
+                throw new HandledRejection("يرجى تحديد ما إذا كان الطالب ناجحاً أم راسباً");
+            }
+
+        }
+
+        for (SubjectJsonDto subject : studentAttempt.getSubjects()) {
+            if (!subjectsIdReqSet.contains(subject.getSubjectId())) {
+                logger.logJsonObject(
+                        "Subject was not found in Subjects Req :\n{}",
+                        attemptAndQuestionsDto.getStudentAttempt().getSubjects()
+                );
+                throw new HandledRejection("يرجي التأكد من البيانات");
+            }
+        }
+
+        studentAttempt.setSubjects(attemptAndQuestionsDto.getStudentAttempt().getSubjects());
 
         log.info("Calling [studentAttemptRepository].[save]");
         studentAttemptRepository.save(studentAttempt);
@@ -167,6 +194,16 @@ public class StudentSalahQuestionService {
         log.info("[saveAttempt] called successfully");
 
         return new Response("Attempt Completed successfully");
+    }
+
+    private List<Integer> getSubjectsId(List<SubjectJsonDto> subjectsJsonDto) {
+        List<Integer> subjectsId = new ArrayList<>();
+
+        for (SubjectJsonDto subjectJsonDto : subjectsJsonDto) {
+            subjectsId.add(subjectJsonDto.getSubjectId());
+        }
+
+        return subjectsId;
     }
 
 }
