@@ -100,6 +100,7 @@ public class AttemptService {
                 .studentLevel(studentLevel)
                 .attemptDateTime(LocalDateTime.now())
                 .subjects(subjectJsonDtos)
+                .level(studentLevel.getLevel())
                 .isCompleted(false)
                 .build();
 

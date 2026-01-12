@@ -16,7 +16,8 @@ public interface StudentAttemptRepository extends JpaRepository<StudentAttempt, 
             "    ssa.attempt_date_time AS latest_attempt,\n" +
             "    ssa.completed,\n" +
             "    (elem ->> 'passed')::boolean AS passed,\n" +
-            "    s.name AS subjectName\n" +
+            "    s.name AS subjectName,\n" +
+            "    ssa.level AS level\n" +
             "FROM student_salah_attempt ssa\n" +
             "CROSS JOIN LATERAL jsonb_array_elements(ssa.subjects) AS elem\n" +
             "INNER JOIN subjects s on s.id = (elem ->> 'subjectId')::int\n" +

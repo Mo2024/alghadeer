@@ -3,6 +3,7 @@ package com.mohamed.backend.salah.attempt;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mohamed.backend.salah.attempt.dto.SubjectJsonDto;
 import com.mohamed.backend.salah.level.StudentLevel;
+import com.mohamed.backend.salah.questions.Level;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,10 @@ public class StudentAttempt {
 
     @Column(name = "completed")
     private Boolean isCompleted;
+
+    @Column(name = "level")
+    @Enumerated(EnumType.STRING)
+    private Level level;
 
     @Column(name = "comments")
     private String comments;
