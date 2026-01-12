@@ -16,7 +16,7 @@ import { JsonParsePipe } from '../../pipes/json-parse.pipe';
 })
 export class StudentComponent {
 
-  displayedEnrollment: boolean = false;
+  displayEnrollment: boolean = false;
   grade: string = '';
   isDisabled: boolean = false;
   gaugeSize: number = 250; // default size
@@ -41,7 +41,7 @@ export class StudentComponent {
     this.isDisabled = true;
     this.semesterService.enrollStudent(this.grade).subscribe({
       next: async (res) => {
-        this.displayedEnrollment = false;
+        this.displayEnrollment = false;
         this.isDisabled = false;
         if (!environment.production) {
           console.log(res)
@@ -81,7 +81,7 @@ export class StudentComponent {
         }
 
         if (res) {
-          this.displayedEnrollment = !res.enrolled;
+          this.displayEnrollment = !res.enrolled;
           this.studentPageDetails = res
         } else if (!res) {
           this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
