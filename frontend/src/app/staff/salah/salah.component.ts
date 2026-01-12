@@ -255,4 +255,19 @@ export class SalahComponent {
     })
   }
 
+  getLevelArabic(level: any): string {
+    switch (level) {
+      case 'ONE':
+        return 'الأول';
+      case 'TWO':
+        return 'الثاني';
+      case 'THREE':
+        return 'الثالث';
+      case 'FOUR':
+        return 'الرابع';
+      default:
+        return '';
+    }
+  }
+
 }
