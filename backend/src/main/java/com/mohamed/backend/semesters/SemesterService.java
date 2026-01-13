@@ -260,6 +260,7 @@ public class SemesterService {
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR')")
+    @Transactional
     public Response dropStudentFromSemester(Integer studentId) throws JsonProcessingException {
 
         log.info("Calling [semesterRepository].[findByActive]");
