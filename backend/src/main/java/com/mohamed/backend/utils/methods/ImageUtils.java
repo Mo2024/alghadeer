@@ -1,5 +1,6 @@
 package com.mohamed.backend.utils.methods;
 
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+@Slf4j
 @Component
 public class ImageUtils {
 
@@ -44,6 +49,17 @@ public class ImageUtils {
 
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(imageBytes);
+        }
+    }
+
+    public void createDirectory(String filePath) {
+        Path path = Paths.get(filePath);
+
+        try {
+            Files.createDirectories(path);
+            log.info("Directory created successfully: {}" , path);
+        } catch (Exception e) {
+            log.error("Failed to create directory: {}" , e.getMessage());
         }
     }
 
