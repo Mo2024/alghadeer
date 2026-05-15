@@ -27,3 +27,44 @@
 .bg-ahlulbayt-green {
     background-color: #A8DADC;
 }
+
+.group-accordion {
+    background: linear-gradient(135deg, #1f2937, #374151);
+    color: white;
+    border: none;
+    transition: all 0.25s ease;
+}
+
+.group-accordion:not(.collapsed) {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.group-accordion:hover {
+    filter: brightness(1.05);
+}
+
+.group-accordion::after {
+    filter: brightness(0) invert(1);
+}
+
+.action-icons i {
+    transition: transform 0.2s ease;
+}
+
+.action-icons i:hover {
+    transform: scale(1.15);
+}
+
+.accordion-item {
+    overflow: hidden;
+}
+
+.accordion-button {
+    box-shadow: none !important;
+}
+
+.accordion-button:focus {
+    box-shadow: none !important;
+}
+

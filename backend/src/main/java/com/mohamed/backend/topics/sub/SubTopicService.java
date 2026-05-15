@@ -1,6 +1,8 @@
 package com.mohamed.backend.topics.sub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.topics.group.TopicGroup;
+import com.mohamed.backend.topics.group.TopicGroupService;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.topics.main.MainTopicService;
@@ -25,13 +27,13 @@ public class SubTopicService {
 
     private final MainTopicRepository mainTopicRepository;
     private final SubTopicRepository subTopicRepository;
-    private final MainTopicService mainTopicService;
+    private final TopicGroupService topicGroupService;
     private final StaffService staffService;
     private final Logger logger;
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<MainTopic> createSubTopic(SubTopic subTopic) throws JsonProcessingException {
+    public List<TopicGroup> createSubTopic(SubTopic subTopic) throws JsonProcessingException {
         log.info("Staff ID:{}", staffService.getStaffId());
 
         logger.logJsonObject("Request parameter details:\n{}", subTopic);
@@ -41,13 +43,15 @@ public class SubTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
-        log.info("Calling [mainTopicRepository].[findById]");
-        mainTopicRepository.findById(subTopic.getMainTopic().getId())
+        log.info("Calling [mainTopicRepository].[findByIdAndArchivedFalse]");
+        mainTopicRepository.findByIdAndArchivedFalse(subTopic.getMainTopic().getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
-        log.info("[mainTopicRepository].[findById] called successfully");
+        log.info("[mainTopicRepository].[findByIdAndArchivedFalse] called successfully");
+
+        subTopic.setArchived(false);
 
         log.info("Calling [subTopicRepository].[save]");
         subTopic = subTopicRepository.save(subTopic);
@@ -55,12 +59,12 @@ public class SubTopicService {
 
         logger.logJsonObject("Subtopic created successfully:\n{}", subTopic);
 
-        return mainTopicService.getTopics();
+        return topicGroupService.getTopicsGroups();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<MainTopic> editSubTopic(SubTopic subTopic) throws JsonProcessingException {
+    public List<TopicGroup> editSubTopic(SubTopic subTopic) throws JsonProcessingException {
         log.info("Staff ID:{}", staffService.getStaffId());
 
         logger.logJsonObject("Request parameter details:\n{}", subTopic);
@@ -70,21 +74,23 @@ public class SubTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
-        log.info("Calling [subTopicRepository].[findById]");
-        subTopicRepository.findById(subTopic.getId())
+        log.info("Calling [subTopicRepository].[findByIdAndArchivedFalse]");
+        subTopicRepository.findByIdAndArchivedFalse(subTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Sub topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
                 });
-        log.info("[subTopicRepository].[findById] called successfully");
+        log.info("[subTopicRepository].[findByIdAndArchivedFalse] called successfully");
 
-        log.info("Calling [mainTopicRepository].[findById]");
-        mainTopicRepository.findById(subTopic.getMainTopic().getId())
+        log.info("Calling [mainTopicRepository].[findByIdAndArchivedFalse]");
+        mainTopicRepository.findByIdAndArchivedFalse(subTopic.getMainTopic().getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
-        log.info("[mainTopicRepository].[findById] called successfully");
+        log.info("[mainTopicRepository].[findByIdAndArchivedFalse] called successfully");
+
+        subTopic.setArchived(false);
 
         log.info("Calling [subTopicRepository].[save]");
         subTopic = subTopicRepository.save(subTopic);
@@ -92,7 +98,7 @@ public class SubTopicService {
 
         logger.logJsonObject("Subtopic edited successfully:\n{}", subTopic);
 
-        return mainTopicService.getTopics();
+        return topicGroupService.getTopicsGroups();
     }
 
     @Transactional
@@ -102,13 +108,13 @@ public class SubTopicService {
 
         logger.logJsonObject("Request parameter details:\n{}", subTopic);
 
-        log.info("Calling [subTopicRepository].[findById]");
-        subTopicRepository.findById(subTopic.getId())
+        log.info("Calling [subTopicRepository].[findByIdAndArchivedFalse]");
+        subTopicRepository.findByIdAndArchivedFalse(subTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Sub topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الفرعي");
                 });
-        log.info("[subTopicRepository].[findById] called successfully");
+        log.info("[subTopicRepository].[findByIdAndArchivedFalse] called successfully");
 
         log.info("Calling [subTopicRepository].[delete]");
         subTopicRepository.delete(subTopic);

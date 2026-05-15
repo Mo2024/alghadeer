@@ -1,6 +1,7 @@
 package com.mohamed.backend.topics.sub;
 
 
+import com.mohamed.backend.topics.group.TopicGroup;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.topics.main.MainTopic;
@@ -44,7 +45,7 @@ public class SubTopicController {
     public ResponseEntity<?> createSubTopic(@RequestBody SubTopic subTopic) {
         try {
             log.info("executing method [TopicService].[createSubTopic]");
-            List<MainTopic> response = subTopicService.createSubTopic(subTopic);
+            List<TopicGroup> response = subTopicService.createSubTopic(subTopic);
             log.info("[TopicService].[createSubTopic] executed successfully");
             logger.logJsonObject("Response for [createSubTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);
@@ -79,7 +80,7 @@ public class SubTopicController {
     public ResponseEntity<?> editSubTopic(@RequestBody SubTopic subTopic) {
         try {
             log.info("executing method [TopicService].[editSubTopic]");
-            List<MainTopic> response = subTopicService.editSubTopic(subTopic);
+            List<TopicGroup> response = subTopicService.editSubTopic(subTopic);
             log.info("[TopicService].[editSubTopic] executed successfully");
             logger.logJsonObject("Response for [editSubTopic]:\n{}", response);
             return ResponseEntity.ok().body(response);

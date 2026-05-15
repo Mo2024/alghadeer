@@ -1,66 +1,113 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { MainTopicService } from '../../../services/topics/main-topic.service';
+
 import { environment } from '../../../../environments/environment';
+
 import { ToastService } from '../../../services/toast.service';
-import { SubTopicService } from '../../../services/topics/sub-topic.service';
+
 import { CreateComponent } from './create/create.component';
 import { EditComponent } from './edit/edit.component';
 
+import { MainTopicService } from '../../../services/topics/main-topic.service';
+import { SubTopicService } from '../../../services/topics/sub-topic.service';
+import { TopicsGroupsService } from '../../../services/topics/topics-groups.service';
+
 @Component({
-    selector: 'app-topics',
-    imports: [CommonModule, CreateComponent, EditComponent],
-    templateUrl: './topics.component.html',
-    styleUrl: './topics.component.css'
+  selector: 'app-topics',
+  imports: [CommonModule, CreateComponent, EditComponent],
+  templateUrl: './topics.component.html',
+  styleUrl: './topics.component.css'
 })
 export class TopicsComponent {
-  topics: any;
 
-  @Input() isSubTopic: boolean = false
-  @Input() showAddTopic: boolean = false
-  @Input() showEditTopic: boolean = false
+  topicGroups: any[] = [];
+
+  /*
+  =====================================
+  CREATE / EDIT STATES
+  =====================================
+  */
+
+  @Input() isSubTopic: boolean = false;
+  @Input() isMainTopic: boolean = false;
+
+  @Input() showAddTopic: boolean = false;
+  @Input() showEditTopic: boolean = false;
+
   @Input() mainTopicId: any;
   @Input() subTopicId: any;
+  @Input() topicGroupId: any;
+
   @Input() topicName: any;
 
-  constructor(private mainTopicsService: MainTopicService, private toastService: ToastService, private subTopicService: SubTopicService) { }
+  constructor(
+    private mainTopicsService: MainTopicService,
+    private subTopicService: SubTopicService,
+    private topicsGroupsService: TopicsGroupsService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit() {
+    this.loadTopicGroups();
+  }
 
-    this.mainTopicsService.getTopics().subscribe({
-      next: async (res) => {
+  /*
+  =====================================
+  LOAD
+  =====================================
+  */
+
+  loadTopicGroups() {
+    this.topicsGroupsService.getTopicsGroups().subscribe({
+      next: (res) => {
+
         if (!environment.production) {
-          console.log(res)
+          console.log(res);
         }
 
         if (res) {
-          this.topics = res
+          this.topicGroups = res;
         } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
+          this.toastService.show(
+            "حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني",
+            'error'
+          );
         }
-
       },
+
       error: (error) => {
+
         if (!environment.production) {
-          console.log(error)
+          console.log(error);
         }
 
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
+        this.toastService.show(
+          "حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني",
+          'error'
+        );
       }
-    })
+    });
   }
 
-  toggleAddTopicOpen(isSubTopic: boolean, mainTopicId?: number) {
-    this.mainTopicId = mainTopicId ? mainTopicId : null;
+  /*
+  =====================================
+  CREATE MODAL
+  =====================================
+  */
+
+  toggleAddTopicOpen(
+    isSubTopic: boolean,
+    isMainTopic: boolean,
+    topicGroupId?: number,
+    mainTopicId?: number
+  ) {
+
     this.isSubTopic = isSubTopic;
+    this.isMainTopic = isMainTopic;
+
+    this.topicGroupId = topicGroupId || null;
+    this.mainTopicId = mainTopicId || null;
+
     this.toggleAddTopic();
   }
 
@@ -68,117 +115,167 @@ export class TopicsComponent {
     this.showAddTopic = !this.showAddTopic;
   }
 
-  openAddSubTopicModal(topicId: number) {
-    alert(`فتح نافذة إضافة موضوع فرعي للموضوع رقم ${topicId}`);
-  }
+  /*
+  =====================================
+  EDIT MODAL
+  =====================================
+  */
 
-  editSubTopic(subtopic: any) {
-    alert(`تعديل الموضوع الفرعي: ${subtopic.name}`);
-  }
+  toggleEditTopicOpen(
+    isSubTopic: any,
+    isMainTopic: any,
+    topicName: any,
+    topicGroupId?: any,
+    mainTopicId?: any,
+    subTopicId?: any
+  ) {
 
-  deleteSubTopic(subId: number, mainTopicIndex: number, subTopicIndex: number) {
-
-
-    this.subTopicService.deleteSubTopic({ id: subId }).subscribe({
-      next: async (res) => {
-        if (!environment.production) {
-          console.log(res)
-        }
-
-        if (res) {
-          this.topics[mainTopicIndex].subTopics.splice(subTopicIndex, 1);
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-
-      },
-      error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
-
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-409") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-      }
-    })
-
-  }
-
-  deleteMainTopic(mainTopicId: number, mainTopicIndex: number) {
-    this.mainTopicsService.deleteMainTopic({ id: mainTopicId }).subscribe({
-      next: async (res) => {
-        if (!environment.production) {
-          console.log(res)
-        }
-
-        if (res) {
-          this.topics.splice(mainTopicIndex, 1);
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-
-      },
-      error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
-
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-409") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-      }
-    })
-
-  }
-
-  handleTopicAdded(topics: any) {
-    this.topics = topics
-    this.showAddTopic = false;
-  }
-
-  toggleEditTopicOpen(isSubTopic: boolean, topicName: string, mainTopicId?: number, subTopicId?: number,) {
-    console.log(mainTopicId)
-    this.topicName = topicName;
-    this.mainTopicId = mainTopicId ? mainTopicId : null;
-    this.subTopicId = subTopicId ? subTopicId : null;
     this.isSubTopic = isSubTopic;
-    this.toggleEditTopic()
+    this.isMainTopic = isMainTopic;
+
+    this.topicName = topicName;
+
+    this.topicGroupId = topicGroupId || null;
+    this.mainTopicId = mainTopicId || null;
+    this.subTopicId = subTopicId || null;
+
+    this.toggleEditTopic();
   }
 
   toggleEditTopic() {
     this.showEditTopic = !this.showEditTopic;
-
   }
 
-  handleTopicEdited(topics: any) {
-    this.topics = topics
-    console.log(topics)
+  /*
+  =====================================
+  DELETE GROUP
+  =====================================
+  */
+
+  deleteTopicGroup(groupId: number, groupIndex: number) {
+
+    this.topicsGroupsService.deleteTopicGroup({ id: groupId }).subscribe({
+
+      next: (res) => {
+
+        if (res) {
+          this.topicGroups.splice(groupIndex, 1);
+        }
+      },
+
+      error: (error) => {
+
+        if (!environment.production) {
+          console.log(error);
+        }
+
+        this.toastService.show(error.error.message, 'error');
+      }
+    });
+  }
+
+  /*
+  =====================================
+  DELETE MAIN TOPIC
+  =====================================
+  */
+
+  deleteMainTopic(
+    mainTopicId: number,
+    groupIndex: number,
+    mainTopicIndex: number
+  ) {
+
+    this.mainTopicsService.deleteMainTopic({ id: mainTopicId }).subscribe({
+
+      next: (res) => {
+
+        if (res) {
+          this.topicGroups[groupIndex]
+            .mainTopics
+            .splice(mainTopicIndex, 1);
+        }
+      },
+
+      error: (error) => {
+
+        if (!environment.production) {
+          console.log(error);
+        }
+
+        this.toastService.show(error.error.message, 'error');
+      }
+    });
+  }
+
+  /*
+  =====================================
+  DELETE SUB TOPIC
+  =====================================
+  */
+
+  deleteSubTopic(
+    subId: number,
+    groupIndex: number,
+    mainTopicIndex: number,
+    subTopicIndex: number
+  ) {
+
+    this.subTopicService.deleteSubTopic({ id: subId }).subscribe({
+
+      next: (res) => {
+
+        if (res) {
+
+          this.topicGroups[groupIndex]
+            .mainTopics[mainTopicIndex]
+            .subTopics
+            .splice(subTopicIndex, 1);
+        }
+      },
+
+      error: (error) => {
+
+        if (!environment.production) {
+          console.log(error);
+        }
+
+        this.toastService.show(error.error.message, 'error');
+      }
+    });
+  }
+
+  /*
+  =====================================
+  HANDLE CREATE / EDIT
+  =====================================
+  */
+
+  handleTopicAdded(res: any) {
+    this.topicGroups = res;
     this.showAddTopic = false;
   }
 
-  trackByTopicId(index: number, topic: any): number {
-    return topic.id;
+  handleTopicEdited(res: any) {
+    this.topicGroups = res;
+    this.showEditTopic = false;
   }
 
-  trackBySubTopicId(index: number, subTopic: any): number {
-    return subTopic.id;
+  /*
+  =====================================
+  TRACK BY
+  =====================================
+  */
+
+  trackByGroupId(index: number, item: any): number {
+    return item.id;
   }
 
+  trackByTopicId(index: number, item: any): number {
+    return item.id;
+  }
+
+  trackBySubTopicId(index: number, item: any): number {
+    return item.id;
+  }
 }

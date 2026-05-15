@@ -1,6 +1,9 @@
 package com.mohamed.backend.topics.main;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mohamed.backend.topics.group.TopicGroup;
+import com.mohamed.backend.topics.group.TopicGroupRepository;
+import com.mohamed.backend.topics.group.TopicGroupService;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
@@ -19,6 +22,8 @@ import java.util.List;
 public class MainTopicService {
 
     private final MainTopicRepository mainTopicRepository;
+    private final TopicGroupRepository topicGroupRepository;
+    private final TopicGroupService topicGroupService;
     private final Logger logger;
 
     @Transactional
@@ -29,7 +34,7 @@ public class MainTopicService {
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<MainTopic> createMainTopic(MainTopic mainTopic) throws JsonProcessingException {
+    public List<TopicGroup> createMainTopic(MainTopic mainTopic) throws JsonProcessingException {
 
         logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
@@ -38,16 +43,26 @@ public class MainTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
+        log.info("Calling [topicGroupRepository].[findById]");
+        topicGroupRepository.findById(mainTopic.getTopicGroup().getId())
+                .orElseThrow(() -> {
+                    log.error("Topic group not found");
+                    return new HandledRejection("الرجاء التحقق من وجود مجموعة المواضيع");
+                });
+        log.info("[topicGroupRepository].[findById] called successfully");
+
+        mainTopic.setArchived(false);
+
         log.info("Calling [mainTopicRepository].[save]");
         mainTopicRepository.save(mainTopic);
         log.info("[mainTopicRepository].[save] called successfully");
 
-        return getTopics();
+        return topicGroupService.getTopicsGroups();
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'SUPERVISOR', 'INSTRUCTOR')")
-    public List<MainTopic> editMainTopic(MainTopic mainTopic) throws JsonProcessingException {
+    public List<TopicGroup> editMainTopic(MainTopic mainTopic) throws JsonProcessingException {
 
         logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
@@ -56,19 +71,31 @@ public class MainTopicService {
             throw new HandledRejection("يرجى التأكد من إدخال الاسم بشكل صحيح وباللغة العربية");
         }
 
-        log.info("Calling [mainTopicRepository].[findById]");
-        mainTopicRepository.findById(mainTopic.getId())
+        log.info("Calling [mainTopicRepository].[findByIdAndArchivedFalse]");
+        MainTopic existingMainTopic =  mainTopicRepository.findByIdAndArchivedFalse(mainTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
-        log.info("[mainTopicRepository].[findById] called successfully");
+        log.info("[mainTopicRepository].[findByIdAndArchivedFalse] called successfully");
+
+        log.info("Calling [topicGroupRepository].[findById]");
+        topicGroupRepository.findById(mainTopic.getTopicGroup().getId())
+                .orElseThrow(() -> {
+                    log.error("Topic group not found");
+                    return new HandledRejection("الرجاء التحقق من وجود مجموعة المواضيع");
+                });
+        log.info("[topicGroupRepository].[findById] called successfully");
+
+        existingMainTopic.setName(mainTopic.getName());
+
+        existingMainTopic.setArchived(false);
 
         log.info("Calling [mainTopicRepository].[save]");
-        mainTopicRepository.save(mainTopic);
+        mainTopicRepository.save(existingMainTopic);
         log.info("[mainTopicRepository].[save] called successfully");
 
-        return getTopics();
+        return topicGroupService.getTopicsGroups();
     }
 
     @Transactional
@@ -77,13 +104,13 @@ public class MainTopicService {
 
         logger.logJsonObject("Request parameter:\n{}", mainTopic);
 
-        log.info("Calling [mainTopicRepository].[findById]");
-        mainTopicRepository.findById(mainTopic.getId())
+        log.info("Calling [mainTopicRepository].[findByIdAndArchivedFalse]");
+        mainTopicRepository.findByIdAndArchivedFalse(mainTopic.getId())
                 .orElseThrow(() -> {
                     log.error("Main topic not found");
                     return new HandledRejection("الرجاء التحقق من وجود الموضوع الرئيسي");
                 });
-        log.info("[mainTopicRepository].[findById] called successfully");
+        log.info("[mainTopicRepository].[findByIdAndArchivedFalse] called successfully");
 
         log.info("Calling [mainTopicRepository].[delete]");
         mainTopicRepository.delete(mainTopic);

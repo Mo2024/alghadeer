@@ -1,6 +1,5 @@
-package com.mohamed.backend.topics.main;
+package com.mohamed.backend.topics.group;
 
-import com.mohamed.backend.topics.group.TopicGroup;
 import com.mohamed.backend.utils.Response;
 import com.mohamed.backend.utils.exceptions.HandledRejection;
 import com.mohamed.backend.utils.methods.Logger;
@@ -21,15 +20,15 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/main-topics")
+@RequestMapping("/api/topics-groups")
 @RequiredArgsConstructor
-@Tag(name = "Main-topic Management", description = "Operations related to main-topic entity")
-public class MainTopicController {
+@Tag(name = "Topic-group Management", description = "Operations related to topic-group entity")
+public class TopicGroupController {
 
-    private final MainTopicService mainTopicService;
+    private final TopicGroupService topicGroupService;
     private final Logger logger;
 
-    @GetMapping("/all/get-topics")
+    @GetMapping("/all/get-topics-groups")
     @Operation(
             summary = "Gets topics",
             description = "Only staff are authorized to perform this request."
@@ -40,12 +39,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> getTopics() {
+    public ResponseEntity<?> getTopicsGroups() {
         try {
-            log.info("executing method [mainTopicService].[getTopics]");
-            List<MainTopic> response = mainTopicService.getTopics();
-            log.info("[mainTopicService].[getTopics] executed successfully");
-            logger.logJsonObject("Response for [getTopics]:\n{}", response);
+            log.info("executing method [topicGroupService].[getTopicsGroups]");
+            List<TopicGroup> response = topicGroupService.getTopicsGroups();
+            log.info("[topicGroupService].[getTopicsGroups] executed successfully");
+            logger.logJsonObject("Response for [getTopicsGroups]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -64,9 +63,9 @@ public class MainTopicController {
         }
     }
 
-    @PostMapping("/all/create-main-topic")
+    @PostMapping("/all/create-topic-group")
     @Operation(
-            summary = "Creates a main topic",
+            summary = "Creates a group topic",
             description = "Only staff are authorized to perform this request."
     )
     @ApiResponses(value = {
@@ -75,12 +74,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> createMainTopic(@RequestBody MainTopic mainTopic) {
+    public ResponseEntity<?> createTopicGroup(@RequestBody TopicGroup topicGroup) {
         try {
-            log.info("executing method [mainTopicService].[createMainTopic]");
-            List<TopicGroup> response = mainTopicService.createMainTopic(mainTopic);
-            log.info("[mainTopicService].[createMainTopic] executed successfully");
-            logger.logJsonObject("Response for [createMainTopic]:\n{}", response);
+            log.info("executing method [topicGroupService].[createTopicGroup]");
+            List<TopicGroup> response = topicGroupService.createTopicGroup(topicGroup);
+            log.info("[topicGroupService].[createTopicGroup] executed successfully");
+            logger.logJsonObject("Response for [createTopicGroup]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -99,9 +98,9 @@ public class MainTopicController {
         }
     }
 
-    @PutMapping("/all/edit-main-topic")
+    @PutMapping("/all/edit-topic-group")
     @Operation(
-            summary = "Edits an existing main topic",
+            summary = "Edits an existing group topic",
             description = "Only staff are authorized to perform this request."
     )
     @ApiResponses(value = {
@@ -110,12 +109,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> editMainTopic(@RequestBody MainTopic mainTopic) {
+    public ResponseEntity<?> editTopicGroup(@RequestBody TopicGroup topicGroup) {
         try {
-            log.info("executing method [mainTopicService].[editMainTopic]");
-            List<TopicGroup> response = mainTopicService.editMainTopic(mainTopic);
-            log.info("[mainTopicService].[editMainTopic] executed successfully");
-            logger.logJsonObject("Response for [editMainTopic]:\n{}", response);
+            log.info("executing method [topicGroupService].[editTopicGroup]");
+            List<TopicGroup> response = topicGroupService.editTopicGroup(topicGroup);
+            log.info("[topicGroupService].[editTopicGroup] executed successfully");
+            logger.logJsonObject("Response for [editTopicGroup]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -134,9 +133,9 @@ public class MainTopicController {
         }
     }
 
-    @DeleteMapping("/all/delete-main-topic")
+    @DeleteMapping("/all/delete-topic-group")
     @Operation(
-            summary = "Deletes a main topic",
+            summary = "Deletes a group topic",
             description = "Only staff are authorized to perform this request."
     )
     @ApiResponses(value = {
@@ -145,12 +144,12 @@ public class MainTopicController {
             @ApiResponse(responseCode = "403", description = "Forbidden - Authorization denied (does not have the required role)"),
             @ApiResponse(responseCode = "500", description = "Internal server error - Usually an unhandled rejection")
     })
-    public ResponseEntity<?> deleteMainTopic(@RequestBody MainTopic mainTopic) throws Exception {
+    public ResponseEntity<?> deleteTopicGroup(@RequestBody TopicGroup topicGroup) throws Exception {
         try {
-            log.info("executing method [mainTopicService].[deleteMainTopic]");
-            Response response = mainTopicService.deleteMainTopic(mainTopic);
-            log.info("[mainTopicService].[deleteMainTopic] executed successfully");
-            logger.logJsonObject("Response for [deleteMainTopic]:\n{}", response);
+            log.info("executing method [topicGroupService].[deleteTopicGroup]");
+            Response response = topicGroupService.deleteTopicGroup(topicGroup);
+            log.info("[topicGroupService].[deleteTopicGroup] executed successfully");
+            logger.logJsonObject("Response for [deleteTopicGroup]:\n{}", response);
             return ResponseEntity.ok().body(response);
         } catch (HandledRejection e) {
             return ResponseEntity
@@ -168,7 +167,7 @@ public class MainTopicController {
                     if (pgException.getSQLState().equals("23503")) {
                         return ResponseEntity
                                 .status(HttpStatus.CONFLICT)
-                                .body(new Response("لا يمكن حذف الموضوع لأنه مرتبط حصة", "ALGD-409"));
+                                .body(new Response("لا يمكن حذف الموضوع لأنه مرتبط بحصة", "ALGD-409"));
                     }
                 }
                 cause = cause.getCause();

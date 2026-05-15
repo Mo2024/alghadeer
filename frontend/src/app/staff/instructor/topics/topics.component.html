@@ -1,68 +1,190 @@
 <div class="container py-4" dir="rtl">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0 position-relative pb-2 fw-bold" style="
-        color: #2c3e50;
-    ">
-            المواضيع الرئيسية
+
+        <h4 class="mb-0 position-relative pb-2 fw-bold" style="color: #2c3e50;">
+
+            المجموعات
+
             <span style="
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 50%;
-            height: 3px;
-            background: linear-gradient(to right, #3498db, #2ecc71);
-            border-radius: 3px;
-        "></span>
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 50%;
+                height: 3px;
+                background: linear-gradient(to right, #3498db, #2ecc71);
+                border-radius: 3px;
+            "></span>
+
         </h4>
     </div>
 
-    <div class="accordion" id="topicsAccordion">
-        <div *ngFor="let topic of topics; trackBy: trackByTopicId; let i = index"
-            class="accordion-item mb-3 shadow-sm rounded-4 border-0">
-            <h2 class="accordion-header" id="heading{{ i }}">
-                <button class="accordion-button collapsed fw-bold rounded-top-4" type="button" data-bs-toggle="collapse"
-                    [attr.data-bs-target]="'#collapse' + i" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
-                    {{ topic.name }}
-                </button>
-            </h2>
+    <!-- GROUPS -->
 
+    <div *ngFor="let group of topicGroups; trackBy: trackByGroupId; let g = index" class="accordion mb-4">
 
-            <div [id]="'collapse' + i" class="accordion-collapse collapse rounded-bottom-4"
-                [attr.aria-labelledby]="'heading' + i">
-                <!-- ❌ NO data-bs-parent -->
-                <div class="accordion-body">
-                    <!-- Subtopics -->
-                    <ul class="list-group list-group-flush pe-0 me-0">
-                        <li *ngFor="let sub of topic.subTopics; trackBy: trackBySubTopicId; let j = index"
-                            class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 border border-light shadow-sm subtopic-bg">
-                            <span>{{ sub.name }}</span>
-                            <div class="d-flex gap-2">
-                                <i (click)="toggleEditTopicOpen(true, sub?.name, topic.id, sub?.id)"
-                                    class="bx bx-edit-alt text-warning fs-5"></i>
-                                <i class="bx bx-trash text-danger fs-5" (click)="deleteSubTopic(sub.id, i, j)"></i>
-                            </div>
-                        </li>
-                    </ul>
+        <div class="accordion-item border-0 shadow rounded-4 overflow-hidden">
 
-                    <div dir="ltr" class="d-flex justify-content-start gap-2 mt-3">
-                        <i class="bx bx-trash text-danger fs-5" (click)="deleteMainTopic(topic.id, i)"></i>
+            <!-- GROUP HEADER -->
 
-                        <i class="bx bx-edit text-warning fs-5"
-                            (click)="toggleEditTopicOpen(false, topic.name, topic.id)"></i>
+            <h2 class="accordion-header">
 
-                        <i class="bx bx-plus text-success fs-5" (click)="toggleAddTopicOpen(true, topic.id)"></i>
+                <button class="accordion-button group-accordion collapsed px-4 py-3" type="button"
+                    data-bs-toggle="collapse" [attr.data-bs-target]="'#groupCollapse' + g">
+
+                    <div class="d-flex justify-content-between align-items-center w-100">
+
+                        <span class="fw-bold fs-6 text-white">
+
+                            {{ group.name }}
+
+                        </span>
+
                     </div>
 
+                </button>
+
+            </h2>
+
+            <!-- GROUP BODY -->
+
+            <div [id]="'groupCollapse' + g" class="accordion-collapse collapse">
+
+                <div class="accordion-body bg-white">
+
+                    <!-- MAIN TOPICS -->
+
+                    <div *ngFor="let topic of group.mainTopics; trackBy: trackByTopicId; let i = index"
+                        class="accordion mb-3">
+
+                        <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
+
+                            <h2 class="accordion-header">
+
+                                <button class="accordion-button collapsed fw-bold rounded-4" type="button"
+                                    data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + g + i">
+
+                                    {{ topic.name }}
+
+                                </button>
+
+                            </h2>
+
+                            <div [id]="'collapse' + g + i" class="accordion-collapse collapse">
+
+                                <div class="accordion-body">
+
+                                    <!-- SUB TOPICS -->
+
+                                    <ul class="list-group list-group-flush">
+
+                                        <li *ngFor="let sub of topic.subTopics; trackBy: trackBySubTopicId; let j = index"
+                                            class="list-group-item d-flex justify-content-between align-items-center rounded-3 mb-2 shadow-sm">
+
+                                            <span>
+                                                {{ sub.name }}
+                                            </span>
+
+                                            <div class="d-flex gap-2">
+
+                                                <!-- EDIT SUB -->
+
+                                                <i class="bx bx-edit-alt text-warning fs-5"
+                                                    (click)="toggleEditTopicOpen(true, false, sub.name, null, topic.id, sub.id)">
+                                                </i>
+
+                                                <!-- DELETE SUB -->
+
+                                                <i class="bx bx-trash text-danger fs-5"
+                                                    (click)="deleteSubTopic(sub.id, g, i, j)">
+                                                </i>
+
+                                            </div>
+
+                                        </li>
+
+                                    </ul>
+
+                                    <!-- MAIN TOPIC ACTIONS -->
+
+                                    <div dir="ltr" class="d-flex gap-2 mt-3">
+
+                                        <!-- DELETE MAIN -->
+
+                                        <i class="bx bx-trash text-danger fs-5"
+                                            (click)="deleteMainTopic(topic.id, g, i)">
+                                        </i>
+
+                                        <!-- EDIT MAIN -->
+
+                                        <i class="bx bx-edit text-warning fs-5"
+                                            (click)="toggleEditTopicOpen(false, true, topic.name, group.id, topic.id)">
+                                        </i>
+
+                                        <!-- ADD SUB -->
+
+                                        <i class="bx bx-plus text-success fs-5"
+                                            (click)="toggleAddTopicOpen(true, false, group.id, topic.id)">
+                                        </i>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex gap-3 ms-auto  action-icons">
+
+                        <!-- EDIT GROUP -->
+
+                        <i class="bx bx-edit text-warning fs-5"
+                            (click)="$event.stopPropagation(); toggleEditTopicOpen(false, false, group.name, group.id)">
+                        </i>
+
+                        <!-- DELETE GROUP -->
+
+                        <i class="bx bx-trash text-danger fs-5"
+                            (click)="$event.stopPropagation(); deleteTopicGroup(group.id, g)">
+                        </i>
+
+                        <!-- ADD MAIN TOPIC -->
+
+                        <i class="bx bx-plus text-success fs-5"
+                            (click)="$event.stopPropagation(); toggleAddTopicOpen(false, true, group.id)">
+                        </i>
+
+                    </div>
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
+    <!-- ADD GROUP BUTTON -->
+
     <button class="btn bg-ahlulbayt-green text-dark btn-lg rounded-circle position-fixed bottom-0 end-0 m-4"
-        (click)="toggleAddTopicOpen(false)">+</button>
+        (click)="toggleAddTopicOpen(false, false)">
+
+        +
+
+    </button>
+
 </div>
 
-<app-create [mainTopicId]="mainTopicId" [isSubTopic]="isSubTopic" (closeClicked)="toggleAddTopic()"
-    (pushTopic)="handleTopicAdded($event)" *ngIf="showAddTopic"></app-create>
 
-<app-edit [topicName]="topicName" [mainTopicId]="mainTopicId" [subTopicId]="subTopicId" [isSubTopic]="isSubTopic"
-    (closeClicked)="toggleEditTopic()" (editTopicEmit)="handleTopicEdited($event)" *ngIf="showEditTopic"> </app-edit>
+<app-create [mainTopicId]="mainTopicId" [topicGroupId]="topicGroupId" [isSubTopic]="isSubTopic"
+    [isMainTopic]="isMainTopic" (closeClicked)="toggleAddTopic()" (pushTopic)="handleTopicAdded($event)"
+    *ngIf="showAddTopic">
+</app-create>
+
+
+<app-edit [topicName]="topicName" [topicGroupId]="topicGroupId" [mainTopicId]="mainTopicId" [subTopicId]="subTopicId"
+    [isSubTopic]="isSubTopic" [isMainTopic]="isMainTopic" (closeClicked)="toggleEditTopic()"
+    (editTopicEmit)="handleTopicEdited($event)" *ngIf="showEditTopic">
+</app-edit>

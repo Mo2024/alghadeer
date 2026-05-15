@@ -1,5 +1,6 @@
 package com.mohamed.backend.topics.sub;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mohamed.backend.topics.main.MainTopic;
 import jakarta.persistence.*;
@@ -23,6 +24,10 @@ public class SubTopic {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "archived")
+    @JsonIgnore
+    private Boolean archived;
 
     @ManyToOne
     @JoinColumn(name = "main_topic_id")
