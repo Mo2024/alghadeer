@@ -6,12 +6,16 @@ import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { TopicsGroupsService } from '../../../../services/topics/topics-groups.service';
+import { TreeNode } from 'primeng/api';
+import { TreeSelectModule } from 'primeng/treeselect';
+
 
 @Component({
-    selector: 'app-session-details',
-    imports: [CommonModule, FormsModule, RouterModule],
-    templateUrl: './session-details.component.html',
-    styleUrl: './session-details.component.css'
+  selector: 'app-session-details',
+  imports: [CommonModule, FormsModule, RouterModule, TreeSelectModule],
+  templateUrl: './session-details.component.html',
+  styleUrl: './session-details.component.css'
 })
 export class SessionDetailsComponent {
 
@@ -33,6 +37,9 @@ export class SessionDetailsComponent {
   topicsToChange: any = [];
 
   topics: any;
+  topicGroups: any;
+  topicTree: TreeNode[] = [];
+  selectedTopic: any
 
   arabicDaysMap: any = {
     'SUNDAY': 'الأحد',
@@ -45,15 +52,124 @@ export class SessionDetailsComponent {
   };
 
 
-  constructor(private sessionService: SessionService, private toastService: ToastService, private router: Router, private mainTopicService: MainTopicService) { }
+  constructor(private sessionService: SessionService, private topicsGroupsService: TopicsGroupsService, private toastService: ToastService, private router: Router, private mainTopicService: MainTopicService) { }
 
   ngOnInit() {
-
-    this.getTopics();
-
+    // this.getTopics();
+    // this.loadTopicGroups();
   }
 
+  loadTopicGroups() {
+    this.topicsGroupsService.getTopicsGroups().subscribe({
+      next: (res) => {
 
+        if (!environment.production) {
+          console.log(res);
+        }
+
+        if (res) {
+          this.topicGroups = res;
+          this.buildTopicTree();
+
+        } else {
+          this.toastService.show(
+            "حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني",
+            'error'
+          );
+        }
+      },
+
+      error: (error) => {
+
+        if (!environment.production) {
+          console.log(error);
+        }
+
+        this.toastService.show(
+          "حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني",
+          'error'
+        );
+      }
+    });
+  }
+
+  buildTopicTree(): void {
+    const sessionSubTopicIds = this.sessionObject.subTopics.map(
+      (subTopic: any) => subTopic.id
+    );
+
+    this.topicTree = this.topicGroups.map((group: any, groupIndex: number) => ({
+      key: `group-${group.id}`,
+      label: group.name,
+      data: group,
+      selectable: false,
+      groupIndex,
+
+      children: group.mainTopics.map((mainTopic: any, mainIndex: number) => ({
+        key: `main-${mainTopic.id}`,
+        label: mainTopic.name,
+        data: mainTopic,
+        selectable: false,
+        mainIndex,
+
+        children: mainTopic.subTopics
+          .map((subTopic: any, subIndex: number) => {
+            const leafNode = {
+              key: `sub-${subTopic.id}`,
+              label: subTopic.name,
+              data: subTopic,
+              leaf: true,
+              selectable: true,
+              subIndex
+            }
+            const isInSession = sessionSubTopicIds.includes(subTopic.id);
+
+            if (isInSession) {
+              console.log(subTopic)
+              this.loadSubTopicToList(
+                leafNode,
+                mainTopic.id
+              );
+            }
+
+            return leafNode
+
+          })
+          .filter((subTopic: any) => {
+            return !sessionSubTopicIds.includes(subTopic.data.id);
+          })
+      }))
+    }));
+
+    console.log(this.topicTree)
+  }
+
+  onTreeNodeSelect(event: any): void {
+    const node: any = event.node;
+
+    if (!node.leaf) {
+      node.expanded = !node.expanded;
+      this.selectedTopic = null;
+      return;
+    }
+
+    const mainTopicNode = node.parent;
+    const groupNode = mainTopicNode.parent;
+
+    const children = mainTopicNode.children;
+
+    const subIndex = children.findIndex(
+      (child: any) => child.data.id === node.data.id
+    );
+
+    this.addSubTopic(
+      node.data,
+      mainTopicNode.data.id,
+      subIndex,
+      mainTopicNode.mainIndex,
+      groupNode.groupIndex,
+    );
+  }
   getTopics() {
     const subTopicsId: any = []
     this.sessionObject.subTopics.forEach((subtopic: any) => {
@@ -92,24 +208,26 @@ export class SessionDetailsComponent {
   toggleChangeSubTopicBtn() {
     this.isDisabledSubTopic = true
     this.isEditable = true
-    this.getTopics();
-    for (let i = 0; i < this.sessionObject.subTopics.length; i++) {
-      const subTopic = this.sessionObject.subTopics[i]
-      const mainTopicId = subTopic.mainTopicId
+    // this.getTopics();
+    this.loadTopicGroups();
 
-      let innerMap = this.removedSubTopic.get(mainTopicId);
-      if (!innerMap) {
-        innerMap = new Map<any, any>();
-      }
+    // for (let i = 0; i < this.sessionObject.subTopics.length; i++) {
+    //   const subTopic = this.sessionObject.subTopics[i]
+    //   const mainTopicId = subTopic.mainTopicId
 
-      innerMap.set(subTopic.id, subTopic);
-      this.removedSubTopic.set(mainTopicId, innerMap);
+    //   let innerMap = this.removedSubTopic.get(mainTopicId);
+    //   if (!innerMap) {
+    //     innerMap = new Map<any, any>();
+    //   }
 
-      this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
-      this.topicsToChange.push(subTopic.id);
+    //   innerMap.set(subTopic.id, subTopic);
+    //   this.removedSubTopic.set(mainTopicId, innerMap);
 
-      this.selectedSubTopicIndex = '';
-    }
+    //   this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
+    //   this.topicsToChange.push(subTopic.id);
+
+    //   this.selectedSubTopicIndex = '';
+    // }
     // console.log(this.mainTopicsId)
     this.isDisabledSubTopic = false
 
@@ -273,38 +391,78 @@ export class SessionDetailsComponent {
     })
   }
 
-  addSubTopic() {
-    if (this.selectedSubTopicIndex === '') return;
+  addSubTopic(subTopic: any, mainTopicId: any, subIndex: any, mainIndex: any, groupIndex: any) {
 
-    const subTopic = this.topics[this.selectedMainTopicIndex].subTopics[this.selectedSubTopicIndex];
-    const mainTopicId = this.topics[this.selectedMainTopicIndex];
+    let innerMap = this.removedSubTopic.get(mainTopicId);
+    if (!innerMap) {
+      innerMap = new Map<any, any>();
+    }
+    innerMap.set(
+      subTopic.id,
+      this.topicTree[groupIndex].children?.[mainIndex]?.children?.[subIndex]
+    );
+    this.removedSubTopic.set(mainTopicId, innerMap);
+
+    this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
+    this.topicsToChange.push(subTopic.id);
+
+    this.topicTree[groupIndex].children?.[mainIndex]?.children?.splice(
+      subIndex,
+      1
+    );
+    this.selectedTopic = null;
+  }
+
+  loadSubTopicToList(subTopicNode: any, mainTopicId: any) {
 
     let innerMap = this.removedSubTopic.get(mainTopicId);
     if (!innerMap) {
       innerMap = new Map<any, any>();
     }
 
-    innerMap.set(subTopic.id, subTopic);
+
+    innerMap.set(
+      subTopicNode.data.id,
+      subTopicNode
+    );
     this.removedSubTopic.set(mainTopicId, innerMap);
 
-    this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
-    this.topicsToChange.push(subTopic.id);
+    this.mainTopicIdsOfSubTopicsToChange.set(subTopicNode.data.id, mainTopicId);
+    this.topicsToChange.push(subTopicNode.data.id);
 
-    this.topics[this.selectedMainTopicIndex].subTopics.splice(this.selectedSubTopicIndex, 1);
-
-    this.selectedSubTopicIndex = '';
   }
 
+  // addSubTopic() {
+  //   if (this.selectedSubTopicIndex === '') return;
 
-  removeSubTopic(subTopicId: number, index: number) {
-    this.getSubTopicName(subTopicId)
+  //   const subTopic = this.topics[this.selectedMainTopicIndex].subTopics[this.selectedSubTopicIndex];
+  //   const mainTopicId = this.topics[this.selectedMainTopicIndex];
+
+  //   let innerMap = this.removedSubTopic.get(mainTopicId);
+  //   if (!innerMap) {
+  //     innerMap = new Map<any, any>();
+  //   }
+
+  //   innerMap.set(subTopic.id, subTopic);
+  //   this.removedSubTopic.set(mainTopicId, innerMap);
+
+  //   this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
+  //   this.topicsToChange.push(subTopic.id);
+
+  //   this.topics[this.selectedMainTopicIndex].subTopics.splice(this.selectedSubTopicIndex, 1);
+
+  //   this.selectedSubTopicIndex = '';
+  // }
+
+
+  removeSubTopic(subTopicId: number, mainIndex: number) {
 
     const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
     const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
 
     this.mainTopicIdsOfSubTopicsToChange.delete(subTopicId)
     this.removedSubTopic.get(mainTopicId)?.delete(subTopicId);
-    this.topicsToChange.splice(index, 1)
+    // this.topicsToChange.splice(index, 1)
     const mainTopicIndex = this.topics.findIndex(
       (mainTopic: any) => mainTopic.id === mainTopicId
     );
@@ -318,9 +476,32 @@ export class SessionDetailsComponent {
 
   }
 
+
+  //   removeSubTopic(subTopicId: number, index: number) {
+  //   this.getSubTopicName(subTopicId)
+
+  //   const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
+  //   const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
+
+  //   this.mainTopicIdsOfSubTopicsToChange.delete(subTopicId)
+  //   this.removedSubTopic.get(mainTopicId)?.delete(subTopicId);
+  //   this.topicsToChange.splice(index, 1)
+  //   const mainTopicIndex = this.topics.findIndex(
+  //     (mainTopic: any) => mainTopic.id === mainTopicId
+  //   );
+  //   console.log(mainTopicIndex)
+
+  //   const isDuplicate = this.topics[mainTopicIndex].subTopics.some(
+  //     (subTopic: any) => subTopic.id === subTopic.id
+  //   );
+
+  //   if (!isDuplicate) this.topics[mainTopicIndex].subTopics.push(subtopic)
+
+  // }
   getSubTopicName(subTopicId: number) {
     const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
     const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
-    return subtopic.name
+    // console.log(subtopic)
+    return subtopic?.data?.name || subtopic?.name;
   }
 }

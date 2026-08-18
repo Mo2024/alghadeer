@@ -34,14 +34,28 @@
                                 <div class="col-4 fw-bold text-dark">الموضوع:</div>
                                 <div class="col-8">
                                     <ng-container *ngIf="isEditable; else showTopic">
-                                        <select class="form-select mb-2" [(ngModel)]="selectedMainTopicIndex"
+                                        <!-- <p-treeselect [options]="topicTree" [(ngModel)]="selectedTopic"
+                                            placeholder="اختر الموضوع" selectionMode="single" [filter]="true"
+                                            filterPlaceholder="بحث..." [style]="{ width: '100%' }" appendTo="body">
+                                        </p-treeselect> -->
+                                        <p-treeselect [options]="topicTree" [(ngModel)]="selectedTopic"
+                                            placeholder="اختر الموضوع" [style]="{ width: '100%' }"
+                                            (onNodeSelect)="onTreeNodeSelect($event)">
+                                        </p-treeselect>
+                                        <!-- 
+                                        <p-treeselect [options]="topicTree" [(ngModel)]="selectedTopic"
+                                            placeholder="اختر الموضوع" [style]="{ width: '100%' }"
+                                            (onNodeSelect)="onTreeNodeSelect($event)">
+                                        </p-treeselect> -->
+
+                                        <!-- <select class="form-select mb-2" [(ngModel)]="selectedMainTopicIndex"
                                             (change)="onMainTopicChange()">
                                             <option [ngValue]="''">اختر الموضوع الرئيسي</option>
                                             <option *ngFor="let topic of topics; let i = index" [ngValue]="i">
                                                 {{ topic.name }}
                                             </option>
-                                        </select>
-
+                                        </select> -->
+                                        <!-- 
                                         <div class="d-flex align-items-center gap-2 mb-4">
                                             <select class="form-select flex-grow-1" [(ngModel)]="selectedSubTopicIndex">
                                                 <option [ngValue]="''">اختر الموضوع الفرعي</option>
@@ -59,7 +73,7 @@
 
                                             <i (click)="addSubTopic()" class="bx bx-plus text-success"
                                                 style="font-size: 1.5rem; cursor: pointer;"></i>
-                                        </div>
+                                        </div> -->
 
                                         <ul class="list-group mt-1" style="padding-right: 0; margin-right: 0;">
                                             <li *ngFor="let id of topicsToChange; let i = index"

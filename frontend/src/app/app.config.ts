@@ -8,6 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,5 +23,11 @@ export const appConfig: ApplicationConfig = {
       // MatDatepickerModule,
       // MatNativeDateModule
     ),
+    provideAnimations(),
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    })
   ]
 };
