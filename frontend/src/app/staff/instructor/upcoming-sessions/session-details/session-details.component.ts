@@ -23,6 +23,8 @@ export class SessionDetailsComponent {
   @Output() closeSessionDetails: EventEmitter<void> = new EventEmitter<void>();
   @Output() refreshSessionList: EventEmitter<void> = new EventEmitter<void>();
 
+  sessionObjectSubTopicsBkp: any = []
+
   isDisabled: boolean = false;
   isDisabledSubTopic: boolean = false
 
@@ -33,6 +35,9 @@ export class SessionDetailsComponent {
   removedSubTopic: Map<any, Map<any, any>> = new Map();
   innerMap: Map<any, any> = new Map<any, any>();
   mainTopicIdsOfSubTopicsToChange: Map<any, any> = new Map<any, any>();
+  subTopicsNodeToAdd: Map<any, any> = new Map<any, any>();
+
+
 
   topicsToChange: any = [];
 
@@ -60,6 +65,8 @@ export class SessionDetailsComponent {
   }
 
   loadTopicGroups() {
+    this.sessionObjectSubTopicsBkp = [...this.sessionObject.subTopics]
+
     this.topicsGroupsService.getTopicsGroups().subscribe({
       next: (res) => {
 
@@ -98,38 +105,37 @@ export class SessionDetailsComponent {
       (subTopic: any) => subTopic.id
     );
 
+    this.topicTree = []
+    this.topicsToChange = []
+
     this.topicTree = this.topicGroups.map((group: any, groupIndex: number) => ({
       key: `group-${group.id}`,
       label: group.name,
       data: group,
       selectable: false,
-      groupIndex,
-
       children: group.mainTopics.map((mainTopic: any, mainIndex: number) => ({
         key: `main-${mainTopic.id}`,
         label: mainTopic.name,
         data: mainTopic,
         selectable: false,
-        mainIndex,
 
         children: mainTopic.subTopics
-          .map((subTopic: any, subIndex: number) => {
+          .map((subTopic: any) => {
             const leafNode = {
               key: `sub-${subTopic.id}`,
               label: subTopic.name,
               data: subTopic,
               leaf: true,
               selectable: true,
-              subIndex
+              groupIndex,
+              mainIndex,
             }
             const isInSession = sessionSubTopicIds.includes(subTopic.id);
 
             if (isInSession) {
               console.log(subTopic)
               this.loadSubTopicToList(
-                leafNode,
-                mainTopic.id
-              );
+                leafNode);
             }
 
             return leafNode
@@ -153,82 +159,15 @@ export class SessionDetailsComponent {
       return;
     }
 
-    const mainTopicNode = node.parent;
-    const groupNode = mainTopicNode.parent;
-
-    const children = mainTopicNode.children;
-
-    const subIndex = children.findIndex(
-      (child: any) => child.data.id === node.data.id
-    );
-
     this.addSubTopic(
-      node.data,
-      mainTopicNode.data.id,
-      subIndex,
-      mainTopicNode.mainIndex,
-      groupNode.groupIndex,
+      node
     );
-  }
-  getTopics() {
-    const subTopicsId: any = []
-    this.sessionObject.subTopics.forEach((subtopic: any) => {
-      subTopicsId.push(subtopic.id)
-
-    });
-    console.log(subTopicsId)
-    this.mainTopicService.getTopics().subscribe({
-      next: async (res) => {
-        if (!environment.production) {
-          console.log(res)
-        }
-        if (res) {
-          this.topics = res;
-        }
-
-      },
-      error: (error) => {
-        if (!environment.production) {
-          console.log(error)
-        }
-
-        if (error.error.status === "ALGD-400") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-403") {
-          this.toastService.show(error.error.message, 'error');
-        } else if (error.error.status === "ALGD-500") {
-          this.toastService.show(error.error.message, 'error');
-        } else {
-          this.toastService.show("حدث خطأ غير متوقع، يرجى التواصل مع إشراف التعليم الديني", 'error');
-        }
-      }
-    })
   }
 
   toggleChangeSubTopicBtn() {
     this.isDisabledSubTopic = true
     this.isEditable = true
-    // this.getTopics();
     this.loadTopicGroups();
-
-    // for (let i = 0; i < this.sessionObject.subTopics.length; i++) {
-    //   const subTopic = this.sessionObject.subTopics[i]
-    //   const mainTopicId = subTopic.mainTopicId
-
-    //   let innerMap = this.removedSubTopic.get(mainTopicId);
-    //   if (!innerMap) {
-    //     innerMap = new Map<any, any>();
-    //   }
-
-    //   innerMap.set(subTopic.id, subTopic);
-    //   this.removedSubTopic.set(mainTopicId, innerMap);
-
-    //   this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
-    //   this.topicsToChange.push(subTopic.id);
-
-    //   this.selectedSubTopicIndex = '';
-    // }
-    // console.log(this.mainTopicsId)
     this.isDisabledSubTopic = false
 
   }
@@ -286,19 +225,14 @@ export class SessionDetailsComponent {
     return `${start} الى ${end}`;
   }
 
-  onMainTopicChange() {
-
-    // Optional: Reset subtopic when main topic changes
-    this.selectedSubTopicIndex = '';
-  }
-
   emitCloseClicked(): void {
     this.closeSessionDetails.emit();
   }
 
   cancelEditing() {
-    this.selectedMainTopicIndex = '';
-    this.selectedSubTopicIndex = ''
+    this.sessionObject.subTopics = [...this.sessionObjectSubTopicsBkp]
+    this.topicsToChange = []
+    this.subTopicsNodeToAdd = new Map<any, any>();
     this.isEditable = !this.isEditable
   }
 
@@ -316,22 +250,11 @@ export class SessionDetailsComponent {
         this.isDisabled = false
         if (res) {
 
-          const newSubTopics: any = []
-          this.topicsToChange.forEach((subTopicId: number) => {
-            const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
-            const subTopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
-            newSubTopics.push(subTopic)
-          });
-          this.sessionObject.subTopics = newSubTopics;
 
-          this.selectedMainTopicIndex = '';
-          this.selectedSubTopicIndex = '';
 
-          this.removedSubTopic.clear();
-          this.innerMap.clear();
-          this.mainTopicIdsOfSubTopicsToChange.clear();
-          this.topicsToChange = []
-            ;
+          this.buildTopicTree()
+
+
           this.isEditable = !this.isEditable
           this.refreshSessionList.emit()
         } else {
@@ -391,117 +314,54 @@ export class SessionDetailsComponent {
     })
   }
 
-  addSubTopic(subTopic: any, mainTopicId: any, subIndex: any, mainIndex: any, groupIndex: any) {
+  addSubTopic(subTopicNode: any) {
 
-    let innerMap = this.removedSubTopic.get(mainTopicId);
-    if (!innerMap) {
-      innerMap = new Map<any, any>();
+    this.subTopicsNodeToAdd.set(subTopicNode.data.id, subTopicNode)
+    this.topicsToChange.push(subTopicNode.data.id);
+
+    console.log(subTopicNode.data)
+    this.sessionObject.subTopics.push(subTopicNode.data)
+    console.log(this.sessionObject.subTopics)
+
+    const mainNode =
+      this.topicTree[subTopicNode.groupIndex]
+        .children?.[subTopicNode.mainIndex];
+
+    if (mainNode) {
+      mainNode.children = mainNode.children?.filter(
+        (node: any) => node.data.id !== subTopicNode.data.id
+      ) ?? [];
     }
-    innerMap.set(
-      subTopic.id,
-      this.topicTree[groupIndex].children?.[mainIndex]?.children?.[subIndex]
-    );
-    this.removedSubTopic.set(mainTopicId, innerMap);
 
-    this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
-    this.topicsToChange.push(subTopic.id);
-
-    this.topicTree[groupIndex].children?.[mainIndex]?.children?.splice(
-      subIndex,
-      1
-    );
     this.selectedTopic = null;
   }
 
-  loadSubTopicToList(subTopicNode: any, mainTopicId: any) {
-
-    let innerMap = this.removedSubTopic.get(mainTopicId);
-    if (!innerMap) {
-      innerMap = new Map<any, any>();
-    }
+  loadSubTopicToList(subTopicNode: any) {
 
 
-    innerMap.set(
-      subTopicNode.data.id,
-      subTopicNode
-    );
-    this.removedSubTopic.set(mainTopicId, innerMap);
+    this.subTopicsNodeToAdd.set(subTopicNode.data.id, subTopicNode)
 
-    this.mainTopicIdsOfSubTopicsToChange.set(subTopicNode.data.id, mainTopicId);
     this.topicsToChange.push(subTopicNode.data.id);
 
   }
 
-  // addSubTopic() {
-  //   if (this.selectedSubTopicIndex === '') return;
 
-  //   const subTopic = this.topics[this.selectedMainTopicIndex].subTopics[this.selectedSubTopicIndex];
-  //   const mainTopicId = this.topics[this.selectedMainTopicIndex];
+  removeSubTopic(subTopicId: number) {
 
-  //   let innerMap = this.removedSubTopic.get(mainTopicId);
-  //   if (!innerMap) {
-  //     innerMap = new Map<any, any>();
-  //   }
+    const subTopicNode = this.subTopicsNodeToAdd.get(subTopicId);
 
-  //   innerMap.set(subTopic.id, subTopic);
-  //   this.removedSubTopic.set(mainTopicId, innerMap);
+    this.topicTree[subTopicNode.groupIndex].children?.[subTopicNode.mainIndex]?.children?.push(subTopicNode);
 
-  //   this.mainTopicIdsOfSubTopicsToChange.set(subTopic.id, mainTopicId);
-  //   this.topicsToChange.push(subTopic.id);
+    this.subTopicsNodeToAdd.delete(subTopicId);
 
-  //   this.topics[this.selectedMainTopicIndex].subTopics.splice(this.selectedSubTopicIndex, 1);
-
-  //   this.selectedSubTopicIndex = '';
-  // }
-
-
-  removeSubTopic(subTopicId: number, mainIndex: number) {
-
-    const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
-    const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
-
-    this.mainTopicIdsOfSubTopicsToChange.delete(subTopicId)
-    this.removedSubTopic.get(mainTopicId)?.delete(subTopicId);
-    // this.topicsToChange.splice(index, 1)
-    const mainTopicIndex = this.topics.findIndex(
-      (mainTopic: any) => mainTopic.id === mainTopicId
-    );
-    console.log(mainTopicIndex)
-
-    const isDuplicate = this.topics[mainTopicIndex].subTopics.some(
-      (subTopic: any) => subTopic.id === subTopic.id
+    this.topicsToChange = this.topicsToChange.filter(
+      (id: any) => id !== subTopicId
     );
 
-    if (!isDuplicate) this.topics[mainTopicIndex].subTopics.push(subtopic)
+    this.sessionObject.subTopics = this.sessionObject.subTopics.filter(
+      (subTopic: any) => subTopic.id !== subTopicId
+    );
 
   }
 
-
-  //   removeSubTopic(subTopicId: number, index: number) {
-  //   this.getSubTopicName(subTopicId)
-
-  //   const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
-  //   const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
-
-  //   this.mainTopicIdsOfSubTopicsToChange.delete(subTopicId)
-  //   this.removedSubTopic.get(mainTopicId)?.delete(subTopicId);
-  //   this.topicsToChange.splice(index, 1)
-  //   const mainTopicIndex = this.topics.findIndex(
-  //     (mainTopic: any) => mainTopic.id === mainTopicId
-  //   );
-  //   console.log(mainTopicIndex)
-
-  //   const isDuplicate = this.topics[mainTopicIndex].subTopics.some(
-  //     (subTopic: any) => subTopic.id === subTopic.id
-  //   );
-
-  //   if (!isDuplicate) this.topics[mainTopicIndex].subTopics.push(subtopic)
-
-  // }
-  getSubTopicName(subTopicId: number) {
-    const mainTopicId = this.mainTopicIdsOfSubTopicsToChange.get(subTopicId)
-    const subtopic = this.removedSubTopic.get(mainTopicId)?.get(subTopicId)
-    // console.log(subtopic)
-    return subtopic?.data?.name || subtopic?.name;
-  }
 }
