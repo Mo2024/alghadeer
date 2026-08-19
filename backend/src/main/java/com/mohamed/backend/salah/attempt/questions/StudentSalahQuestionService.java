@@ -38,7 +38,7 @@ public class StudentSalahQuestionService {
         log.info("[studentAttemptRepository].[findById] called successfully");
 
         log.info("Calling [questionRepository].[findByStudentSalahAttemptId]");
-        List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.findByStudentSalahAttemptId(attemptId);
+        List<StudentSalahQuestionView> listOfQuestions = studentSalahQuestionRepository.findByStudentSalahAttemptIdOrderByIdAsc(attemptId);
         log.info("[questionRepository].[findByStudentSalahAttemptId] called successfully");
 
         if(listOfQuestions.isEmpty()){

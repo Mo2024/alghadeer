@@ -46,7 +46,7 @@ public interface StudentSalahQuestionRepository  extends JpaRepository<StudentSa
             Integer attemptId
     );
 
-    List<StudentSalahQuestionView> findByStudentSalahAttemptId(int attemptId);
+    List<StudentSalahQuestionView> findByStudentSalahAttemptIdOrderByIdAsc(int attemptId); //sort by id ig
 
     int countByStudentSalahAttemptId(int attemptId);
 }
